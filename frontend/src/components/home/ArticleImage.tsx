@@ -57,7 +57,8 @@ export function ArticleImage({
             setSrc(fallback);
           }
         }}
-        unoptimized={src.startsWith("http://")}
+        // External editorial images stay in the browser; Next must not proxy arbitrary hosts.
+        unoptimized={src.startsWith("http://") || src.startsWith("https://")}
       />
       {showBadge && (
         <span className="absolute left-3 top-3 z-10 rounded bg-accent-soil px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white">
