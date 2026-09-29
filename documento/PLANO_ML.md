@@ -123,3 +123,17 @@
 
 ## Risco Principal
 - Sem dados bons, o ML vira custo e nao vantagem.
+
+## Plano incremental e gates
+
+O módulo não deve ser implementado antes de fechar dados e critério de sucesso. A ordem é:
+
+1. **Inventário de dados** — mapear campos editoriais, eventos de leitura e lacunas.
+2. **Instrumentação** — persistir cliques, leitura, rejeição, categoria final e revisão humana.
+3. **Rotulação editorial** — criar labels de tendência, relevância, texto fraco e duplicidade.
+4. **Baseline** — avaliar TF-IDF/classificador leve contra a heurística atual.
+5. **Validação editorial** — comparar precisão, recall, ranking e falsos positivos com critério humano.
+6. **Integração** — só após ganho comprovado, adicionar scores ao classifier/filter/home.
+7. **Evolução** — embeddings e re-treino apenas com volume e feedback reais.
+
+Cada fase precisa demonstrar seu gate antes da seguinte. Se não houver ganho mensurável, o escopo deve ser simplificado; ML não substitui a reescrita nem pode quebrar o fluxo principal.
