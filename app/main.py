@@ -40,6 +40,7 @@ from app.ml_editorial import get_latest_trend_signals
 from app.operations_routes import router as operations_router
 from app.publisher import ArticlePublisher
 from app.schema import NewsArticle
+from app.security import trusted_proxy_hosts
 
 # Configurar Loguru
 logger.remove()
@@ -134,7 +135,7 @@ app.add_middleware(
 )
 app.add_middleware(
     ProxyHeadersMiddleware,
-    trusted_hosts=[host.strip() for host in os.getenv("TRUSTED_PROXY_HOSTS", "127.0.0.1,::1").split(",") if host.strip()],
+    trusted_hosts=sorted(trusted_proxy_hosts()),
 )
 app.include_router(operations_router)
 app.include_router(editorial_router)

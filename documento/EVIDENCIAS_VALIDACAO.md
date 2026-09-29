@@ -3,6 +3,22 @@
 Registro detalhado extraído do plano operacional. O plano principal mantém apenas
 decisões, gates e critérios; esta página guarda evidências extensas.
 
+## Regra de validade
+
+Cada evidência é histórica e vale somente para o SHA, data, ambiente e comando registrados. Nenhum resultado desta página substitui a execução no candidato atual.
+
+## Auditoria atual — 29/09/2026
+
+- Base: `850cdd6`, branch `codex/otimizacao-completa`.
+- Ruff: aprovado com `./venv/bin/ruff check app tests scripts`.
+- Mypy: aprovado com `./.venv/bin/mypy app` em 73 arquivos.
+- Compilação Python: aprovada com `python3 -m compileall -q app scripts`.
+- ESLint: aprovado com `npm run lint`.
+- Build frontend: aprovado com `npm run build`; Next 16.3.3 gerou 37 páginas.
+- Testes direcionados: 8 aprovados em segurança e rate limit.
+- Suíte completa: não aprovada; 144 testes foram coletados e a execução travou em `tests/unit/test_admin_endpoints.py::test_admin_endpoints_require_auth`.
+- Docker: indisponível na sessão; validações Compose, Swarm, healthcheck real e rollback não foram executadas.
+
 ## CI, imagens e performance
 
 - CI publicado com todos os jobs verdes; manifests GHCR consultados no host de teste e digests registrados no relatório de prontidão. Nenhuma stack foi aplicada.

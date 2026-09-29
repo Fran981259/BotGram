@@ -1,12 +1,28 @@
-# Portal Cerrado
+# Portal Cerrado — documentação
 
 Portal de noticias automatizado com backend FastAPI, fila Celery, banco PostgreSQL e frontend Next.js.
 
-## Status Atual
-- Backend real em operacao.
-- Frontend real em operacao e dependente da API.
-- O runtime principal nao usa mais JSON local como fonte de noticias.
-- O plano de acao e a memoria canônica estao separados neste mesmo diretorio.
+## Fonte de verdade
+
+- `PLANO_ACAO.md` — gates, ordem de execução e bloqueios atuais.
+- `MEMORIA.md` — fatos canônicos confirmados sobre arquitetura, runtime e restrições.
+- `OPERACAO.md` — procedimentos de backup, rotação, rollback e promoção.
+- `SPEC.md` — visão curta do produto e componentes.
+- `EVIDENCIAS_VALIDACAO.md` — evidências datadas; não substitui a execução atual.
+- `PRONTIDAO_CANDIDATO.md` — snapshot histórico, válido apenas para o SHA registrado.
+
+Os documentos de ML são planejamento futuro e não autorizam implementação nem promoção.
+
+Quando houver conflito, prevalece: código/testes no commit atual, `PLANO_ACAO.md`, `MEMORIA.md`, `OPERACAO.md` e demais documentos datados.
+
+## Estado auditado em 29/09/2026
+
+- Branch: `codex/otimizacao-completa`; base: `850cdd6`.
+- Checkout limpo no início da otimização.
+- Ruff, Mypy, compileall, ESLint e build frontend aprovados nesta sessão.
+- Testes direcionados de segurança/rate limit: 8 aprovados.
+- Suíte completa: bloqueada por travamento em `tests/unit/test_admin_endpoints.py::test_admin_endpoints_require_auth`.
+- Docker indisponível nesta sessão; Compose, Swarm e smoke externo permanecem não verificados.
 
 ## Stack
 - FastAPI
@@ -14,16 +30,6 @@ Portal de noticias automatizado com backend FastAPI, fila Celery, banco PostgreS
 - PostgreSQL
 - Next.js + Tailwind
 - Scraping, classificacao, reescrita e publicacao por pipeline
-
-## Documentos Principais
-- `PLANO_ACAO.md` - plano unico e travado por escopo.
-- `PLANO_ML.md` - arquitetura e roteiro do modulo de machine learning.
-- `PLANO_ML_ACAO.md` - plano de acao do modulo de machine learning por fases.
-- `CRONOGRAMA_ML_EXECUTIVO.md` - cronograma executivo do modulo de machine learning.
-- `REFERENCIA_ML_NOTICIAS_CURTAS_PTB.md` - leitura comparativa de um projeto externo de classificacao de noticias.
-- `MEMORIA.md` - fatos canonicos do projeto.
-- `OPERACAO.md` - status operacional consolidado.
-- `SPEC.md` - especificacao tecnica resumida.
 
 ## Fonte de configuração
 

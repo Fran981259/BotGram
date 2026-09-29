@@ -8,7 +8,9 @@
 - Nenhum texto de documentação, status histórico ou build anterior substitui uma validação executada sobre o commit candidato atual.
 - Não manter Compose e Swarm como dois runtimes produtivos concorrentes; Compose é local/teste e Swarm só existe após uma stack dedicada e validada.
 
-## Estado de Referência em 24/09/2026
+## Estado de Referência histórico em 24/09/2026
+
+> Esta tabela registra um snapshot anterior. O candidato atual precisa repetir todos os gates no próprio SHA.
 
 | Gate | Estado | Evidência atual |
 | --- | --- | --- |
@@ -290,3 +292,18 @@ Restaurar uma base reproduzível, testável e operável antes de qualquer evolu�
 - Ações: criar tag de candidato, publicar imagens SHA, fazer deploy somente no ambiente de teste e executar smoke test completo.
 - Saída: relatório de aceite com versões, resultados, risco residual e plano de rollback.
 - Regra: produção continua bloqueada até aprovação explícita do usuário depois do relatório.
+
+## Fase 11 — Otimização estrutural e consolidação documental
+
+- Estado: iniciada em 29/09/2026 na branch `codex/otimizacao-completa`.
+- Objetivo: reduzir complexidade de manutenção sem alterar rotas, autenticação, migrations, contratos públicos ou comportamento editorial aprovado.
+- Ordem obrigatória:
+  1. consolidar documentação e marcar snapshots históricos;
+  2. reproduzir e corrigir o bloqueio da suíte completa de testes;
+  3. inventariar imports, scripts, rotas, variáveis e módulos com consumidores;
+  4. remover somente código comprovadamente morto ou duplicado, uma fatia por vez;
+  5. consolidar configurações sem misturar Compose local e Swarm de teste;
+  6. corrigir defaults inseguros e atualizar contratos de ambiente;
+  7. validar backend, frontend, migrations, runtime e documentação no mesmo commit.
+- Regra: nenhuma remoção será feita apenas por nome, tamanho ou baixa frequência aparente; cada remoção deve ter busca de referências, teste ou evidência equivalente.
+- Saída: relatório de arquivos removidos/consolidados, contratos preservados, validações e risco residual.

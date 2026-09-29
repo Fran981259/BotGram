@@ -7,11 +7,12 @@
 - Infra: Docker Swarm via Tailscale (100.95.111.24).
 
 ## Runtime Real
-- Provider LLM: Groq (configurado como LLM_PROVIDER=gemini com GROQ_API_KEY).
+- O código suporta `gemini`, `groq` e `openai`; o provider ativo é definido por `LLM_PROVIDER` e a ordem de fallback por `LLM_FALLBACK_CHAIN`.
+- Não há evidência atual nesta sessão para afirmar qual provider está ativo em produção. Não tratar valores de `.env.example` como configuração de produção.
 - Classificador: heuristico com keywords PT-BR e EN, normalizado via contracts.category_name().
 - Categorias canônicas: tech, culture, health, science, sports, politics, economy, security, agriculture, education, clima, world e general.
 - Repórteres digitais são definidos em config/reporters.yml, inclusive cobertura internacional para world.
-- O servidor ainda executa o Portal Cerrado legado por Docker Compose; a migração para Swarm é pendente.
+- O repositório contém Compose para uso local/teste e uma stack Swarm dedicada para teste. A execução produtiva e o cutover continuam pendentes de evidência e aprovação.
 
 ## Regras Fixas
 - Nao misturar docs de planejamento com docs de operacao.
@@ -29,6 +30,13 @@
 
 ## Observacao
 - Esta memoria e para consistencia, nao para planejamento.
+
+## Estado auditado
+
+- Última auditoria: 29/09/2026.
+- Base: `850cdd6`, branch `codex/otimizacao-completa`.
+- A suíte completa de testes não foi aprovada: há travamento no primeiro teste administrativo.
+- Resultados anteriores registrados neste diretório são históricos e precisam ser repetidos no candidato atual.
 
 ## Migração Swarm Pendente
 - O destino oficial é Docker Swarm, com stack `cerrado`; nenhuma nova configuração deve introduzir o nome `botgram`.
