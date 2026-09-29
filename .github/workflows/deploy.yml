@@ -30,7 +30,7 @@ jobs:
         working-directory: frontend
         run: |
           npm ci
-          npm ls --all --json > ../artifacts/frontend-npm-tree.json || true
+          npm ls --all --json > ../artifacts/frontend-npm-tree.json
       - name: Upload dependency inventory
         uses: actions/upload-artifact@v4
         with:
@@ -60,7 +60,7 @@ jobs:
           pip install mypy
           mypy app/
       - name: Unit tests
-        run: pytest tests/unit -q
+        run: pytest tests/unit tests/integration -q
 
   lint-frontend:
     runs-on: ubuntu-latest
@@ -77,12 +77,18 @@ jobs:
       - name: Lint frontend
         working-directory: frontend
         run: npm run lint
+      - name: Type check frontend
+        working-directory: frontend
+        run: npx tsc --noEmit
+      - name: Audit frontend dependencies
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
       - name: Build frontend
         working-directory: frontend
         run: npm run build
 
   publish:
-    needs: [test-backend, lint-frontend]
+    needs: [dependency-inventory, test-backend, lint-frontend]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
