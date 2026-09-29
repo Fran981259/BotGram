@@ -83,28 +83,28 @@ def admin_list_articles(
     _auth=Depends(require_api_key),
 ):
     """Lista todos os artigos com filtros opcionais (admin completo)."""
-    owns_session = False
-    if not hasattr(db, "query"):
-        db = get_session()
-        owns_session = True
     try:
-        query = db.query(NewsArticle)
+        base_query = db.query(NewsArticle)
 
         # Filtros
         if status and status != "all":
             statuses = [s.strip() for s in status.split(",") if s.strip()]
             if len(statuses) == 1:
-                query = query.filter(NewsArticle.status == statuses[0])
+                base_query = base_query.filter(NewsArticle.status == statuses[0])
             else:
-                query = query.filter(NewsArticle.status.in_(statuses))
+                base_query = base_query.filter(NewsArticle.status.in_(statuses))
         if category and category != "all":
-            query = query.filter(NewsArticle.category == category)
+            base_query = base_query.filter(NewsArticle.category == category)
         if q:
-            query = query.filter(NewsArticle.title.ilike(f"%{q}%"))
+            base_query = base_query.filter(NewsArticle.title.ilike(f"%{q}%"))
 
-        total = query.order_by(None).count()
+        # COUNT via subquery — um único passe na tabela
+        total = db.query(func.count()).select_from(
+            base_query.order_by(None).subquery()
+        ).scalar() or 0
+
         articles = (
-            query.order_by(NewsArticle.created_at.desc())
+            base_query.order_by(NewsArticle.created_at.desc())
             .offset(offset)
             .limit(limit)
             .all()
@@ -118,9 +118,6 @@ def admin_list_articles(
     except Exception as exc:
         logger.error("admin_list_articles falhou (%s)", type(exc).__name__)
         raise HTTPException(status_code=503, detail="Erro interno") from None
-    finally:
-        if owns_session:
-            db.close()
 
 
 # ─── Detalhe ──────────────────────────────────────────────────────────────────
