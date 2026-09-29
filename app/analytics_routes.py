@@ -1,7 +1,6 @@
 """First-party, rate-limited page-view tracking route."""
 
 import ipaddress
-import os
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
@@ -10,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from app.database import get_db
 from app.rate_limit import is_rate_limited
+from app.security import trusted_proxy_hosts
 
 router = APIRouter()
 _WINDOW_SECONDS = 60
@@ -51,8 +51,7 @@ def _is_rate_limited(request: Request) -> bool:
 
 def _trusted_proxy_hosts() -> set[str]:
     """Load the explicit proxy allowlist used for forwarded client addresses."""
-    raw = os.getenv("TRUSTED_PROXY_HOSTS", "127.0.0.1,::1")
-    return {value.strip() for value in raw.split(",") if value.strip()}
+    return trusted_proxy_hosts()
 
 
 def _client_ip(request: Request) -> str:

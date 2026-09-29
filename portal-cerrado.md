@@ -173,7 +173,7 @@
 - frontend/src/lib/adminApi.ts → cliente HTTP do painel admin (tipagens + fetch)
 - frontend/src/styles/admin.css → design system dark mode exclusivo do admin
 
-## Last updated: 2026-09-28
+## Last updated: 2026-09-29
 
 - news_articles · reporters · publication_logs · scraping_tasks · editorial_trend_signals
 
@@ -181,4 +181,4 @@
 
 - Backups operacionais: retenção de 30 dias; restore de teste obrigatório antes de expurgo.
 
-## Last updated: 2026-09-28
+## Last updated: 2026-09-29

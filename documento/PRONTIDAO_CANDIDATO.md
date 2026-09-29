@@ -1,8 +1,10 @@
 # Prontidão do Candidato — Portal Cerrado
 
+> Snapshot histórico. Este arquivo não aprova o checkout atual. Os resultados só são válidos quando o SHA registrado coincidir com o candidato auditado.
+
 ## Estado atual
 
-- Data: 24/09/2026.
+- Data do snapshot: 24/09/2026.
 - Qualidade estática: Ruff e Mypy do backend aprovados.
 - Testes: 120 unitários e 8 de integração aprovados.
 - Frontend: lint, TypeScript, build e smoke full-stack local aprovados.

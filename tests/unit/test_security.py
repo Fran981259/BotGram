@@ -1,7 +1,7 @@
 import pytest
 from fastapi import HTTPException
 
-from app.security import require_api_key
+from app.security import require_api_key, trusted_proxy_hosts
 
 
 def test_production_rejects_weak_operator_key(monkeypatch):
@@ -28,3 +28,11 @@ def test_rotation_accepts_previous_key_during_transition(monkeypatch):
     monkeypatch.setenv("PUBLISH_API_KEY_PREVIOUS", previous)
 
     assert require_api_key(previous) is None
+
+
+def test_production_rejects_wildcard_trusted_proxy(monkeypatch):
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    monkeypatch.setenv("TRUSTED_PROXY_HOSTS", "*")
+
+    with pytest.raises(RuntimeError, match="wildcard"):
+        trusted_proxy_hosts()

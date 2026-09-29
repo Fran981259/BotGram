@@ -1,15 +1,16 @@
 # OPERACAO - Portal Cerrado
 
 ## Status Consolidado
-- Validação local em 20/09/2026: 84 testes backend, Ruff e mypy aprovados; ESLint e build Next aprovados.
-- A validação acima não confirma o estado do Docker Swarm, serviços externos, banco de produção ou provedor LLM.
+- Os números históricos de validação devem ser consultados em `EVIDENCIAS_VALIDACAO.md` e não representam automaticamente o candidato atual.
+- Na auditoria de 29/09/2026, Ruff, Mypy, compileall, ESLint, build frontend e a suíte completa passaram; foram 145 testes em ambiente limpo Python 3.12.
+- Docker não estava disponível nesta sessão; o estado do Swarm, serviços externos, banco de produção e provider LLM permanece desconhecido.
 - O pipeline mede e retorna a duração de scan, classificação, reescrita, publicação e total por execução.
 
 ## Stack em Produção
 - Backend: FastAPI + Celery + Redis + PostgreSQL
 - Frontend: Next.js + Tailwind
 - Infra: Docker Swarm via Tailscale (100.95.111.24)
-- LLM: Groq (LLM_PROVIDER=gemini com GROQ_API_KEY)
+- LLM: provider configurável (`gemini`, `groq` ou `openai`) por `LLM_PROVIDER`, com fallback em `LLM_FALLBACK_CHAIN`.
 - Deploy: via update.sh (docker stack deploy)
 
 ## Contrato de Runtime
@@ -17,15 +18,17 @@
 ### Backend Obrigatorio em Produção
 - `DATABASE_URL` -> Postgres do stack.
 - `REDIS_URL` -> Redis do stack.
-- `LLM_PROVIDER` -> `gemini` (usa Groq API via SDK compatível).
-- `GROQ_API_KEY` -> chave da API Groq (provider real).
-- `GEMINI_API_KEY` -> fallback OpenRouter (opcional).
-- `OPENAI_API_KEY` -> fallback OpenRouter (opcional).
+- `REDIS_PASSWORD` -> senha do Redis usada pelo stack e pelos healthchecks.
+- `LLM_PROVIDER` -> provider ativo: `gemini`, `groq` ou `openai`.
+- `LLM_FALLBACK_CHAIN` -> ordem de fallback, limitada aos providers suportados pelo código.
+- `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENAI_API_KEY` -> chaves dos respectivos providers, conforme a cadeia configurada.
 - `PUBLISH_API_KEY` -> chave para endpoints de escrita.
 - `SITE_URL` -> URL publica do site.
 - `NEXT_PUBLIC_SITE_URL` -> mesma URL publica para o frontend.
 - `NEXT_PUBLIC_API_URL` -> URL interna da API para o frontend.
 - `CORS_ALLOWED_ORIGINS` -> origem publica do frontend e origem local de manutencao.
+- `TRUSTED_PROXY_HOSTS` -> allowlist dos endereços dos proxies; wildcard é proibido em produção.
+- `FLOWER_USER` e `FLOWER_PASSWORD` -> credenciais do monitoramento Flower no caminho Swarm.
 - `ENVIRONMENT` -> `production` no deploy real.
 - `SIMILARITY_THRESHOLD` -> limiar de compliance (default: 0.35).
 
@@ -55,7 +58,7 @@
 | 3 - Frontend | done | API/URL/metadata errados | frontend usa API real |
 | 4 - Build e Registry | done | imagem nao publicada | build local funcional |
 | 5 - Portainer/Swarm | done | stack fora do contrato | services 1/1 |
-| 6 - Validacao Final | local done | divergência entre ambiente local e produção | 84 testes; Ruff, mypy, ESLint e build Next aprovados em 20/09/2026 |
+| 6 - Validacao Final | snapshot histórico | divergência entre ambiente local e produção | 84 testes; Ruff, mypy, ESLint e build Next aprovados em 20/09/2026; repetir no candidato atual |
 
 ## Guia Operacional
 1. Validar banco, API e frontend.

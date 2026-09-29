@@ -25,6 +25,12 @@ def client():
     return TestClient(app)
 
 
+@pytest.fixture(autouse=True)
+def configured_test_api_key(monkeypatch):
+    """Keep admin endpoint tests independent from a developer's local .env."""
+    monkeypatch.setenv("PUBLISH_API_KEY", "dev-test-key-32-chars-long-secret!!")
+
+
 @pytest.fixture
 def auth_headers():
     key = os.getenv("PUBLISH_API_KEY", "dev-test-key-32-chars-long-secret!!")

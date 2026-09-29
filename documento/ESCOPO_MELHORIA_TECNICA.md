@@ -1,5 +1,7 @@
 # Escopo de Melhoria Técnica — Portal Cerrado
 
+> Documento histórico de 25/09/2026. Os resultados abaixo não representam automaticamente o commit atual; consulte `documento/EVIDENCIAS_VALIDACAO.md` para a auditoria mais recente.
+
 **Versão:** 1.0
 **Data da Auditoria:** 25/09/2026
 **Metodologia:** Framework `arq_data/.agents/skills/` (9 domínios)

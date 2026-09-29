@@ -20,7 +20,7 @@ fi
 export ENABLE_LOCAL_SCHEDULER
 
 echo "==> Iniciando API (porta ${API_PORT}) com agendador local..."
-ENABLE_LOCAL_SCHEDULER=1 .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port "${API_PORT}" \
+ENABLE_LOCAL_SCHEDULER="${ENABLE_LOCAL_SCHEDULER}" .venv/bin/uvicorn app.main:app --host 0.0.0.0 --port "${API_PORT}" \
   --lifespan on &
 API_PID=$!
 
