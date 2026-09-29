@@ -136,7 +136,7 @@
 - frontend/src/components/admin/PipelineFunnel.tsx → visualização do funil de estágios (Fase 3 ✅)
 - app/admin_pipeline_routes.py → rotas de status, trigger e task do pipeline (Fase 3 ✅)
 - frontend/src/app/admin/editorial/page.tsx → mesa editorial existente (integrada ao shell)
-- frontend/src/app/admin/repórteres/page.tsx → gestão de agentes IA (Fase 4 ✅)
+- frontend/src/app/admin/reporteres/page.tsx → gestão de agentes IA (Fase 4 ✅)
 - frontend/src/components/admin/ReporterCard.tsx → card de repórter e métricas (Fase 4 ✅)
 - frontend/src/components/admin/ReporterEditModal.tsx → editor de persona/voz/prompt (Fase 4 ✅)
 - frontend/src/components/admin/ReporterArticlesModal.tsx → histórico de matérias do repórter (Fase 4 ✅)
