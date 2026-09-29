@@ -94,23 +94,11 @@ export async function fetchOperationsStatus(apiKey: string): Promise<OperationsS
   return apiFetch<OperationsStatus>("/api/operations/status", apiKey);
 }
 
-/** Retorna estatísticas consolidadas para o dashboard. */
+/** Retorna estatísticas consolidadas para o dashboard (valida PUBLISH_API_KEY). */
 export async function fetchAdminStats(apiKey: string): Promise<AdminStats> {
-  try {
-    type StatsRaw = { total_published: number; total_pending: number; total_reporters: number };
-    const raw = await apiFetch<StatsRaw>("/api/admin/stats", apiKey);
-    return { ...raw, last_scan_at: null, articles_today: 0, articles_this_week: 0 };
-  } catch {
-    const s = await apiFetch<OperationsStatus>("/api/operations/status", apiKey);
-    return {
-      total_published: s.published_count ?? 0,
-      total_pending: s.pending_count ?? 0,
-      total_reporters: 0,
-      last_scan_at: s.last_published_at ?? null,
-      articles_today: 0,
-      articles_this_week: 0,
-    };
-  }
+  type StatsRaw = { total_published: number; total_pending: number; total_reporters: number };
+  const raw = await apiFetch<StatsRaw>("/api/admin/stats", apiKey);
+  return { ...raw, last_scan_at: null, articles_today: 0, articles_this_week: 0 };
 }
 
 // ─── Artigos ──────────────────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, createContext, useContext, useCallback } from "react";
-import { loadApiKey, saveApiKey, clearApiKey, fetchOperationsStatus } from "@/lib/adminApi";
+import { loadApiKey, saveApiKey, clearApiKey, fetchAdminStats } from "@/lib/adminApi";
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
@@ -31,7 +31,7 @@ type Props = {
 };
 
 /**
- * Verifica PUBLISH_API_KEY via /api/operations/status.
+ * Verifica PUBLISH_API_KEY via /api/admin/stats (endpoint autenticado).
  * Persiste a chave na sessionStorage (limpa ao fechar aba).
  * Renderiza `loginSlot` enquanto não autenticado.
  */
@@ -45,7 +45,7 @@ export function AdminAuthGuard({ children, loginSlot }: Props) {
     if (!opts.silent) setIsLoading(true);
     setError("");
     try {
-      await fetchOperationsStatus(key.trim());
+      await fetchAdminStats(key.trim());
       setApiKey(key.trim());
       saveApiKey(key.trim());
       setAuthenticated(true);
