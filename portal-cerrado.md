@@ -46,6 +46,7 @@
 - app/security.py → autenticação por chave com política de força em produção
 - app/editorial_routes.py → revisão editorial e registro de auditoria
 - tests/unit/test_security.py → contrato de força da chave editorial
+- tests/unit/test_admin_endpoints.py → suite automatizada dos endpoints do painel admin
 - tests/unit/test_env_contract.py → variáveis documentadas versus runtime
 - tests/unit/test_operations_sitemap.py → filtro de artigos do news sitemap
 - .env.example → contrato de ambiente sem chaves legadas
@@ -125,10 +126,53 @@
 - frontend/src/lib/editorialApi.ts → protected editorial queue client
 - frontend/src/components/admin/ → editorial review dashboard UI
 - config/scheduler.yaml → local publication policy
-- documento/FONTES_RASPAGEM.md → catálogo de fontes, URLs e status de integração
-- documento/EVIDENCIAS_VALIDACAO.md → evidências extensas de testes, CI e Swarm
+- frontend/src/app/admin/layout.tsx → shell do admin (auth guard + sidebar + topbar)
+- frontend/src/app/admin/page.tsx → redirect /admin → /admin/dashboard
+- frontend/src/app/admin/dashboard/page.tsx → KPIs, artigos recentes e atalhos
+- frontend/src/app/admin/artigos/page.tsx → gestão completa de artigos (Fase 2 ✅)
+- frontend/src/components/admin/ArticleEditModal.tsx → modal de edição inline (Fase 2 ✅)
+- app/admin_routes.py → GET/PATCH/DELETE /api/admin/articles, GET /api/admin/stats (Fase 2 ✅)
+- frontend/src/app/admin/pipeline/page.tsx → status e scan manual Celery (Fase 3 ✅)
+- frontend/src/components/admin/PipelineFunnel.tsx → visualização do funil de estágios (Fase 3 ✅)
+- app/admin_pipeline_routes.py → rotas de status, trigger e task do pipeline (Fase 3 ✅)
+- frontend/src/app/admin/editorial/page.tsx → mesa editorial existente (integrada ao shell)
+- frontend/src/app/admin/repórteres/page.tsx → gestão de agentes IA (Fase 4 ✅)
+- frontend/src/components/admin/ReporterCard.tsx → card de repórter e métricas (Fase 4 ✅)
+- frontend/src/components/admin/ReporterEditModal.tsx → editor de persona/voz/prompt (Fase 4 ✅)
+- frontend/src/components/admin/ReporterArticlesModal.tsx → histórico de matérias do repórter (Fase 4 ✅)
+- app/admin_reporter_routes.py → CRUD e persona de repórteres IA (Fase 4 ✅)
+- frontend/src/app/admin/analytics/page.tsx → métricas e alcance editorial (Fase 5 ✅)
+- frontend/src/components/admin/AnalyticsTimelineChart.tsx → gráfico vetorial de tendências (Fase 5 ✅)
+- frontend/src/components/admin/AnalyticsDistribution.tsx → distribuição de categorias e repórteres (Fase 5 ✅)
+- frontend/src/lib/adminAnalyticsApi.ts → cliente de dados de analytics (Fase 5 ✅)
+- app/admin_analytics_routes.py → agregação de KPIs, timeline e rankings (Fase 5 ✅)
+- frontend/src/app/admin/redes-sociais/page.tsx → Twitter/X e distribuição social (Fase 6 ✅)
+- frontend/src/components/admin/SocialPostModal.tsx → modal de tweet manual com preview (Fase 6 ✅)
+- frontend/src/lib/adminSocialApi.ts → cliente de API para redes sociais (Fase 6 ✅)
+- app/admin_social_routes.py → rotas de status, disparo e histórico social (Fase 6 ✅)
+- frontend/src/app/admin/logs/page.tsx → auditoria e histórico de logs (Fase 7 ✅)
+- frontend/src/app/admin/moderacao/page.tsx → fila de moderação e quarentena (Fase 7 ✅)
+- frontend/src/app/admin/usuarios/page.tsx → credenciais, operadores e segurança (Fase 7 ✅)
+- frontend/src/lib/adminAuditApi.ts → cliente de API para auditoria e moderação (Fase 7 ✅)
+- app/admin_audit_routes.py → rotas de auditoria, moderação e segurança (Fase 7 ✅)
+- frontend/src/app/admin/configuracoes/page.tsx → scheduler, LLM e fontes (Fase 8 ✅)
+- frontend/src/components/admin/LLMProviderCard.tsx → card de provedor LLM com teste (Fase 8 ✅)
+- frontend/src/components/admin/SchedulerConfigCard.tsx → parâmetros de volume do scheduler (Fase 8 ✅)
+- frontend/src/lib/adminConfigApi.ts → cliente de configurações e teste LLM (Fase 8 ✅)
+- app/admin_config_routes.py → rotas de scheduler, teste LLM e fontes (Fase 8 ✅)
+- frontend/src/components/admin/ArticleFilterBar.tsx → barra de filtros e busca de artigos
+- frontend/src/components/admin/ArticleTable.tsx → tabela responsiva de artigos
+- frontend/src/components/admin/PipelineLogsCard.tsx → card de logs de atividade Celery
+- frontend/src/components/admin/PipelineMetricsCards.tsx → cards de status de workers e lock Redis
+- frontend/src/components/admin/ReporterVoiceSection.tsx → formulário de persona e voz IA
+- frontend/src/components/admin/AdminSidebar.tsx → navegação colapsável
+- frontend/src/components/admin/AdminAuthGuard.tsx → proteção via PUBLISH_API_KEY + context
+- frontend/src/components/admin/AdminLoginPanel.tsx → tela de login dark mode
+- frontend/src/components/admin/AdminShared.tsx → StatCard, StatusBadge, ConfirmModal, useToast, Spinner, EmptyState
+- frontend/src/lib/adminApi.ts → cliente HTTP do painel admin (tipagens + fetch)
+- frontend/src/styles/admin.css → design system dark mode exclusivo do admin
 
-## Database Tables
+## Last updated: 2026-09-28
 
 - news_articles · reporters · publication_logs · scraping_tasks · editorial_trend_signals
 
@@ -136,4 +180,4 @@
 
 - Backups operacionais: retenção de 30 dias; restore de teste obrigatório antes de expurgo.
 
-## Last updated: 2026-09-24
+## Last updated: 2026-09-28

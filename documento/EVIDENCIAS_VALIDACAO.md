@@ -20,3 +20,10 @@ decisões, gates e critérios; esta página guarda evidências extensas.
 - Arquivos: `app/database.py`, `docker-stack.swarm.yml`, `docker-compose.yml`.
 - Validação: os 8 serviços `cerrado_test` convergiram em `1/1`; API, frontend e Caddy responderam HTTP 200 com headers de segurança.
 - Risco residual: baixo; fallback defensivo e drivers explícitos, sem impacto nos containers standalone de produção.
+
+## Estabilização de healthchecks e resiliência Swarm — 28/09/2026
+
+- Causa: healthcheck do Caddy batia na raiz `/` (renderização SSR Next.js pesada sofria timeout no wget sob contenção); o worker Celery de monitoramento excedia 15s no cold start do python com cota estrita de 0.25 CPU; ambos saíam limpos (código 0) e não reiniciavam por causa de `restart_policy.condition: on-failure`.
+- Arquivos: `Caddyfile.test`, `Caddyfile`, `docker-stack.swarm.yml`, `documento/EVIDENCIAS_VALIDACAO.md`.
+- Validação: Caddy responde 200 direto em `/healthz`; `cerrado_test_caddy` e `cerrado_test_celery_monitoring` convergiram para 1/1 com status `healthy`; todos os 9 serviços `cerrado_test` ativos em 1/1; 125 testes unitários e 8 de integração aprovados.
+- Risco residual: baixo; cotas e endpoints isolados, sem impacto nos contêineres legados de produção.

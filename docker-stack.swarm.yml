@@ -183,18 +183,18 @@ services:
       - CMD-SHELL
       - python -c "import os, redis; redis.from_url(os.environ['REDIS_URL']).ping()"
       interval: 60s
-      timeout: 15s
+      timeout: 30s
       retries: 3
       start_period: 30s
     deploy:
       replicas: 1
       resources:
         limits:
-          cpus: '0.25'
+          cpus: '0.50'
           memory: 256M
       restart_policy:
-        condition: on-failure
-        max_attempts: 3
+        condition: any
+        max_attempts: 5
   flower:
     image: ${BACKEND_IMAGE:?BACKEND_IMAGE SHA obrigatoria}
     logging: *id001
@@ -254,7 +254,7 @@ services:
     image: caddy:2-alpine
     logging: *id001
     healthcheck:
-      test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost:80/"]
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost:80/healthz"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -263,7 +263,7 @@ services:
     - ${HTTPS_PORT:-8843}:443
     - ${HTTPS_PORT:-8843}:443/udp
     configs:
-    - source: caddyfile_test_http_v3
+    - source: caddyfile_test_http_v4
       target: /etc/caddy/Caddyfile
     volumes:
     - cerrado_test_caddy_data:/data
@@ -273,10 +273,10 @@ services:
     deploy:
       replicas: 1
       restart_policy:
-        condition: on-failure
-        max_attempts: 3
+        condition: any
+        max_attempts: 5
 configs:
-  caddyfile_test_http_v3:
+  caddyfile_test_http_v4:
     file: ./Caddyfile.test
 volumes:
   cerrado_test_postgres_data: {}

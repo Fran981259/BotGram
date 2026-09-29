@@ -3,6 +3,8 @@
 }
 
 portalcerrado.com.br, www.portalcerrado.com.br {
+    respond /healthz 200
+
     reverse_proxy /api/* portal_cerrado:8000
     
     reverse_proxy /* frontend:3000

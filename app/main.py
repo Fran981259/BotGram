@@ -26,6 +26,13 @@ from fastapi.responses import JSONResponse
 from loguru import logger
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
+from app.admin_analytics_routes import router as admin_analytics_router
+from app.admin_audit_routes import router as admin_audit_router
+from app.admin_config_routes import router as admin_config_router
+from app.admin_pipeline_routes import router as admin_pipeline_router
+from app.admin_reporter_routes import router as admin_reporter_router
+from app.admin_routes import router as admin_router
+from app.admin_social_routes import router as admin_social_router
 from app.analytics_routes import router as analytics_router
 from app.database import get_db, get_session, init_db
 from app.editorial_routes import router as editorial_router
@@ -132,6 +139,13 @@ app.add_middleware(
 app.include_router(operations_router)
 app.include_router(editorial_router)
 app.include_router(analytics_router)
+app.include_router(admin_router)
+app.include_router(admin_pipeline_router)
+app.include_router(admin_reporter_router)
+app.include_router(admin_analytics_router)
+app.include_router(admin_social_router)
+app.include_router(admin_audit_router)
+app.include_router(admin_config_router)
 
 
 @app.get("/")

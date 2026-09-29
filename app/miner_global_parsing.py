@@ -183,6 +183,12 @@ class GlobalNewsParsingMixin:
             for link in entry.links:
                 if link.get("type", "").startswith("image/"):
                     return link.get("href")
+        for field in ("summary", "description"):
+            raw_html = entry.get(field, "")
+            if raw_html and "<img" in raw_html:
+                m = re.search(r'<img[^>]+src=["\']([^"\']+)["\']', raw_html, re.I)
+                if m:
+                    return m.group(1)
         return None
 
     def _detect_language(self, text: str) -> str:

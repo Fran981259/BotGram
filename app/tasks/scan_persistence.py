@@ -207,7 +207,10 @@ def _article_content(article_data: dict, fetcher, counters: dict):
     content = {
         "title": _clean_plain_text(article_data.get("title") or "")[:500],
         "lead": _clean_plain_text(article_data.get("summary") or "")[:2000],
-        "body": article_data.get("body") or "", "published_at": None, "author": None, "image_url": None,
+        "body": article_data.get("body") or "",
+        "published_at": None,
+        "author": None,
+        "image_url": article_data.get("image_url") or None,
     }
     if not fetcher:
         return content
@@ -227,7 +230,7 @@ def _apply_fetch_detail(content: dict, detail: dict) -> dict:
     content["body"] = detail.get("content") or ""
     content["published_at"] = _parse_iso_datetime(detail.get("published_at"))
     content["author"] = (detail.get("author") or "")[:200]
-    content["image_url"] = (detail.get("image_url") or "")[:500]
+    content["image_url"] = (detail.get("image_url") or content.get("image_url") or "")[:500] or None
     return content
 
 

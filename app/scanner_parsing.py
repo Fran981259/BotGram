@@ -122,6 +122,9 @@ class ScannerArticleMethods:
             category = self._classify(title)
             reporter = self.REPORTER_BY_CATEGORY.get(category, "enzo.bianchi")
             summary = self._extract_summary(element)
+            img = element.find("img")
+            img_src = (img.get("src") or img.get("data-src") or "") if img else ""
+            img_url = urljoin(base_url, img_src.strip()) if img_src and not img_src.startswith("data:") else None
             return {
                 "title": title[:300],
                 "summary": summary,
@@ -131,6 +134,7 @@ class ScannerArticleMethods:
                 "category": category,
                 "region": portal.get("region", "ms"),
                 "reporter_slug": reporter,
+                "image_url": img_url,
                 "scraped_at": datetime.now(timezone.utc).isoformat(),
             }
         except Exception:

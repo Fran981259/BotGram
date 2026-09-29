@@ -71,8 +71,9 @@ class ArticleFetcher(ArticleMetadataMixin, ArticleBodyMixin):
             html = resp.text
             soup = BeautifulSoup(html, "html.parser")
 
-            # remove elementos de ruído antes de qualquer extração
+            # extrai metadados estruturados e imagem antes da remoção de ruído no DOM
             jsonld = self._extract_jsonld(soup)
+            image_url = self._extract_image(soup, jsonld, url)
             self._strip_noise(soup)
             title = self._clean_text(
                 self._pick_first(
@@ -98,7 +99,6 @@ class ArticleFetcher(ArticleMetadataMixin, ArticleBodyMixin):
 
             published_at = self._extract_date(soup, jsonld)
             author = self._extract_author(soup, jsonld)
-            image_url = self._extract_image(soup, jsonld, url)
 
             # título final: se o título vier poluído por prefixo da categoria,
             # tenta a melhor versão (JSON-LD já costuma estar limpo)

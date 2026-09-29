@@ -233,7 +233,7 @@ class ArticleMetadataMixin:
             and "image" not in low
         ):
             # permite urls sem extensão mas com padrão de CDN de imagem
-            if not re.search(r"/(img|image|foto|thumb|media)/", low):
+            if not re.search(r"/(img|image|foto|thumb|media|imagens|fotos|noticias|upload|uploads)/", low):
                 return False
         return True
 
