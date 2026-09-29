@@ -5,6 +5,7 @@ Suporta apenas Gemini e OpenAI.
 
 import logging
 import os
+import re
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
@@ -247,24 +248,32 @@ CORPO:
 
         rewritten = self.complete(prompt=user_prompt, system_prompt=reporter_prompt, max_tokens=2000, temperature=0.65)
 
-        # Extrair Título, Resumo e Corpo
-        import re
-
         parsed_title = title
         parsed_summary = summary
         parsed_body = rewritten
 
-        match = re.search(r"TÍTULO:\s*(.*?)\nRESUMO:\s*(.*?)\nCORPO:\s*(.*)", rewritten, re.IGNORECASE | re.DOTALL)
-        if match:
-            parsed_title = match.group(1).strip()
-            parsed_summary = match.group(2).strip()
-            parsed_body = match.group(3).strip()
-        else:
-            # Fallback se o LLM ignorar o formato
-            # Tenta limpar as tags TÍTULO:, etc se ele gerou bagunçado
-            parsed_body = re.sub(
-                r"^(TÍTULO:|RESUMO:|CORPO:).*\n?", "", rewritten, flags=re.IGNORECASE | re.MULTILINE
-            ).strip()
+        t_match = re.search(r"TÍTULO:\s*([^\n]+)", rewritten, re.IGNORECASE)
+        s_match = re.search(r"RESUMO:\s*([^\n]+(?:\n[^\n]+)?)", rewritten, re.IGNORECASE)
+        c_match = re.search(r"CORPO:\s*(.*)", rewritten, re.IGNORECASE | re.DOTALL)
+        if t_match:
+            parsed_title = t_match.group(1).strip()
+        if s_match:
+            parsed_summary = s_match.group(1).strip()
+        if c_match:
+            parsed_body = c_match.group(1).strip()
+        elif not t_match and not s_match:
+            parsed_body = re.sub(r"^(TÍTULO:|RESUMO:|CORPO:).*\n?", "", rewritten, flags=re.IGNORECASE | re.MULTILINE).strip()
+
+        # Fallback: se o título ainda for em inglês ou inalterado de fonte estrangeira
+        from app.editorial import is_english_text
+
+        if is_english_text(parsed_title):
+            try:
+                translated_t = self.translate_to_pt_br(parsed_title)
+                if translated_t and not is_english_text(translated_t):
+                    parsed_title = translated_t.strip()
+            except Exception:
+                pass
 
         return {
             **article,
@@ -278,9 +287,7 @@ CORPO:
 
     def translate_to_pt_br(self, text: str, source_lang: str = "en") -> str:
         system_prompt = f"Você é um tradutor especializado em jornalismo. Traduza de {source_lang} para Português Brasileiro (pt-BR) com fluidez natural e tom jornalístico."
-        return self.complete(
-            prompt=f"Traduza para pt-BR:\n\n{text}", system_prompt=system_prompt, max_tokens=2000, temperature=0.3
-        )
+        return self.complete(prompt=f"Traduza para pt-BR:\n\n{text}", system_prompt=system_prompt, max_tokens=2000, temperature=0.3)
 
 
 def test_llm_connection(provider: Optional[str] = None) -> bool:

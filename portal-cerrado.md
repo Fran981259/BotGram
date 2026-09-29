@@ -63,6 +63,7 @@
 - alembic/versions/b3a8e4f7c2d1_add_news_title_fts_index.py → índice FTS PostgreSQL para fontes relacionadas
 - app/personality.py → evolução temporal dos repórteres com datas normalizadas
 - scripts/quarantine_misclassified_global_articles.py → auditoria segura de fontes globais
+- scripts/quarantine_english_articles.py → auditoria e quarentena de títulos em inglês
 - app/duplicate_detection.py → regras compartilhadas de duplicação e conteúdo sensível
 - app/trend_models.py → sinais e modelo de tendências editoriais
 - app/curiosity_models.py → categorias e padrões de curiosidades
