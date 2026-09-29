@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchArticleBySlug, fetchNewsResponse } from '@/lib/api';
@@ -14,6 +13,7 @@ import {
 } from '@/lib/formatArticle';
 import { categorySlug, getCategory, PATTERN_IMAGES } from '@/lib/categories';
 import { ArticleQuickGuide } from '@/components/article/ArticleQuickGuide';
+import { ArticleImage } from '@/components/home/ArticleImage';
 import { ArticleShareActions } from '@/components/article/ArticleShareActions';
 import { ArticleSidebar } from '@/components/article/ArticleSidebar';
 import { getReporter, reporterInitials } from '@/lib/reporters';
@@ -124,13 +124,12 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <section className="relative isolate min-h-[560px] overflow-hidden bg-canvas text-text-primary">
-        <Image
-          src={img}
-          alt=""
-          fill
+        <ArticleImage
+          article={article}
           priority
           sizes="100vw"
-          className="object-cover opacity-15 mix-blend-multiply"
+          className="absolute inset-0 h-full w-full opacity-15 mix-blend-multiply"
+          showBadge={false}
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-canvas)_0%,transparent_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-surface to-transparent" />
@@ -212,15 +211,12 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
           </div>
 
           <figure className="mx-5 mt-6 overflow-hidden rounded-[1.5rem] bg-zinc-100 sm:mx-7">
-            <div className="relative h-[260px] sm:h-[380px]">
-              <Image
-                src={img}
-                alt={article.title}
-                fill
-                sizes="(min-width: 1024px) 760px, 100vw"
-                className="object-cover"
-              />
-            </div>
+            <ArticleImage
+              article={article}
+              sizes="(min-width: 1024px) 760px, 100vw"
+              className="h-[260px] sm:h-[380px]"
+              showBadge={false}
+            />
             <figcaption className="bg-canvas px-4 py-3 text-xs font-medium text-text-muted">
               {primarySource
                 ? `Imagem: ${primarySource.name || article.source || 'Fonte original'}`
