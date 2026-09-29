@@ -159,6 +159,7 @@ def root():
 
 
 @app.get("/health")
+@app.get("/api/health")
 def health_check(db=Depends(get_db)):
     """Verifica saúde do sistema."""
     owns_session = False
@@ -180,6 +181,7 @@ def health_check(db=Depends(get_db)):
 
 
 @app.get("/live")
+@app.get("/api/live")
 def liveness():
     return {"status": "alive"}
 
