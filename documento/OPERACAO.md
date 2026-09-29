@@ -18,6 +18,7 @@
 ### Backend Obrigatorio em Produção
 - `DATABASE_URL` -> Postgres do stack.
 - `REDIS_URL` -> Redis do stack.
+- `REDIS_PASSWORD` -> senha do Redis usada pelo stack e pelos healthchecks.
 - `LLM_PROVIDER` -> provider ativo: `gemini`, `groq` ou `openai`.
 - `LLM_FALLBACK_CHAIN` -> ordem de fallback, limitada aos providers suportados pelo código.
 - `GEMINI_API_KEY`, `GROQ_API_KEY`, `OPENAI_API_KEY` -> chaves dos respectivos providers, conforme a cadeia configurada.
@@ -26,6 +27,8 @@
 - `NEXT_PUBLIC_SITE_URL` -> mesma URL publica para o frontend.
 - `NEXT_PUBLIC_API_URL` -> URL interna da API para o frontend.
 - `CORS_ALLOWED_ORIGINS` -> origem publica do frontend e origem local de manutencao.
+- `TRUSTED_PROXY_HOSTS` -> allowlist dos endereços dos proxies; wildcard é proibido em produção.
+- `FLOWER_USER` e `FLOWER_PASSWORD` -> credenciais do monitoramento Flower no caminho Swarm.
 - `ENVIRONMENT` -> `production` no deploy real.
 - `SIMILARITY_THRESHOLD` -> limiar de compliance (default: 0.35).
 
