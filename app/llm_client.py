@@ -1,17 +1,14 @@
-"""
-Cliente LLM do Portal Cerrado.
-Suporta apenas Gemini e OpenAI.
-"""
+"""Cliente LLM do Portal Cerrado — suporte a Gemini, OpenAI e Groq."""
 
 import logging
 import os
+import random
 import re
+import time
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
 import requests
-
-from app.translation_glossary import TranslationGlossary  # noqa: F401
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -97,14 +94,10 @@ class LLMClient:
     MAX_ATTEMPTS = 3
     MAX_RETRY_WAIT = 15
 
-
     def _post_with_backoff(
         self, url: str, payload: Dict, headers: Optional[Dict] = None, params: Optional[Dict] = None
     ) -> requests.Response:
         """POST com retry e backoff exponencial rigoroso para erros transientes (429/5xx)."""
-        import random
-        import time
-
         last_exc = None
         for attempt in range(1, self.MAX_ATTEMPTS + 1):
             try:
@@ -264,16 +257,21 @@ CORPO:
         elif not t_match and not s_match:
             parsed_body = re.sub(r"^(TÍTULO:|RESUMO:|CORPO:).*\n?", "", rewritten, flags=re.IGNORECASE | re.MULTILINE).strip()
 
-        # Fallback: se o título ainda for em inglês ou inalterado de fonte estrangeira
+        # Fallback: se o título ou o resumo ainda estiverem em inglês
         from app.editorial import is_english_text
 
-        if is_english_text(parsed_title):
-            try:
-                translated_t = self.translate_to_pt_br(parsed_title)
-                if translated_t and not is_english_text(translated_t):
-                    parsed_title = translated_t.strip()
-            except Exception:
-                pass
+        for field in ("title", "summary"):
+            val = parsed_title if field == "title" else parsed_summary
+            if val and is_english_text(val):
+                try:
+                    translated = self.translate_to_pt_br(val)
+                    if translated and not is_english_text(translated):
+                        if field == "title":
+                            parsed_title = translated.strip()
+                        else:
+                            parsed_summary = translated.strip()
+                except Exception:
+                    pass
 
         return {
             **article,

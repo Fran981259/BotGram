@@ -7,7 +7,8 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
-from app.llm_client import LLMClient, TranslationGlossary
+from app.llm_client import LLMClient
+from app.translation_glossary import TranslationGlossary
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
