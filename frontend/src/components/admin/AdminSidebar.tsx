@@ -14,7 +14,7 @@ const NAV: NavItem[] = [
   { section: "Visão geral", label: "Dashboard",       href: "/admin/dashboard",       icon: "⬛" },
   { section: "Conteúdo",    label: "Artigos",          href: "/admin/artigos",          icon: "📰" },
   {                         label: "Mesa editorial",   href: "/admin/editorial",        icon: "✍️" },
-  {                         label: "Repórteres",       href: "/admin/repórteres",       icon: "🤖" },
+  {                         label: "Repórteres",       href: "/admin/reporteres",       icon: "🤖" },
   { section: "Operações",   label: "Pipeline",         href: "/admin/pipeline",         icon: "⚙️" },
   {                         label: "Redes sociais",    href: "/admin/redes-sociais",    icon: "📡" },
   { section: "Dados",       label: "Analytics",        href: "/admin/analytics",        icon: "📊" },

@@ -74,7 +74,7 @@ export default function DashboardPage() {
         <QuickLink href="/admin/pipeline"      icon="⚙️" label="Pipeline de coleta"       sub="Status e scan manual" />
         <QuickLink href="/admin/editorial"     icon="✍️" label="Mesa editorial"           sub="Revisão da fila" />
         <QuickLink href="/admin/analytics"     icon="📊" label="Analytics"               sub="Alcance e engajamento" />
-        <QuickLink href="/admin/repórteres"    icon="🤖" label="Repórteres"              sub="Agentes IA" />
+        <QuickLink href="/admin/reporteres"    icon="🤖" label="Repórteres"              sub="Agentes IA" />
         <QuickLink href="/admin/configuracoes" icon="🔧" label="Configurações"            sub="Sistema e LLM" />
       </div>
 

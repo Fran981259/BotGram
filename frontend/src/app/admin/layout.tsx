@@ -14,7 +14,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/admin/dashboard":     "Dashboard",
   "/admin/artigos":       "Artigos",
   "/admin/editorial":     "Mesa editorial",
-  "/admin/repórteres":    "Repórteres",
+  "/admin/reporteres":    "Repórteres",
   "/admin/pipeline":      "Pipeline de coleta",
   "/admin/analytics":     "Analytics",
   "/admin/redes-sociais": "Redes sociais",
