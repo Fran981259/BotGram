@@ -1,6 +1,7 @@
 """Tarefas de Reescrita — Portal Cerrado."""
 
 import logging
+import os
 import re
 from datetime import datetime, timezone
 
@@ -114,12 +115,13 @@ def rewrite_pending_articles(self):
     rewritten = 0
     failed = 0
     try:
+        batch_size = int(os.getenv("REWRITE_BATCH_SIZE", "5"))
         articles = (
             db.query(NewsArticle)
             .filter(NewsArticle.status == "classified")
             .order_by(NewsArticle.final_score.desc())
             .with_for_update(skip_locked=True)
-            .limit(15)
+            .limit(batch_size)
             .all()
         )
 
@@ -131,12 +133,15 @@ def rewrite_pending_articles(self):
                 if not art.sources:
                     art.status = "failed"
                     art.updated_at = datetime.now(timezone.utc)
+                    db.commit()
                     failed += 1
                     continue
 
                 sources = sources_list(art.sources)
                 if not sources:
                     art.status = "review"
+                    art.updated_at = datetime.now(timezone.utc)
+                    db.commit()
                     failed += 1
                     continue
                 main_url = sources[0]["url"]
@@ -174,10 +179,12 @@ def rewrite_pending_articles(self):
                 new_title = ""
                 new_summary = ""
                 if llm.api_key:
-                    import time as _time
+                    if rewritten > 0:
+                        import time as _time
 
-                    # Espaçamento p/ respeitar RPM do tier gratuito do Gemini (flash-lite: ~10 RPM)
-                    _time.sleep(20)
+                        sleep_s = int(os.getenv("REWRITE_ITEM_SLEEP_SECONDS", "15"))
+                        _time.sleep(sleep_s)
+
                     result_llm = llm.rewrite_article(
                         article_data,
                         reporter.get_system_prompt(),
@@ -191,9 +198,7 @@ def rewrite_pending_articles(self):
                         new_summary = result_llm.get("rewritten_summary")
 
                 if not content:
-                    # An upstream outage or a short answer must not delete the source.
-                    art.status = "classified"
-                    art.updated_at = datetime.now(timezone.utc)
+                    db.rollback()
                     failed += 1
                     continue
 
@@ -231,18 +236,16 @@ def rewrite_pending_articles(self):
                         ", ".join(finding.code for finding in writing_findings),
                     )
                 art.updated_at = datetime.now(timezone.utc)
+                db.commit()
                 rewritten += 1
             except LLMUnavailableError:
+                db.rollback()
                 logger.warning("[REWRITE] LLM indisponível; artigo %s ficará classificado", art.id)
-                art.status = "classified"
-                art.updated_at = datetime.now(timezone.utc)
                 failed += 1
             except Exception as e:
+                db.rollback()
                 logger.error("[REWRITE] erro num artigo (%s)", type(e).__name__)
-                art.status = "classified"
-                art.updated_at = datetime.now(timezone.utc)
                 failed += 1
-        db.commit()
     except Exception as e:
         db.rollback()
         logger.error(f"[REWRITE] erro no lote: {e}")
