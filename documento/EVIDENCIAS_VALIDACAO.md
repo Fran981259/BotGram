@@ -15,8 +15,9 @@ Cada evidência é histórica e vale somente para o SHA, data, ambiente e comand
 - Compilação Python: aprovada com `python3 -m compileall -q app scripts`.
 - ESLint: aprovado com `npm run lint`.
 - Build frontend: aprovado com `npm run build`; Next 16.3.3 gerou 37 páginas.
-- Testes direcionados: 8 aprovados em segurança e rate limit.
-- Suíte completa: não aprovada; 144 testes foram coletados e a execução travou em `tests/unit/test_admin_endpoints.py::test_admin_endpoints_require_auth`.
+- Testes direcionados: 14 aprovados em segurança, rate limit, ambiente e CI.
+- Suíte completa: 145 testes aprovados em 19,79s usando ambiente limpo Python 3.12 com `requirements.txt`; foi emitido apenas um warning de depreciação da biblioteca Starlette.
+- A falha anterior do `.venv` local foi reproduzida como incompatibilidade de Starlette 1.x com o TestClient; a restrição `starlette<1.0.0` resolveu o problema no ambiente limpo.
 - Docker: indisponível na sessão; validações Compose, Swarm, healthcheck real e rollback não foram executadas.
 
 ## CI, imagens e performance

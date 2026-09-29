@@ -20,8 +20,7 @@ Quando houver conflito, prevalece: código/testes no commit atual, `PLANO_ACAO.m
 - Branch: `codex/otimizacao-completa`; base: `850cdd6`.
 - Checkout limpo no início da otimização.
 - Ruff, Mypy, compileall, ESLint e build frontend aprovados nesta sessão.
-- Testes direcionados de segurança/rate limit: 8 aprovados.
-- Suíte completa: bloqueada por travamento em `tests/unit/test_admin_endpoints.py::test_admin_endpoints_require_auth`.
+- Suíte completa: 145 testes aprovados em ambiente limpo Python 3.12 com as restrições atuais de dependências.
 - Docker indisponível nesta sessão; Compose, Swarm e smoke externo permanecem não verificados.
 
 ## Stack

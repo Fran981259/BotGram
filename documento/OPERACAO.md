@@ -2,7 +2,7 @@
 
 ## Status Consolidado
 - Os números históricos de validação devem ser consultados em `EVIDENCIAS_VALIDACAO.md` e não representam automaticamente o candidato atual.
-- Na auditoria de 29/09/2026, Ruff, Mypy, compileall, ESLint, build frontend e 8 testes direcionados passaram; a suíte completa travou no primeiro teste administrativo.
+- Na auditoria de 29/09/2026, Ruff, Mypy, compileall, ESLint, build frontend e a suíte completa passaram; foram 145 testes em ambiente limpo Python 3.12.
 - Docker não estava disponível nesta sessão; o estado do Swarm, serviços externos, banco de produção e provider LLM permanece desconhecido.
 - O pipeline mede e retorna a duração de scan, classificação, reescrita, publicação e total por execução.
 

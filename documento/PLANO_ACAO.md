@@ -295,7 +295,7 @@ Restaurar uma base reproduzível, testável e operável antes de qualquer evolu�
 
 ## Fase 11 — Otimização estrutural e consolidação documental
 
-- Estado: iniciada em 29/09/2026 na branch `codex/otimizacao-completa`.
+- Estado: em execução na branch `codex/otimizacao-completa`; documentação, limpeza legada, CI, proxy, imagens e matriz de dependências já foram validados.
 - Objetivo: reduzir complexidade de manutenção sem alterar rotas, autenticação, migrations, contratos públicos ou comportamento editorial aprovado.
 - Ordem obrigatória:
   1. consolidar documentação e marcar snapshots históricos;
@@ -307,3 +307,4 @@ Restaurar uma base reproduzível, testável e operável antes de qualquer evolu�
   7. validar backend, frontend, migrations, runtime e documentação no mesmo commit.
 - Regra: nenhuma remoção será feita apenas por nome, tamanho ou baixa frequência aparente; cada remoção deve ter busca de referências, teste ou evidência equivalente.
 - Saída: relatório de arquivos removidos/consolidados, contratos preservados, validações e risco residual.
+- Evidência atual: ambiente limpo Python 3.12 com `requirements.txt` restrito executou 145 testes em 19,79s; Ruff, Mypy, compileall, ESLint, TypeScript e build frontend passaram.

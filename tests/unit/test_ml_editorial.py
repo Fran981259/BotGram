@@ -120,9 +120,9 @@ def test_refresh_trend_signals_uses_real_db_rows():
         assert after >= before
         assert any(t["topic"] == "politics" for t in trends)
     finally:
-        db.query(EditorialTrendSignal).filter(EditorialTrendSignal.evidence.like(f"%{slug}%")).delete(
-            synchronize_session=False
-        )
+        for signal in db.query(EditorialTrendSignal).all():
+            if slug in str(signal.evidence):
+                db.delete(signal)
         db.query(NewsArticle).filter(NewsArticle.slug == slug).delete(synchronize_session=False)
         db.commit()
         db.close()
