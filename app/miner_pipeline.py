@@ -1,6 +1,8 @@
 """Pipeline completo do minerador global."""
 
 import logging
+import os
+import time
 from datetime import datetime, timezone
 from typing import Dict, List
 
@@ -48,23 +50,29 @@ class MinerPipeline:
         articles = self.miner.classifier.filter_by_priority(articles, min_tier="TIER_3")
         logger.info(f"Após filtro de prioridade: {len(articles)} artigos")
 
-        # 4. Tradução para pt-BR
+        # 4. Balanceamento de volume antes da tradução para evitar chamadas LLM excessivas
+        selected = self.volume.balance_selection(articles, total_target=target_volume)
+        max_batch = int(os.getenv("MINER_TRANSLATE_BATCH_SIZE", str(target_volume)))
+        selected = selected[:max_batch]
+        logger.info(f"Artigos selecionados para tradução/roteamento: {len(selected)}")
+
+        # 5. Tradução controlada com pacing para evitar HTTP 429
+        sleep_s = float(os.getenv("MINER_TRANSLATE_SLEEP_SECONDS", "2.0"))
         translated = []
-        for article in articles:
+        for i, article in enumerate(selected):
             try:
+                if i > 0 and article.get("source_lang") != "pt-BR":
+                    time.sleep(sleep_s)
                 translated.append(self.translator.translate(article))
             except RuntimeError:
                 translated.append({**article, "needs_review": True})
 
-        # 5. Roteamento para repórteres
+        # 6. Roteamento para repórteres
         for article in translated:
             article = self._route_to_reporter(article)
 
-        # 6. Balanceamento de volume
-        final = self.volume.balance_selection(translated, total_target=target_volume)
-        logger.info(f"Volume final balanceado: {len(final)} artigos")
-
-        return final
+        logger.info(f"Volume final pronto: {len(translated)} artigos")
+        return translated
 
     def _route_to_reporter(self, article: Dict) -> Dict:
         category = article.get("category", "")
