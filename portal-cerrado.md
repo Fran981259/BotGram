@@ -181,4 +181,4 @@
 
 - Backups operacionais: retenção de 30 dias; restore de teste obrigatório antes de expurgo.
 
-## Last updated: 2026-09-29
+## Last updated: 2026-09-30
