@@ -261,11 +261,11 @@ services:
     networks:
       - portal_cerrado_net
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO /dev/null http://localhost:3000/ || exit 1"]
+      test: ["CMD-SHELL", "wget -qO /dev/null http://localhost:3000/robots.txt || exit 1"]
       interval: 30s
-      timeout: 10s
+      timeout: 15s
       retries: 3
-      start_period: 30s
+      start_period: 45s
 
   caddy:
     image: caddy:2-alpine
