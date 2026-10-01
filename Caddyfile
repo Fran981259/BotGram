@@ -3,13 +3,25 @@
 }
 
 portalcerrado.com.br, www.portalcerrado.com.br {
-    respond /healthz 200
+    handle /healthz {
+        respond 200
+    }
 
-    reverse_proxy /api/* portal_cerrado:8000
-    
-    reverse_proxy /* frontend:3000
-    
-    # Headers de segurança básicos
+    # Rotas API que pertencem ao Next.js
+    handle /api/markets {
+        reverse_proxy frontend:3000
+    }
+
+    # Demais APIs pertencem ao backend Python
+    handle /api/* {
+        reverse_proxy portal_cerrado:8000
+    }
+
+    # Frontend Next.js
+    handle {
+        reverse_proxy frontend:3000
+    }
+
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
         X-Content-Type-Options "nosniff"
