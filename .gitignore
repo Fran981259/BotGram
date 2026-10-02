@@ -49,3 +49,9 @@ data/*.db
 history_dump.json
 *_output.txt
 *_results.txt
+
+# Auditoria visual legada, arquivada fora do frontend.
+# A auditoria de evidência visual vive no projeto separado
+# `portal-cerrado-playwright`. O diretório de 220 MB fica preservado em disco
+# para consulta, mas fora do Git.
+_arquivado_auditor_legado/
