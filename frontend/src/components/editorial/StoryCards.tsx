@@ -88,7 +88,7 @@ export function FeatureStoryCard({ article }: { article: Article }) {
 
   return (
     <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-lg border border-black/10 bg-surface">
-      <Link href={href} target={target} className="block">
+      <Link href={href} target={target} className="block" tabIndex={-1} aria-hidden="true">
         <ArticleImage
           article={article}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -123,7 +123,7 @@ export function StoryCard({ article, showSummary = true }: { article: Article; s
 
   return (
     <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-lg border border-black/10 bg-surface">
-      <Link href={href} target={target} className="block">
+      <Link href={href} target={target} className="block" tabIndex={-1} aria-hidden="true">
         <ArticleImage
           article={article}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -191,7 +191,7 @@ export function HorizontalStoryCard({ article }: { article: Article }) {
 
   return (
     <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-lg border border-black/10 bg-surface sm:flex-row">
-      <Link href={href} target={target} className="block shrink-0 sm:w-2/5">
+      <Link href={href} target={target} className="block shrink-0 sm:w-2/5" tabIndex={-1} aria-hidden="true">
         <ArticleImage
           article={article}
           sizes="(min-width: 640px) 40vw, 100vw"

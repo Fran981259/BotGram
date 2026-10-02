@@ -76,10 +76,19 @@
   --container-gutter-lg: 1.5rem;
 
   /* Medidas de leitura de artigo. `--sidebar-width` substitui o literal 360px
-     em `noticia/[slug]/page.tsx`. */
+     em `noticia/[slug]/page.tsx`.
+
+     A escala existe porque três páginas usavam larguras diferentes à mão:
+     360px no artigo, 280px no repórter e 320px no formulário de contato. Os
+     valores foram preservados um a um — trocar a medida mudaria o desenho. O
+     ganho é outro: `noticia/[slug]/loading.tsx` repetia os 360px do esqueleto em
+     vez de ler o token, então uma mudança de token desalinharia o esqueleto da
+     página sem nenhum aviso. */
   --reading-width: 68ch;
   --reading-width-wide: 74ch;
   --sidebar-width: 360px;
+  --sidebar-width-md: 320px;
+  --sidebar-width-sm: 280px;
 
   /* Superfícies e bordas. Derivadas das cores já existentes, para que o
      contraste entre papel, cartão e linha fique explícito em vez de implícito. */
@@ -210,6 +219,17 @@ body {
 .content-page a {
   font-weight: 900;
   color: var(--color-accent-soil);
+
+    /* Alvo de toque. Medido em /sobre: estes links tinham 21px de altura,
+       abaixo do mínimo de 24px da WCAG 2.5.8 (AA). Padding vertical em
+       elemento inline não altera a altura da linha, então amplia a área
+       clicável sem empurrar o texto.
+
+       O sublinhado continua ausente de propósito: é a convenção do site
+       inteiro, e o link de prosa se distingue por cor e por peso. Se a
+       identificação por cor sozinha incomodar, a correção é sublinhar aqui
+       e não em cada página. */
+    padding-block: 0.3rem;
 }
 
 /* Notícia — diagramação de jornal real */

@@ -74,7 +74,7 @@ export default async function ReporterPage({ params, searchParams }: { params: P
               </div>
             </div>
           </div>
-          <div className="grid gap-6 p-8 md:grid-cols-[1fr_280px]">
+          <div className="grid gap-6 p-8 md:grid-cols-[1fr_var(--sidebar-width-sm)]">
             <p className="text-lg leading-relaxed text-text-primary">{r.bio}</p>
             <div className="rounded-2xl bg-canvas p-5 text-sm text-text-muted">
               <p className="font-black uppercase tracking-widest text-accent-soil">Credenciais</p>

@@ -27,7 +27,7 @@ export default function ContatoPage() {
               por um canal direto com a redação.
             </p>
           </div>
-          <div className="grid gap-6 py-8 md:grid-cols-[1fr_320px] sm:py-10">
+          <div className="grid gap-6 py-8 md:grid-cols-[1fr_var(--sidebar-width-md)] sm:py-10">
             <div>
               <h2 className="font-display text-3xl font-black text-text-primary">
                 Envie sua mensagem

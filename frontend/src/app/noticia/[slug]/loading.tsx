@@ -2,7 +2,7 @@ export default function Loading() {
   return (
     <div className="container-custom py-8 animate-pulse">
       <div className="h-[560px] rounded-[2rem] bg-black/10" />
-      <div className="-mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="-mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_var(--sidebar-width)]">
         <article className="rounded-[2rem] bg-surface p-6">
           <div className="flex items-center gap-4 border-b border-black/5 pb-6"><div className="h-14 w-14 rounded-full bg-black/10" /><div className="h-5 w-40 rounded bg-black/10" /></div>
           <div className="my-8 h-72 rounded-2xl bg-black/10" />
