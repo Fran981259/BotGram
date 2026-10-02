@@ -127,19 +127,30 @@ jobs:
             echo "OK  $name: nenhuma tag :latest"
           fi
 
-          # Compose e stack precisam descrever exatamente os mesmos serviços.
-          services="$(grep -cE '^  [a-z_]+:$' "$rendered" || true)"
+          # Contagem de serviços, lida só do bloco `services:`.
+          #
+          # Contar por `^  chave:$` no arquivo inteiro contaria também volumes e
+          # networks de topo, e esses nomes DIFEREM por definição: o Compose usa
+          # `portal_cerrado_net`/`postgres_data`, a stack usa `cerrado_test_net`/
+          # `cerrado_test_postgres_data`. Comparar os dois inteiros mediria a
+          # divergência de nomenclatura de infraestrutura, não a de serviços.
+          services="$(awk '/^services:/{f=1;next} /^[a-z]/{f=0} f && /^  [a-z_]+:$/' "$rendered" | wc -l)"
           echo "OK  $name: $services serviço(s)"
         done
 
-        compose_services="$(grep -oE '^  [a-z_]+:$' /tmp/compose.rendered.yml | sort -u)"
-        swarm_services="$(grep -oE '^  [a-z_]+:$' /tmp/swarm.rendered.yml | sort -u)"
+        # Comparação do conjunto de SERVIÇOS, extraindo o bloco `services:`
+        # em vez de varrer o arquivo inteiro.
+        service_names() {
+          awk '/^services:/{f=1;next} /^[a-z]/{f=0} f && /^  [a-z_]+:$/ {gsub(/[ :]/,"",$0); print}' "$1" | sort
+        }
+        compose_services="$(service_names /tmp/compose.rendered.yml)"
+        swarm_services="$(service_names /tmp/swarm.rendered.yml)"
         if [ "$compose_services" != "$swarm_services" ]; then
           echo "::error title=Runtimes divergentes::Compose e Swarm descrevem serviços diferentes"
           diff <(echo "$compose_services") <(echo "$swarm_services") || true
           fail=1
         else
-          echo "OK  Compose e Swarm descrevem o mesmo conjunto de serviços"
+          echo "OK  Compose e Swarm descrevem o mesmo conjunto de serviços ($(echo "$compose_services" | wc -l))"
         fi
 
         # Prova de que nenhum segredo real entrou no gate: cada segredo OBRIGATÓRIO
