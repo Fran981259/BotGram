@@ -43,8 +43,8 @@ export default function Footer() {
           </p>
         </div>
 
-        <div>
-          <h4 className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Editorias</h4>
+        <nav aria-labelledby="footer-editorias">
+          <h4 id="footer-editorias" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Editorias</h4>
           <ul className="mt-3 space-y-0.5 text-sm">
             {EDITORIAS.map((item) => (
               <li key={item.href}>
@@ -54,10 +54,10 @@ export default function Footer() {
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
 
-        <div>
-          <h4 className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Institucional</h4>
+        <nav aria-labelledby="footer-institucional">
+          <h4 id="footer-institucional" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Institucional</h4>
           <ul className="mt-3 space-y-0.5 text-sm">
             {INSTITUCIONAL.map((item) => (
               <li key={item.href}>
@@ -68,10 +68,10 @@ export default function Footer() {
             ))}
           </ul>
           <p className="mt-5 text-xs leading-relaxed text-text-muted">Redação em Campo Grande — MS.</p>
-        </div>
+        </nav>
 
-        <div>
-          <h4 className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Colunistas</h4>
+        <nav aria-labelledby="footer-colunistas">
+          <h4 id="footer-colunistas" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Colunistas</h4>
           <ul className="mt-3 space-y-1 text-sm">
             {REPORTER_LIST.filter((r) => r.slug !== "redacao.cerrado")
               .slice(0, 7)
@@ -86,7 +86,7 @@ export default function Footer() {
                 </li>
               ))}
           </ul>
-        </div>
+        </nav>
       </div>
       <div className="border-t border-black/10">
         <div className="container-editorial flex flex-wrap items-center justify-between gap-4 py-5 text-xs text-text-muted">

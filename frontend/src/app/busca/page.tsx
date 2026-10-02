@@ -50,7 +50,20 @@ export default async function BuscaPage({ searchParams }: { searchParams: Promis
     <div className="container-editorial py-8">
       <h1 className="font-display text-3xl font-bold text-text-primary">Busca</h1>
 
-      <form action="/busca" role="search" className="mt-5 flex max-w-xl gap-2">
+      {/*
+        Medido em 360px: `flex` + botão `shrink-0` exigiam 361px de um content box
+        de 325px. A causa é o input sem `min-w-0` — num container flex ele não
+        encolhe abaixo do tamanho intrínseco do atributo `size`.
+
+        Grade resolve os dois casos: `minmax(0, 1fr)` deixa o campo encolher de
+        verdade, e abaixo de 420px o botão ocupa a largura toda, sem botão
+        cortado e sem barra horizontal.
+      */}
+      <form
+        action="/busca"
+        role="search"
+        className="mt-5 grid max-w-xl grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
+      >
         <label htmlFor="busca-q" className="sr-only">
           Termo de busca
         </label>
@@ -61,9 +74,12 @@ export default async function BuscaPage({ searchParams }: { searchParams: Promis
           defaultValue={q}
           placeholder="Digite um termo para buscar…"
           autoFocus={!q}
-          className="h-12 flex-1 rounded border border-black/15 bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted"
+          className="h-12 w-full min-w-0 rounded border border-black/15 bg-surface px-4 text-sm text-text-primary placeholder:text-text-muted"
         />
-        <button type="submit" className="h-12 shrink-0 rounded bg-accent-soil px-6 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-charcoal">
+        <button
+          type="submit"
+          className="h-12 w-full shrink-0 rounded bg-accent-soil px-6 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-charcoal sm:w-auto"
+        >
           Buscar
         </button>
       </form>

@@ -3,6 +3,40 @@ import { Suspense } from "react";
 import { MarketBar } from "@/components/markets/MarketBar";
 import { DesktopNav } from "@/components/NavMenu";
 import { MobileMenu } from "@/components/home/MobileMenu";
+import { formatCampoGrandeDate } from "@/lib/time";
+
+/**
+ * Barra utilitária: data e edição.
+ *
+ * Só entra o que o projeto REAL entrega. Não há integração de clima no
+ * Portal, e o plano §33 é explícito sobre não fabricar dado de produção — um
+ * "28°C" inventado seria pior que a ausência do dado.
+ *
+ * A data é calculada no servidor, no fuso de Campo Grande, reaproveitando o
+ * utilitário de `lib/time`.
+ */
+function UtilityBar() {
+  const today = formatCampoGrandeDate(new Date().toISOString(), {
+    weekday: "long",
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <div className="border-b border-black/10 bg-canvas">
+      <div className="container-editorial flex items-center justify-between gap-4 py-2">
+        <p className="min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+          {/* capitalizar só a primeira letra: `first-letter` respeita o texto real */}
+          <span className="first-letter:uppercase">{today}</span>
+        </p>
+        <p className="hidden shrink-0 text-[11px] font-black uppercase tracking-[0.18em] text-accent-leaf sm:block">
+          Mato Grosso do Sul
+        </p>
+      </div>
+    </div>
+  );
+}
 
 function SearchControl() {
   return (
@@ -31,6 +65,7 @@ function SearchControl() {
 export default function Header() {
   return (
     <>
+      <UtilityBar />
       <Suspense
         fallback={
           <div className="sticky top-0 z-40 bg-accent-soil text-white" role="status" aria-label="Carregando cotações">
