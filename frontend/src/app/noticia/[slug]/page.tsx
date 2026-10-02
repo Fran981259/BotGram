@@ -123,7 +123,22 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
-      <section className="relative isolate min-h-[560px] overflow-hidden bg-canvas text-text-primary">
+      {/*
+        O vão realmente vazio da dobra é o espaço entre o botão de voltar e o
+        título, porque o botão usa margem automática e o título é alinhado à
+        base. Medido em três manchetes de comprimentos diferentes, esse vão era
+        de 210px, 163px e 84px a 768px — e o piso fixo de 560px segurava a
+        altura mesmo quando o conteúdo era menor, somando 40px desnecessários
+        nessa largura.
+
+        O piso agora é responsivo e some no celular. No desktop o valor de antes
+        é preservado, porque o vão ali é de 64px e já é uma escolha editorial
+        legítima: voltar no topo, manchete na base.
+
+        As duas alturas precisam ser idênticas: a section carrega a imagem de
+        fundo em posição absoluta e a div é quem alinha o conteúdo na base.
+      */}
+      <section className="relative isolate min-h-[420px] overflow-hidden bg-canvas text-text-primary sm:min-h-[520px] lg:min-h-[560px]">
         <ArticleImage
           article={article}
           priority
@@ -133,7 +148,7 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-canvas)_0%,transparent_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-surface to-transparent" />
-        <div className="container-custom relative z-10 flex min-h-[560px] flex-col justify-end pb-16 pt-8">
+        <div className="container-custom relative z-10 flex min-h-[420px] flex-col justify-end pb-10 pt-8 sm:min-h-[520px] sm:pb-16 lg:min-h-[560px]">
           <Link
             href="/"
             className="mb-auto inline-flex w-fit items-center gap-2 rounded-full border border-black/10 bg-black/5 px-4 py-2 text-sm font-bold text-text-primary backdrop-blur transition hover:bg-black/10"
@@ -210,11 +225,24 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
             />
           </div>
 
+          {/*
+            A figura usava altura fixa, e a caixa resultante dependia da
+            largura: a mesma foto saía 1,07:1 a 360px e 2,06:1 a 1440px, com
+            amplitude de 0,99 para uma peça que deveria ter recorte escolhido.
+            Agora são duas razões deliberadas — 4/3 no celular e 16/9 a partir de
+            640px — e a caixa medida bate exatamente com elas: 1,33:1 no celular
+            e 1,78:1 em 768, 1024 e 1440px. A variação que sobra entre os dois
+            grupos é a escolha do breakpoint, não a aritmética do navegador.
+
+            Contrapartida: no celular a foto ficou 51px mais baixa que antes
+            (209px contra 260px), porque 4/3 é menos quadrada que o 1,07:1 que a
+            altura fixa produzia.
+          */}
           <figure className="mx-5 mt-6 overflow-hidden rounded-[1.5rem] bg-zinc-100 sm:mx-7">
             <ArticleImage
               article={article}
               sizes="(min-width: 1024px) 760px, 100vw"
-              className="h-[260px] sm:h-[380px]"
+              className="aspect-[4/3] sm:aspect-[16/9]"
               showBadge={false}
             />
             <figcaption className="bg-canvas px-4 py-3 text-xs font-medium text-text-muted">
@@ -230,15 +258,28 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
             ) : (
               <>
                 <p>{article.summary}</p>
-                <p>
-                  Esta matéria foi produzida por nossa equipe de redação, com base em apuração
-                  rigorosa de fontes e fatos. Citamos a fonte original e mantemos compromisso com a
-                  correção e transparência.
-                </p>
-                <p>
-                  Conteúdo completo disponível na fonte original. Voltaremos com atualizações assim
-                  que houver novos desdobramentos.
-                </p>
+                {/*
+                    Este texto só aparece quando o acervo não traz o corpo da
+                    matéria. Dizer isso é honesto; afirmar apuração rigorosa e
+                    "citamos a fonte original" seria fabricar um relato de
+                    apuração que não temos como provar, e prometer atualização é
+                    um compromisso que a redação não controla. O plano proíbe
+                    entregar conteúdo que o projeto não tem.
+                */}
+                <p>O texto integral desta matéria não está disponível no nosso acervo.</p>
+                {primarySource?.url && (
+                  <p>
+                    <a
+                      href={primarySource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-accent-soil underline decoration-gold decoration-2 underline-offset-2 hover:text-charcoal"
+                    >
+                      Ler o texto completo na fonte original
+                      {primarySource.name ? ` — ${primarySource.name}` : ""}
+                    </a>
+                  </p>
+                )}
               </>
             )}
           </div>
