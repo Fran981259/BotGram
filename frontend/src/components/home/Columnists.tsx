@@ -50,7 +50,7 @@ export async function Columnists() {
               <h3 className="mt-1.5 line-clamp-3 font-display text-xl font-bold leading-tight text-text-primary transition-colors group-hover:text-accent-soil">{latest.title}</h3>
             </Link>
             <div className="mt-3 flex items-center justify-between gap-3 text-xs text-text-muted">
-              <Link href={`/reporter/${slug}`} className="inline-flex min-w-0 items-center gap-2 font-bold text-text-primary transition-colors hover:text-accent-soil">
+              <Link href={`/reporter/${slug}`} className="inline-flex min-w-0 items-center gap-2 py-2 font-bold text-text-primary transition-colors hover:text-accent-soil">
                 <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gold font-display text-[10px] font-bold text-charcoal">
                   {reporterInitials(bio.name)}
                 </span>

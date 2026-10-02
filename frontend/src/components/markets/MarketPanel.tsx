@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getMarketFeed } from "@/lib/markets";
 import { formatMarketTime } from "@/lib/time";
 
@@ -60,9 +59,12 @@ export async function MarketPanel() {
         <p>
           Fonte: {sources.join(" · ")}
           {updated ? ` · atualizado ${formatMarketTime(updated)}` : ""}.{" "}
-          <Link href="/api/markets" className="font-semibold text-accent-soil underline decoration-gold decoration-2 underline-offset-2 hover:text-gold-deep">
+          <a
+            href="/api/markets"
+            className="font-semibold text-accent-soil underline decoration-gold decoration-2 underline-offset-2 hover:text-gold-deep"
+          >
             dados brutos
-          </Link>
+          </a>
         </p>
       </div>
     </aside>

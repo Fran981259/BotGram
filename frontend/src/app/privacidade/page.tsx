@@ -1,5 +1,14 @@
 import type { Metadata } from 'next';
-export const metadata: Metadata = { title: 'Política de Privacidade' };
+import { getPublicSiteUrl } from '@/lib/siteUrl';
+
+const BASE = getPublicSiteUrl();
+
+export const metadata: Metadata = {
+  title: 'Política de Privacidade',
+  description:
+    'Como o Portal Cerrado coleta, usa e protege os dados de quem navega no site.',
+  alternates: { canonical: `${BASE}/privacidade` },
+};
 
 export default function PrivacidadePage() {
   return (

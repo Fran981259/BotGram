@@ -8,9 +8,16 @@ const nextConfig: NextConfig = {
     useTypeScriptCli: false,
   },
   async rewrites() {
+    // Rotas API servidas pelo próprio Next.js NÃO podem cair no proxy para o
+    // backend Python. Sem a exclusão abaixo, o wildcard captura também
+    // /api/markets e o App Router nunca chega a atender a rota — o resultado
+    // em produção é um 404 que não existe no código-fonte.
+    //
+    // O Caddy já entrega /api/markets ao frontend; este rewrite é a segunda
+    // camada e precisa respeitar a mesma divisão de responsabilidade.
     return [
       {
-        source: "/api/:path*",
+        source: "/api/:path((?!markets$).*)",
         destination: `${process.env.NEXT_PUBLIC_API_URL || "http://portal_cerrado:8000"}/api/:path*`,
       },
     ];

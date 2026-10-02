@@ -1,5 +1,14 @@
 import type { Metadata } from 'next';
-export const metadata: Metadata = { title: 'Contato' };
+import { getPublicSiteUrl } from '@/lib/siteUrl';
+
+const BASE = getPublicSiteUrl();
+
+export const metadata: Metadata = {
+  title: 'Contato',
+  description:
+    'Fale com a redação do Portal Cerrado: escreva sobre cobertura, correção, publicidade ou parceria.',
+  alternates: { canonical: `${BASE}/contato` },
+};
 
 export default function ContatoPage() {
   return (

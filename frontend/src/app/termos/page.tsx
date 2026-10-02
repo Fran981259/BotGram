@@ -1,5 +1,14 @@
 import type { Metadata } from 'next';
-export const metadata: Metadata = { title: 'Termos de Uso' };
+import { getPublicSiteUrl } from '@/lib/siteUrl';
+
+const BASE = getPublicSiteUrl();
+
+export const metadata: Metadata = {
+  title: 'Termos de Uso',
+  description:
+    'Condições de uso do Portal Cerrado: direitos autorais, responsabilidade editorial e uso do conteúdo.',
+  alternates: { canonical: `${BASE}/termos` },
+};
 
 export default function TermosPage() {
   return (

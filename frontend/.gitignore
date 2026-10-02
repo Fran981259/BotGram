@@ -13,6 +13,31 @@
 # testing
 /coverage
 
+# playwright visual audit — auditoria VISUAL EXTERNA, fora deste repositório.
+#
+# A auditoria de evidência visual saiu do Portal Cerrado e passou a viver no
+# projeto separado `portal-cerrado-playwright`, que observa o site publicado
+# sem escrever nada aqui. Este diretório é a implementação antiga, mantida só
+# em disco; nada dela deve entrar no Git.
+#
+#Ignorar o diretório inteiro evita 220 MB de `artifacts/` e mantém o frontend
+# livre do coletor de evidência, conforme a separação de responsabilidades.
+playwright/
+playwright.config.ts
+
+# artefatos gerados, caso o padrão acima seja removido no futuro
+playwright/artifacts/
+playwright/report/
+playwright/results/
+playwright/blob-report/
+playwright/.cache/
+playwright/test-results/
+playwright/.auth/
+playwright/screenshots/
+playwright/diagnostics/
+*.zip
+!playwright/artifacts/.gitkeep
+
 # next.js
 /.next/
 /out/

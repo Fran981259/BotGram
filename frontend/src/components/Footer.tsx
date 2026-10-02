@@ -45,10 +45,10 @@ export default function Footer() {
 
         <div>
           <h4 className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Editorias</h4>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-3 space-y-0.5 text-sm">
             {EDITORIAS.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-text-muted transition-colors hover:text-accent-soil hover:underline hover:decoration-gold decoration-2 underline-offset-2">
+                <Link href={item.href} className="inline-block py-2 text-text-muted transition-colors hover:text-accent-soil hover:underline hover:decoration-gold decoration-2 underline-offset-2">
                   {item.label}
                 </Link>
               </li>
@@ -58,10 +58,10 @@ export default function Footer() {
 
         <div>
           <h4 className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Institucional</h4>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-3 space-y-0.5 text-sm">
             {INSTITUCIONAL.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="text-text-muted transition-colors hover:text-accent-soil hover:underline hover:decoration-gold decoration-2 underline-offset-2">
+                <Link href={item.href} className="inline-block py-2 text-text-muted transition-colors hover:text-accent-soil hover:underline hover:decoration-gold decoration-2 underline-offset-2">
                   {item.label}
                 </Link>
               </li>
@@ -72,7 +72,7 @@ export default function Footer() {
 
         <div>
           <h4 className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Colunistas</h4>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-3 space-y-1 text-sm">
             {REPORTER_LIST.filter((r) => r.slug !== "redacao.cerrado")
               .slice(0, 7)
               .map((reporter) => (
@@ -80,7 +80,7 @@ export default function Footer() {
                   <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gold/20 text-[10px] font-bold text-gold-deep">
                     {reporterInitials(reporter.name)}
                   </span>
-                  <Link href={`/reporter/${reporter.slug}`} className="truncate text-text-muted transition-colors hover:text-accent-soil hover:underline hover:decoration-gold decoration-2 underline-offset-2">
+                  <Link href={`/reporter/${reporter.slug}`} className="inline-block min-w-0 truncate py-2 text-text-muted transition-colors hover:text-accent-soil hover:underline hover:decoration-gold decoration-2 underline-offset-2">
                     {reporter.name}
                   </Link>
                 </li>

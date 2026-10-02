@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
+import { getPublicSiteUrl } from '@/lib/siteUrl';
 
-export const metadata: Metadata = { title: 'Sobre' };
+const BASE = getPublicSiteUrl();
+
+export const metadata: Metadata = {
+  title: 'Sobre',
+  description:
+    'Conheça o Portal Cerrado: quem apura o que acontece em Mato Grosso do Sul, com jornalismo local rigoroso e independente.',
+  alternates: { canonical: `${BASE}/sobre` },
+};
 
 export default function SobrePage() {
   return (

@@ -24,7 +24,7 @@ export function SectionHeading({
         </h2>
       </div>
       {href && (
-        <Link href={href} className="shrink-0 pb-1 text-xs font-bold uppercase tracking-wider text-accent-soil underline decoration-gold decoration-2 underline-offset-4 transition-colors hover:text-gold-deep">
+        <Link href={href} className="-my-2 inline-block shrink-0 py-2 text-xs font-bold uppercase tracking-wider text-accent-soil underline decoration-gold decoration-2 underline-offset-4 transition-colors hover:text-gold-deep">
           {linkLabel}
         </Link>
       )}
