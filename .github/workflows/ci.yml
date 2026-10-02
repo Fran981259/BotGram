@@ -3,8 +3,13 @@ name: CI Pipeline
 on:
   pull_request:
     branches: [ "main" ]
-  # Disparo manual: permite gerar evidência de gate sobre um commit já
-  # publicado em `main`, que o gatilho de pull_request não alcançaria.
+  # Push direto em main gera evidência de gate sobre o próprio candidato.
+  # Sem isso, o gate de contrato Swarm só tinha evidência de um commit antigo
+  # e cada avanço exigia disparo manual.
+  push:
+    branches: [ "main" ]
+  # Disparo manual: permite reexecutar a validação sobre um commit já
+  # publicado, sem novo commit.
   workflow_dispatch:
 
 jobs:
@@ -63,6 +68,13 @@ jobs:
     - name: Check types
       working-directory: ./frontend
       run: npx tsc --noEmit
+    - name: Audit de dependências de produção
+      working-directory: ./frontend
+      # SEM `--offline`, de propósito. A auditoria offline consulta o cache
+      # local de avisos e já reportou "0 vulnerabilidades" com o projeto sobre
+      # um RCE crítico (GHSA-vcvr-r3jv-pc5j). Auditoria com rede é a que vale.
+      # `--omit=dev` porque o gate é sobre o que é servido em produção.
+      run: npm audit --omit=dev --audit-level=high
     - name: Build
       working-directory: ./frontend
       run: npm run build
