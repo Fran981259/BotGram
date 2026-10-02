@@ -159,7 +159,7 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
         </div>
       </section>
 
-      <div className="container-custom -mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="container-custom -mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_var(--sidebar-width)]">
         <article className="relative z-10 min-w-0 overflow-hidden rounded-[2rem] border border-black/5 bg-white shadow-[0_28px_90px_rgba(45,41,38,0.12)]">
           <div className="grid gap-4 border-b border-zinc-100 bg-white/95 p-5 sm:grid-cols-[1fr_auto] sm:items-center sm:p-7">
             <div className="flex items-center gap-4">

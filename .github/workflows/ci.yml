@@ -57,6 +57,12 @@ jobs:
     - name: Run ESLint
       working-directory: ./frontend
       run: npm run lint
+    # `npm run build` não falha em erro de tipo quando o erro está em arquivo
+    # excluído do bundle. Um `playwright.config.ts` órfão quebrou `tsc` e o
+    # build, e o CI seguiu verde. A checagem de tipos precisa ser explícita.
+    - name: Check types
+      working-directory: ./frontend
+      run: npx tsc --noEmit
     - name: Build
       working-directory: ./frontend
       run: npm run build

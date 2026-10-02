@@ -23,6 +23,58 @@
   --radius-3xl: 1rem;
   --radius-full: 9999px;
   --radius: 0.25rem;
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     FASE 1 — FUNDAÇÃO DE DESIGN SYSTEM
+     ─────────────────────────────────────────────────────────────────────────
+     Tokens ADITIVOS. Nenhum valor já existente foi alterado, e a escala de
+     espaçamento do Tailwind NÃO foi tocada — mexer em `--spacing` mudaria
+     toda utilitária `p-*`/`gap-*` do projeto de uma vez, o que é mudança
+     visual e pertence à fase de redesign.
+
+     Estes tokens existem para dar nome a medidas que hoje estão literais
+     espalhadas por arquivos. Valores idênticos aos atuais: trocar literal por
+     token aqui não move nada na tela.
+
+     Regra de uso: espaço pequeno = itens do mesmo grupo; médio = cards de uma
+     seção; grande = separação de seção. Espaço grande nunca vem de altura fixa.
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Escala de espaçamento editorial, em px de referência.
+     4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64 · 80 */
+  --space-hairline: 2px;
+  --space-tight: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 40px;
+  --space-4xl: 48px;
+  --space-5xl: 64px;
+  --space-6xl: 80px;
+
+  /* Larguras de conteúdo.
+     Os dois containers existentes viram uma escala só, sem mudar de valor:
+     `--container-narrow` era `.container-custom`, `--container-editorial` era
+     `.container-editorial`. As duas larguras foram mantidas de propósito —
+     unificá-las em um único número já é decisão visual de redesign. */
+  --container-narrow: 1280px;
+  --container-editorial: 1344px;
+  --container-gutter: 1.25rem;
+  --container-gutter-lg: 1.5rem;
+
+  /* Medidas de leitura de artigo. `--sidebar-width` substitui o literal 360px
+     em `noticia/[slug]/page.tsx`. */
+  --reading-width: 68ch;
+  --reading-width-wide: 74ch;
+  --sidebar-width: 360px;
+
+  /* Superfícies e bordas. Derivadas das cores já existentes, para que o
+     contraste entre papel, cartão e linha fique explícito em vez de implícito. */
+  --color-border: color-mix(in srgb, var(--color-text-primary) 12%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--color-text-primary) 24%, transparent);
 }
 
 * { scrollbar-width: thin; scrollbar-color: #cfc7b4 transparent; }
@@ -68,15 +120,17 @@ body {
 }
 
 /* util */
+/* As larguras vêm dos tokens. Os valores são idênticos aos literais anteriores:
+   trocar por token não move nada na tela, apenas dá nome ao número. */
 .container-custom {
-  max-width: 1280px;
+  max-width: var(--container-narrow);
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  padding-inline: var(--container-gutter);
 }
-@media (min-width: 640px) { .container-custom { padding-inline: 1.5rem; } }
+@media (min-width: 640px) { .container-custom { padding-inline: var(--container-gutter-lg); } }
 
 .container-editorial {
-  max-width: 1344px;
+  max-width: var(--container-editorial);
   margin-inline: auto;
   padding-inline: clamp(1.1rem, 3vw, 1.75rem);
 }
@@ -150,7 +204,7 @@ body {
 
 /* Notícia — diagramação de jornal real */
 .article-body {
-  max-width: 68ch;
+  max-width: var(--reading-width);
   font-size: 1.125rem;
   line-height: 1.85;
   color: var(--color-text-primary);
@@ -201,7 +255,7 @@ body {
 }
 
 .article-body-premium {
-  max-width: 74ch;
+  max-width: var(--reading-width-wide);
   font-size: clamp(1.08rem, 1vw + 0.86rem, 1.24rem);
   line-height: 1.9;
 }
