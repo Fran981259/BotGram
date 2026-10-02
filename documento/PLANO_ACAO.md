@@ -8,20 +8,40 @@
 - Nenhum texto de documentação, status histórico ou build anterior substitui uma validação executada sobre o commit candidato atual.
 - Não manter Compose e Swarm como dois runtimes produtivos concorrentes; Compose é local/teste e Swarm só existe após uma stack dedicada e validada.
 
-## Estado de Referência histórico em 24/09/2026
+## Estado de Referência em 02/10/2026
 
-> Esta tabela registra um snapshot anterior. O candidato atual precisa repetir todos os gates no próprio SHA.
+> Evidência executada sobre o candidato `e7f85c7b7f40d53b91a38c70325ee7a951bdd717`,
+> com árvore limpa e `local` igual a `remoto`. O snapshot de 24/09 ficou
+> desatualizado em dois pontos que mudaram a leitura do gate: o número de
+> arquivos do mypy e o de testes.
 
 | Gate | Estado | Evidência atual |
 | --- | --- | --- |
-| Git limpo e commit candidato | aprovado | `e9dbb16801d041af11ef5873d58882aae17f35d4` local/remoto |
+| Git limpo e commit candidato | aprovado | `e7f85c7` local/remoto, 0 pendências |
 | Ruff backend | aprovado | `ruff check app tests scripts` sem violações |
-| Mypy backend | aprovado | `mypy app` sem erros em 65 arquivos |
-| Testes backend | aprovado | 120 unitários + 8 integração aprovados |
-| Lint, tipos e build frontend | aprovado | Next.js gerou 27 páginas em 24/09/2026 |
-| Dependências frontend | aprovado localmente | `npm audit --offline --omit=dev` sem vulnerabilidades altas |
-| Contrato Swarm | aprovado localmente | Compose e stack dedicados renderizados com imagens por SHA |
-| Deploy e rollback em teste | não iniciado | depende dos gates anteriores |
+| Mypy backend | aprovado | `mypy app` sem erros em 73 arquivos |
+| Testes backend | aprovado | `145 passed` em 20,4 s |
+| Lint, tipos e build frontend | aprovado | lint 0 problemas; `tsc --noEmit` 0 erros; build `✓ Compiled successfully` — local e CI |
+| Dependências frontend | aprovado | `npm audit --omit=dev --audit-level=high` → 0 vulnerabilidades, com rede |
+| Contrato Swarm | aprovado | CI `run #37049823402`: Compose e stack renderizados em imagens presas ao SHA, sem `:latest`, mesmos 9 serviços |
+| Deploy e rollback em teste | adiado | decisão registrada em 02/10/2026: sai do conjunto bloqueante e passa a valer após o redesign |
+
+### Ressalvas registradas
+
+- **O gate de dependências não pode ser validado com `--offline`.** A validação
+  de 24/09 usou `npm audit --offline`, que consulta cache local de avisos e
+  reportou "0 vulnerabilidades" com o projeto sobre uma falha crítica de RCE
+  (GHSA-vcvr-r3jv-pc5j, `next/og`, `next` 16.2.0–16.3.5). Corrigido em
+  `e7f85c7`, que levou `next` e `eslint-config-next` a 16.3.8. A auditoria
+  com rede é a que vale; `--offline` dá resposta falsamente positiva.
+- **Resta 1 vulnerabilidade alta fora de produção:** `brace-expansion`
+  (DoS por expansão quadrática), transitiva de `devDependencies` via
+  `typescript-eslint` → `minimatch`. Não afeta runtime servido e não aparece
+  em `--omit=dev`. Fica para decisão posterior.
+- **O `ci.yml` não roda `tsc --noEmit`.** Antes de `e7f85c7`, um
+  `playwright.config.ts` órfão quebrava tipos e build, e o CI seguia verde
+  por rodar apenas `lint` e `build`. A lacuna permanece: tipos não são
+  verificados no CI.
 
 ## Objetivo
 
