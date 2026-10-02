@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { fetchNewsResponse, rankHomepageArticles, type Article } from "@/lib/api";
 import { prioritizeElectionCoverage, selectPoliticalCoverage } from "@/lib/electionCoverage";
-import { HeroGrid } from "@/components/home/HeroGrid";
+import { HeroGrid, MostReadBlock } from "@/components/home/HeroGrid";
+import { NewsletterBlock } from "@/components/editorial/SectionBlocks";
 import { AgroModule } from "@/components/home/AgroModule";
 import { PoderModule } from "@/components/home/PoderModule";
 import { Columnists } from "@/components/home/Columnists";
@@ -88,6 +89,17 @@ export default async function Home() {
   const heroArticles = [main, ...side, ...rail, ...latest].filter((article): article is Article => Boolean(article));
   const rankedAgro = rankHomepageArticles(agro);
   const politicalCoverage = selectPoliticalCoverage(politics, [...heroArticles, ...rankedAgro], 6);
+
+  // "Mais lidas" não repete matéria já mostrada acima. A exclusão é feita sobre
+  // os mesmos conjuntos que a política usa, então nenhuma manchete aparece duas
+  // vezes na página — o risco apontado pelo plano §25.
+  const alreadyShown = new Set(
+    [...heroArticles, ...rankedAgro, ...politicalCoverage].map((article) => article.slug || article.title),
+  );
+  const mostRead = recent.filter(
+    (article) => !alreadyShown.has(article.slug || article.title) && (article.engagement_score ?? 0) > 0,
+  );
+
   const hardError = settled.every((result) => result.status === "rejected");
 
   return (
@@ -101,6 +113,10 @@ export default async function Home() {
       )}
 
       <HeroGrid main={main} side={side} rail={rail} latest={latest} />
+
+      {/* Agro e política já são blocos de matéria; o ranking entra entre eles
+          para quebrar o padrão de "grade de cards + faixa escura". */}
+      <MostReadBlock articles={mostRead} />
 
       <AgroModule articles={rankedAgro} />
 
@@ -126,6 +142,15 @@ export default async function Home() {
       >
         <Columnists />
       </Suspense>
+
+      {/*
+        Fecha a página com chamada de assinatura, como o plano §11.4 pede.
+        O destino é /contato porque não existe endpoint de assinatura: um
+        formulário que "envia" para lugar nenhum seria pior que um link honesto.
+      */}
+      <section aria-label="Assine a newsletter" className="container-editorial pb-10">
+        <NewsletterBlock />
+      </section>
 
       <script
         type="application/ld+json"

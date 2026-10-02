@@ -15,9 +15,28 @@ function AgroFeature({ article }: { article: Article }) {
   const reporter = getReporter(article.reporter_slug);
   return (
     <Link href={hrefOf(article)} className="group block">
-      <div className="grid gap-5 sm:grid-cols-[2fr_3fr] sm:items-stretch">
-        <ArticleImage article={article} sizes="(max-width: 640px) 100vw, 40vw" className="aspect-[16/10] sm:aspect-auto sm:h-full" />
-        <div className="flex flex-col justify-center py-1">
+      {/*
+        Medido em produção, o mesmo artigo e as mesmas colunas 2fr/3fr em 7
+        larguras de janela: a caixa da imagem saiu entre 1,05:1 e 1,63:1 —
+        amplitude de 0,58 para uma peça que deveria ter 1,6:1. A 1024px ela
+        ficava praticamente quadrada (245x233).
+
+        A causa é a coluna da imagem passar a tomar a altura do texto vizinho:
+        `next/image` vem com `fill` e `object-cover`, então não há distorção,
+        mas o recorte passa a depender do tamanho da manchete em vez de uma
+        razão escolhida. Agora a razão vale em todo tamanho.
+
+        Contrapartida conhecida: como a coluna de texto é mais larga, entre
+        768px e 1024px o texto fica mais alto que a imagem e sobra cerca de
+        55px sob ela. É espaço honesto e previsível; antes o mesmo espaço era
+        preenchido com um recorte que mudava de formato a cada largura.
+
+        O texto continua centralizado na altura da imagem pelo `self-stretch`,
+        que preserva a intenção editorial do original.
+      */}
+      <div className="grid gap-5 sm:grid-cols-[2fr_3fr] sm:items-start">
+        <ArticleImage article={article} sizes="(max-width: 640px) 100vw, 40vw" className="aspect-[16/10]" />
+        <div className="flex flex-col justify-center py-1 sm:self-stretch">
           <span className="text-[10px] font-bold uppercase tracking-wider text-gold-deep">{formatRelativeTime(article.published_at)}</span>
           <h3 className="mt-2 font-display text-2xl font-bold leading-tight text-text-primary transition-colors group-hover:text-accent-soil">{article.title}</h3>
           {article.summary && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-text-muted">{article.summary.replace(/\*\*/g, "")}</p>}

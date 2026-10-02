@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/*
+ * A implementação pré-redesign do NewsCard foi preservada em
+ * `components/legacy/` para permitir reversão, mas nenhuma página a importa.
+ * Sem esta exclusão o Tailwind continua varrendo o arquivo e emite as classes
+ * do card antigo para o bundle de produção — CSS morto que ninguém pediu e
+ * ninguém usa. Se um dia o card legado voltar a ser importado, apague esta
+ * linha; sem ela o estilo some silenciosamente em vez de falhar alto.
+ */
+@source not "../components/legacy";
+
 @theme {
   /* Editorial claro — papel, Cerrado profundo, dourado, carvão */
   --color-canvas: #f6f2e8;
