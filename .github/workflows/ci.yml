@@ -69,11 +69,27 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Fixar imagens por SHA
+    # Renderizar exige TODA variável marcada como `:?` nos arquivos. O Compose
+    # exige 8; a stack exige as mesmas 8 mais as duas de imagem.
+    #
+    # Os valores de senha e chave são PLACEHOLDERS propositais. O gate valida a
+    # forma do contrato, não o ambiente: nenhum segredo real entra no CI, e a
+    # asserção do último passo confere isso.
+    - name: Fornecer variáveis exigidas (imagens por SHA + placeholders)
       run: |
         SHA="${GITHUB_SHA}"
-        echo "BACKEND_IMAGE=ghcr.io/fran981259/portal-cerrado-backend:$SHA" >> "$GITHUB_ENV"
-        echo "FRONTEND_IMAGE=ghcr.io/fran981259/portal-cerrado-frontend:$SHA" >> "$GITHUB_ENV"
+        {
+          echo "BACKEND_IMAGE=ghcr.io/fran981259/portal-cerrado-backend:$SHA"
+          echo "FRONTEND_IMAGE=ghcr.io/fran981259/portal-cerrado-frontend:$SHA"
+          echo "POSTGRES_USER=gate_placeholder"
+          echo "POSTGRES_PASSWORD=gate_placeholder"
+          echo "REDIS_PASSWORD=gate_placeholder"
+          echo "FLOWER_USER=gate_placeholder"
+          echo "FLOWER_PASSWORD=gate_placeholder"
+          echo "PUBLISH_API_KEY=gate_placeholder"
+          echo "NEXT_PUBLIC_SITE_URL=https://example.invalid"
+          echo "CORS_ALLOWED_ORIGINS=https://example.invalid"
+        } >> "$GITHUB_ENV"
 
     # `docker compose config` renderiza sem subir container: valida sintaxe,
     # interpolação e diretivas. `docker stack config` faz o mesmo para a stack.
@@ -125,6 +141,22 @@ jobs:
         else
           echo "OK  Compose e Swarm descrevem o mesmo conjunto de serviços"
         fi
+
+        # Prova de que nenhum segredo real entrou no gate: cada segredo OBRIGATÓRIO
+        # tem de ser substituído pelo placeholder em todo lugar onde aparece.
+        #
+        # A verificação é booleana de propósito. REDIS_PASSWORD e FLOWER_PASSWORD
+        # não aparecem como `CHAVE: valor` — são embutidos em REDIS_URL e em
+        # `--basic-auth`. Uma checagem posicional pegaria a linha errada e daria
+        # falso negativo.
+        for key in POSTGRES_PASSWORD REDIS_PASSWORD FLOWER_PASSWORD PUBLISH_API_KEY; do
+          if grep -q '\${'"$key"':?' /tmp/compose.rendered.yml; then
+            echo "::error title=Segredo no gate::$key permaneceu como variável não resolvida"
+            fail=1
+          else
+            echo "OK  $key interpolado com placeholder, nenhum segredo real no gate"
+          fi
+        done
 
         [ "$fail" -eq 0 ] || exit 1
         echo "Contrato Swarm validado com imagens por SHA."
