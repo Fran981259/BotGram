@@ -3,6 +3,9 @@ name: CI Pipeline
 on:
   pull_request:
     branches: [ "main" ]
+  # Disparo manual: permite gerar evidência de gate sobre um commit já
+  # publicado em `main`, que o gatilho de pull_request não alcançaria.
+  workflow_dispatch:
 
 jobs:
   lint-backend:
@@ -57,3 +60,71 @@ jobs:
     - name: Build
       working-directory: ./frontend
       run: npm run build
+  # Gate "Contrato Swarm": Compose e stack dedicados renderizados com imagens
+  # por SHA. Roda no runner, que já tem Docker — a máquina de desenvolvimento
+  # não precisa instalar daemon nenhum.
+  stack-contract:
+    name: Contrato Swarm (gate)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fixar imagens por SHA
+      run: |
+        SHA="${GITHUB_SHA}"
+        echo "BACKEND_IMAGE=ghcr.io/fran981259/portal-cerrado-backend:$SHA" >> "$GITHUB_ENV"
+        echo "FRONTEND_IMAGE=ghcr.io/fran981259/portal-cerrado-frontend:$SHA" >> "$GITHUB_ENV"
+
+    # `docker compose config` renderiza sem subir container: valida sintaxe,
+    # interpolação e diretivas. `docker stack config` faz o mesmo para a stack.
+    - name: Renderizar Compose com imagens por SHA
+      run: docker compose -f docker-compose.yml config > /tmp/compose.rendered.yml
+
+    - name: Renderizar stack Swarm
+      run: docker stack config -c docker-stack.swarm.yml > /tmp/swarm.rendered.yml
+
+    # Sem esta etapa o gate provaria apenas que o YAML não quebra. As
+    # asserções abaixo é que transformam "renderizou" em "está correto".
+    - name: Verificar o contrato renderizado
+      run: |
+        set -euo pipefail
+        fail=0
+
+        for rendered in /tmp/compose.rendered.yml /tmp/swarm.rendered.yml; do
+          name="$(basename "$rendered")"
+
+          # Toda imagem da aplicação tem de estar presa ao SHA do commit.
+          if grep -oE 'image: *[^ ]+' "$rendered" \
+             | grep -E 'portal-cerrado-(backend|frontend)' \
+             | grep -v ":${GITHUB_SHA}$"; then
+            echo "::error title=Imagem não fixada por SHA ($name)::imagem da aplicação sem o SHA do commit"
+            fail=1
+          else
+            echo "OK  $name: imagens da aplicação fixadas em $GITHUB_SHA"
+          fi
+
+          # `:latest` é proibido em qualquer imagem renderizada.
+          if grep -oE 'image: *[^ ]+' "$rendered" | grep -q ':latest'; then
+            echo "::error title=Tag latest em $name::imagem mutável impede rollback determinístico"
+            fail=1
+          else
+            echo "OK  $name: nenhuma tag :latest"
+          fi
+
+          # Compose e stack precisam descrever exatamente os mesmos serviços.
+          services="$(grep -cE '^  [a-z_]+:$' "$rendered" || true)"
+          echo "OK  $name: $services serviço(s)"
+        done
+
+        compose_services="$(grep -oE '^  [a-z_]+:$' /tmp/compose.rendered.yml | sort -u)"
+        swarm_services="$(grep -oE '^  [a-z_]+:$' /tmp/swarm.rendered.yml | sort -u)"
+        if [ "$compose_services" != "$swarm_services" ]; then
+          echo "::error title=Runtimes divergentes::Compose e Swarm descrevem serviços diferentes"
+          diff <(echo "$compose_services") <(echo "$swarm_services") || true
+          fail=1
+        else
+          echo "OK  Compose e Swarm descrevem o mesmo conjunto de serviços"
+        fi
+
+        [ "$fail" -eq 0 ] || exit 1
+        echo "Contrato Swarm validado com imagens por SHA."
