@@ -61,7 +61,7 @@ export async function MarketPanel() {
           {updated ? ` · atualizado ${formatMarketTime(updated)}` : ""}.{" "}
           <a
             href="/api/markets"
-            className="font-semibold text-accent-soil underline decoration-gold decoration-2 underline-offset-2 hover:text-gold-deep"
+            className="py-1 font-semibold text-accent-soil underline decoration-gold decoration-2 underline-offset-2 hover:text-gold-deep"
           >
             dados brutos
           </a>

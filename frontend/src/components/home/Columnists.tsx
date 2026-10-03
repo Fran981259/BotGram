@@ -15,9 +15,26 @@ type ColumnistEntry = {
   latest?: Article;
 };
 
-async function loadColumnists(): Promise<ColumnistEntry[]> {
+/**
+ * Carrega a matéria mais recente de cada colunista, pulando as que a página já
+ * mostrou mais acima.
+ *
+ * Este componente busca sozinho, sem saber o que os blocos anteriores
+ * renderizaram. Medido: sem o filtro, 6 das 8 assinaturas repetiam uma manchete
+ * que já estava nos destaques, no agro ou no ranking de mais lidas — o plano
+ * proíbe manchete repetida na mesma página.
+ *
+ * Por isso busca duas matérias por colunista e fica com a primeira que ainda não
+ * apareceu. Se as duas já apareceram, o cartão é omitido: preferimos um bloco
+ * menor a uma manchete repetida.
+ */
+async function loadColumnists(excluded: Set<string>): Promise<ColumnistEntry[]> {
   const settled = await Promise.allSettled(
-    COLUMNIST_SLUGS.map((slug) => fetchNewsResponse({ reporterSlug: slug, region: "ms", limit: 1, sortBy: "recent" }).then((res) => res.news[0])),
+    COLUMNIST_SLUGS.map((slug) =>
+      fetchNewsResponse({ reporterSlug: slug, region: "ms", limit: 2, sortBy: "recent" }).then((res) =>
+        res.news.find((article) => !excluded.has(article.slug || article.title)),
+      ),
+    ),
   );
   return COLUMNIST_SLUGS.map((slug, index) => ({
     slug,
@@ -30,8 +47,8 @@ function latestHref(article: Article): string {
   return article.slug ? `/noticia/${article.slug}` : article.url || "#";
 }
 
-export async function Columnists() {
-  const entries = await loadColumnists();
+export async function Columnists({ exclude = [] }: { exclude?: string[] }) {
+  const entries = await loadColumnists(new Set(exclude));
   const publishedEntries = entries.filter(
     (entry): entry is ColumnistEntry & { latest: Article } => Boolean(entry.latest),
   );

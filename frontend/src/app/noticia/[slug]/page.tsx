@@ -87,8 +87,16 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
       fetchNewsResponse({ category: article.category, limit: 6 }),
       fetchNewsResponse({ limit: 6 }),
     ]);
-    related = relatedResult.news.filter((a) => a.slug !== slug).slice(0, 5);
     latest = latestResult.news.filter((a) => a.slug !== slug).slice(0, 5);
+
+    // "Relacionadas" não pode repetir o que "Mais recentes" da barra lateral já
+    // traz: as duas listas são servidas por consultas diferentes e se cruzam.
+    // Medido: a mesma matéria aparecia nas duas, com o mesmo título e a mesma
+    // editoria, na mesma barra lateral.
+    const latestKeys = new Set(latest.map((article) => article.slug || article.title));
+    related = relatedResult.news
+      .filter((a) => a.slug !== slug && !latestKeys.has(a.slug || a.title))
+      .slice(0, 5);
   } catch {
     related = [];
     latest = [];

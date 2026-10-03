@@ -29,7 +29,7 @@ import type { Article } from "@/lib/api";
 
 function MainCard({ article }: { article: Article }) {
   return (
-    <div className="lg:col-span-6">
+    <div className="xl:col-span-6">
       <HeroStoryCard article={article} priority showSummary />
     </div>
   );
@@ -74,11 +74,19 @@ export function HeroGrid({
         Manchetes em destaque
       </h2>
 
-      <div className="grid gap-x-6 gap-y-7 lg:grid-cols-12">
+      {/*
+        A composição de 12 colunas só entra a partir de 1280px, e não a partir de
+        1024px como estava. Medido a 1024px: a grade dava 58,66px por coluna, o
+        rail de 3 colunas ficava com 224px, e a miniatura do card denso consumia
+        116px — sobrando 55px de texto, com a manchete transbordando para fora
+        do documento (scrollWidth 1046 contra 1024). Entre 1024px e 1279px a
+        home agora empilha, que é o desenho pretendido para essa largura.
+      */}
+      <div className="grid gap-x-6 gap-y-7 xl:grid-cols-12">
         {main && <MainCard article={main} />}
 
         {hasSide && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:col-span-3 lg:grid-cols-1">
+          <div className="grid gap-5 sm:grid-cols-2 xl:col-span-3 xl:grid-cols-1">
             {side.slice(0, 2).map((article) => (
               <FeatureCard key={article.slug || article.title} article={article} />
             ))}
@@ -86,7 +94,7 @@ export function HeroGrid({
         )}
 
         {hasRail && (
-          <div className="flex flex-col gap-4 border-t border-black/10 pt-5 lg:col-span-3 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+          <div className="flex flex-col gap-4 border-t border-black/10 pt-5 xl:col-span-3 xl:border-l xl:border-t-0 xl:pl-6 xl:pt-0">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gold-deep">Mais recentes</p>
             {rail.slice(0, 3).map((article) => (
               <CompactCard key={article.slug || article.title} article={article} />

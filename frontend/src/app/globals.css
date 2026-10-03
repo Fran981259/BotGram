@@ -220,10 +220,15 @@ body {
   font-weight: 900;
   color: var(--color-accent-soil);
 
-    /* Alvo de toque. Medido em /sobre: estes links tinham 21px de altura,
-       abaixo do mínimo de 24px da WCAG 2.5.8 (AA). Padding vertical em
-       elemento inline não altera a altura da linha, então amplia a área
-       clicável sem empurrar o texto.
+    /* Alvo de toque. Medido em /sobre: estes links tinham 21px de altura.
+       Padding vertical em elemento inline não altera a altura da linha, então
+       amplia a área clicável sem empurrar o texto.
+
+       Retificação de uma afirmação anterior: eu chamei isso de falha da WCAG
+       2.5.8 (AA), e não é. A norma tem uma exceção para alvo inline — quando o
+       link está dentro de uma frase e o tamanho é limitado pela altura de linha
+       do texto ao redor. É exatamente o caso destes links. A alteração fica
+       como melhoria de usabilidade, não como correção obrigatória.
 
        O sublinhado continua ausente de propósito: é a convenção do site
        inteiro, e o link de prosa se distingue por cor e por peso. Se a

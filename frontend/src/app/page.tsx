@@ -87,7 +87,11 @@ export default async function Home() {
 
   const { main, side, rail, latest } = pickHero(prioritizeElectionCoverage(rankHomepageArticles(recent)));
   const heroArticles = [main, ...side, ...rail, ...latest].filter((article): article is Article => Boolean(article));
-  const rankedAgro = rankHomepageArticles(agro);
+  // O agro também precisa excluir os destaques. A política já fazia isso; o agro
+  // não, e o resultado era a mesma matéria no topo da página e no bloco de
+  // agronegócio — medido em uma manchete por carga da home.
+  const heroKeys = new Set(heroArticles.map((article) => article.slug || article.title));
+  const rankedAgro = rankHomepageArticles(agro.filter((article) => !heroKeys.has(article.slug || article.title)));
   const politicalCoverage = selectPoliticalCoverage(politics, [...heroArticles, ...rankedAgro], 6);
 
   // "Mais lidas" não repete matéria já mostrada acima. A exclusão é feita sobre
@@ -99,6 +103,14 @@ export default async function Home() {
   const mostRead = recent.filter(
     (article) => !alreadyShown.has(article.slug || article.title) && (article.engagement_score ?? 0) > 0,
   );
+
+  // O bloco de colunistas também precisa saber do que a página já trata: ele
+  // busca a matéria mais recente de cada assinatura por conta própria e, sem a
+  // lista, repetia 6 manchetes já mostradas acima.
+  const shownBeforeColumnists = new Set([
+    ...alreadyShown,
+    ...mostRead.map((article) => article.slug || article.title),
+  ]);
 
   const hardError = settled.every((result) => result.status === "rejected");
 
@@ -140,7 +152,7 @@ export default async function Home() {
           </section>
         }
       >
-        <Columnists />
+        <Columnists exclude={[...shownBeforeColumnists]} />
       </Suspense>
 
       {/*

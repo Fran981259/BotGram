@@ -60,9 +60,16 @@ export function HeroStoryCard({
           <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-leaf px-3 py-1.5 text-[10px] font-black uppercase tracking-wider shadow-lg">
             {cat.label}
           </span>
-          <h2 className="mt-3 text-balance font-display text-3xl font-black leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+          {/*
+            Nível de título: a manchete principal é o h1 da página.
+            `HeroStoryCard` é usada só aqui e na variante `hero` da fachada, que
+            não tem nenhum consumidor — trocar o rótulo é seguro. As demais
+            famílias mantêm h2/h3, que é a hierarquia correta quando o card
+            aparece dentro de uma seção que já tem título próprio.
+          */}
+          <h1 className="mt-3 text-balance font-display text-3xl font-black leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
             {article.title}
-          </h2>
+          </h1>
           {showSummary && summary && (
             <p className="mt-3 line-clamp-2 max-w-3xl text-sm font-medium leading-relaxed text-white/85 sm:text-base">
               {summary}
@@ -99,7 +106,7 @@ export function FeatureStoryCard({ article }: { article: Article }) {
       <div className="flex flex-1 flex-col p-5">
         <span className="text-[10px] font-black uppercase tracking-[0.18em] text-accent-leaf">{cat.label}</span>
         <h3 className="mt-2 text-balance font-display text-xl font-black leading-tight text-text-primary transition-colors group-hover:text-accent-leaf">
-          <Link href={href} target={target}>
+          <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
         </h3>
@@ -133,7 +140,7 @@ export function StoryCard({ article, showSummary = true }: { article: Article; s
       </Link>
       <div className="flex flex-1 flex-col p-5">
         <h3 className="text-balance font-display text-lg font-black leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
-          <Link href={href} target={target}>
+          <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
         </h3>
@@ -157,12 +164,19 @@ export function CompactStoryCard({ article, showThumbnail = true }: { article: A
 
   return (
     <article className="group flex items-start gap-4 border-b border-black/10 py-3 last:border-b-0 last:pb-0">
+      {/*
+          A miniatura encolhe a partir de 1280px porque é aí que este card
+          aparece: dentro do rail de 3 colunas, que mede 288px. Com a
+          miniatura de 128px, só sobravam 119px de texto para uma manchete
+          de 16px. A série não é monótona de propósito — a miniatura
+          acompanha a largura do rail, não a da janela.
+      */}
       {showThumbnail && (
         <Link href={href} target={target} className="shrink-0" tabIndex={-1} aria-hidden="true">
           <ArticleImage
             article={article}
             sizes="128px"
-            className="aspect-[16/10] w-28 rounded-sm sm:w-32"
+            className="aspect-[16/10] w-28 rounded-sm sm:w-32 xl:w-24 2xl:w-28"
             showBadge={false}
           />
         </Link>
@@ -170,7 +184,7 @@ export function CompactStoryCard({ article, showThumbnail = true }: { article: A
       <div className="min-w-0 flex-1">
         <span className="text-[10px] font-black uppercase tracking-[0.18em] text-accent-leaf">{cat.label}</span>
         <h3 className="mt-1 text-balance font-display text-base font-black leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
-          <Link href={href} target={target}>
+          <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
         </h3>
@@ -202,7 +216,7 @@ export function HorizontalStoryCard({ article }: { article: Article }) {
       <div className="flex min-w-0 flex-1 flex-col p-5">
         <span className="text-[10px] font-black uppercase tracking-[0.18em] text-accent-leaf">{cat.label}</span>
         <h3 className="mt-2 text-balance font-display text-lg font-black leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
-          <Link href={href} target={target}>
+          <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
         </h3>
@@ -245,7 +259,7 @@ export function RankedStoryItem({
           </span>
         )}
         <h3 className="text-balance font-display text-base font-bold leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
-          <Link href={href} target={target}>
+          <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
         </h3>
