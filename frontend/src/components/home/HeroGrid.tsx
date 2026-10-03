@@ -6,6 +6,8 @@ import {
   StoryCard,
 } from "@/components/editorial/StoryCards";
 import { SectionHeader } from "@/components/editorial/SectionBlocks";
+import { ArticleImage } from "@/components/home/ArticleImage";
+import { getCategory } from "@/lib/categories";
 import type { Article } from "@/lib/api";
 
 /**
@@ -37,12 +39,19 @@ function MainCard({ article }: { article: Article }) {
 
 /** Manchetes de apoio: mesma densidade do original, sem altura fixa. */
 function FeatureCard({ article }: { article: Article }) {
+  const category = getCategory(article.category);
+  const href = article.slug ? `/noticia/${article.slug}` : article.url || "#";
   return (
-    <div className="border-b border-black/10 pb-5 last:border-b-0 last:pb-0">
-      {/* h2, não h3: nesta seção a manchete principal é h1 e estes cards são
-          irmãos dela. Com h3 a página saltava um nível. */}
-      <StoryCard article={article} showSummary={false} nivel="h2" />
-    </div>
+    <article className="group relative overflow-hidden rounded-sm bg-charcoal">
+      <Link href={href} className="block">
+        <ArticleImage article={article} sizes="(min-width: 1280px) 25vw, 50vw" className="aspect-[16/10]" showBadge={false} />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+          <span className="text-[9px] font-black uppercase tracking-[0.16em] text-gold">{category.label}</span>
+          <h2 className="mt-1 text-balance font-display text-xl font-bold leading-tight transition-colors group-hover:text-gold">{article.title}</h2>
+        </div>
+      </Link>
+    </article>
   );
 }
 
@@ -106,7 +115,10 @@ export function HeroGrid({
 
         {hasRail && (
           <div className="flex flex-col gap-4 border-t border-black/10 pt-5 xl:col-span-3 xl:border-l xl:border-t-0 xl:pl-6 xl:pt-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gold-deep">Mais recentes</p>
+            <div className="flex items-end justify-between border-b-2 border-charcoal pb-2">
+              <p className="font-display text-xl font-bold text-text-primary">Últimas notícias</p>
+              <Link href="/categoria/general" className="text-[10px] font-bold uppercase tracking-wider text-accent-soil underline decoration-gold decoration-2 underline-offset-4">ver todas</Link>
+            </div>
             {rail.slice(0, 3).map((article) => (
               <CompactCard key={article.slug || article.title} article={article} />
             ))}
@@ -152,30 +164,39 @@ export function MostReadBlock({ articles }: { articles: Article[] }) {
 
   if (ranked.length < 3) return null;
 
+  const feature = ranked[0];
+  const rest = ranked.slice(1);
   return (
     <section aria-labelledby="mais-lidas-heading" className="container-editorial py-7 sm:py-9">
-      <SectionHeader eyebrow="Ranking" title="Mais lidas" id="mais-lidas-heading" />
-      {/* Duas colunas em vez de uma: com cinco itens e a largura do container
-          inteiro, uma coluna só produziria linhas de texto muito longas. */}
-      <ol className="mt-5 grid gap-x-10 gap-y-1 sm:grid-cols-2">
-        {ranked.map((article, index) => (
-          <li key={article.slug || article.title} className="flex items-start gap-4 border-b border-black/10 py-4">
-            <span aria-hidden="true" className="font-display text-3xl font-black leading-none text-accent-leaf/35 tabular-nums">
-              {index + 1}
-            </span>
-            <div className="min-w-0 flex-1">
-              <h3 className="text-balance font-display text-base font-bold leading-snug text-text-primary">
-                <Link href={article.slug ? `/noticia/${article.slug}` : article.url || "#"} className="transition-colors hover:text-accent-soil">
-                  {article.title}
-                </Link>
-              </h3>
-              <p className="mt-1 line-clamp-1 text-[11px] font-semibold text-text-muted">
-                {formatRelativeTime(article.published_at)}
-              </p>
+      <div className="grid gap-8 rounded-sm border-y border-black/10 bg-surface p-5 sm:p-6 lg:grid-cols-4 lg:gap-8">
+        <div className="lg:col-span-1">
+          <SectionHeader eyebrow="Ranking" title="Mais lidas" id="mais-lidas-heading" />
+          <p className="mt-4 text-sm leading-relaxed text-text-muted">As histórias que mais movimentam a conversa no Cerrado.</p>
+        </div>
+        {feature && (
+          <Link href={feature.slug ? `/noticia/${feature.slug}` : feature.url || "#"} className="group relative overflow-hidden rounded-sm bg-charcoal lg:col-span-2">
+            <ArticleImage article={feature} sizes="(min-width: 1024px) 45vw, 100vw" className="aspect-[16/8]" showBadge={false} />
+            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] text-gold">1º lugar</span>
+              <h3 className="mt-1 font-display text-2xl font-bold leading-tight transition-colors group-hover:text-gold">{feature.title}</h3>
             </div>
-          </li>
-        ))}
-      </ol>
+          </Link>
+        )}
+        <ol className="lg:col-span-1">
+          {rest.map((article, index) => (
+            <li key={article.slug || article.title} className="flex items-start gap-3 border-b border-black/10 py-3 first:pt-0 last:border-0">
+              <span aria-hidden="true" className="font-display text-2xl font-black leading-none text-accent-leaf/45 tabular-nums">{index + 2}</span>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-balance font-display text-[15px] font-bold leading-snug text-text-primary">
+                  <Link href={article.slug ? `/noticia/${article.slug}` : article.url || "#"} className="transition-colors hover:text-accent-soil">{article.title}</Link>
+                </h3>
+                <p className="mt-1 line-clamp-1 text-[10px] font-semibold text-text-muted">{formatRelativeTime(article.published_at)}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }

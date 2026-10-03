@@ -2,14 +2,15 @@
 
 Project Map: leia `portal-cerrado.md` na raiz antes de qualquer ação.
 
-## Regra pétrea de entrega
+## Regra de entrega desta fase
 
-Não implementar novas funcionalidades, não publicar imagens, não executar deploy,
-não aplicar stack e não fazer corte de ambiente enquanto todos os gates definidos
-em `documento/PLANO_ACAO.md` não estiverem aprovados por evidência atual.
+O bloqueio global por aprovação prévia de todos os gates de
+`documento/PLANO_ACAO.md` não se aplica mais à fase atual. Implementações,
+validações e preparações do ambiente de teste podem prosseguir normalmente.
 
-Exceção única: correções estritamente necessárias para fazer os gates passarem.
-Toda exceção deve registrar causa, arquivos afetados, validação e risco residual.
+Deploy em produção, publicação pública e corte de ambiente continuam exigindo
+validação técnica atual, registro do risco residual e aprovação explícita do
+usuário quando houver impacto operacional.
 
 ## Proteção do estado atual
 

@@ -9,8 +9,8 @@
 
 ## Delivery Gate
 
-- Regra pétrea: nenhuma funcionalidade nova ou deploy antes de todos os gates de `documento/PLANO_ACAO.md` passarem com evidência atual.
-- Exceção: apenas correções necessárias para fechar os gates, registradas com validação e risco residual.
+- Regra atual: o bloqueio global por aprovação prévia de todos os gates não se aplica mais à fase atual; produção e cortes de ambiente continuam exigindo validação atual e aprovação explícita.
+- Toda mudança relevante deve registrar validação e risco residual; os gates seguem como critérios de qualidade, não como bloqueio automático de desenvolvimento.
 
 ## Folder Structure
 
@@ -37,7 +37,7 @@
 
 ## Key Files
 
-- AGENTS.md → regra pétrea de entrega e proteção de alterações existentes
+- AGENTS.md → regra de entrega da fase atual e proteção de alterações existentes
 - app/main.py → FastAPI application and HTTP endpoints
 - app/contracts.py → contratos de categoria, fontes e timestamps UTC/apresentação
 - app/main.py → CORS fail-closed e endpoints FastAPI

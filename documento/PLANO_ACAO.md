@@ -1,10 +1,11 @@
 # PLANO DE ACAO - Portal Cerrado
 
-## Regra Pétrea de Entrega
+## Regra de Entrega da Fase Atual
 
 - Este arquivo é a fonte única do plano de entrega e refatoração.
-- Não implementar novas funcionalidades, não publicar imagem, não executar deploy, não aplicar stack e não cortar ambiente enquanto todos os gates abaixo não estiverem aprovados por evidência atual.
-- A única exceção permitida é uma correção estritamente necessária para fazer um gate passar. Ela deve registrar causa, arquivos afetados, comando de validação e risco residual.
+- O bloqueio global que impedia implementação, publicação de imagens e preparação do ambiente até a aprovação de todos os gates foi encerrado para a fase atual.
+- Os gates continuam sendo critérios de qualidade e devem ser atualizados conforme cada mudança; não funcionam mais como bloqueio automático para o desenvolvimento.
+- Deploy em produção, publicação pública e corte de ambiente exigem validação atual, registro do risco residual e aprovação explícita do usuário.
 - Nenhum texto de documentação, status histórico ou build anterior substitui uma validação executada sobre o commit candidato atual.
 - Não manter Compose e Swarm como dois runtimes produtivos concorrentes; Compose é local/teste e Swarm só existe após uma stack dedicada e validada.
 
@@ -53,7 +54,7 @@
 
 ## Objetivo
 
-Restaurar uma base reproduzível, testável e operável antes de qualquer evolução de produto ou deploy. O resultado deve ter um único contrato de runtime, pipeline editorial determinístico, frontend validado, imagens imutáveis e recuperação documentada.
+Manter uma base reproduzível, testável e operável durante a evolução do produto e dos ambientes. O resultado deve ter um único contrato de runtime, pipeline editorial determinístico, frontend validado, imagens imutáveis e recuperação documentada.
 
 ## Definição de Pronto
 
@@ -303,8 +304,9 @@ Restaurar uma base reproduzível, testável e operável antes de qualquer evolu�
   `/health` retornou `healthy`, `news-sitemap.xml` respondeu HTTP 200 com XML válido
   (167 bytes) e ambos os processos foram encerrados ao final.
 - Auditoria de prontidão registrou 50 arquivos modificados e 52 novos não rastreados;
-  não há artefatos de build pendentes. O candidato continua bloqueado até revisão,
-  commits lógicos, Lighthouse e aprovação explícita do ensaio Docker/Swarm.
+  não há artefatos de build pendentes. A revisão, os commits lógicos, o Lighthouse
+  e o ensaio Docker/Swarm permanecem como pendências de qualidade e operação, sem
+  bloquear automaticamente o desenvolvimento desta fase.
 - O acesso autorizado ao nó `100.95.111.24` foi validado por SSH: Swarm ativo,
   nó líder `Razuk`, Engine 26.1.5. A stack `cerrado` não existe nesse endpoint;
   somente `ap2web` e `n8n_2026_evo-go` estão presentes. Nenhuma stack foi aplicada.

@@ -4,6 +4,7 @@ import { MarketBar } from "@/components/markets/MarketBar";
 import { DesktopNav } from "@/components/NavMenu";
 import { MobileMenu } from "@/components/home/MobileMenu";
 import { formatCampoGrandeDate } from "@/lib/time";
+import { BrandLogo } from "@/components/BrandLogo";
 
 /**
  * Barra utilitária: data e edição.
@@ -24,14 +25,14 @@ function UtilityBar() {
   });
 
   return (
-    <div className="border-b border-black/10 bg-canvas">
-      <div className="container-editorial flex items-center justify-between gap-4 py-2">
+    <div className="bg-accent-soil text-white">
+      <div className="container-editorial flex min-h-8 items-center justify-between gap-4 py-1.5">
         <p className="min-w-0 truncate text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted">
           {/* capitalizar só a primeira letra: `first-letter` respeita o texto real */}
-          <span className="first-letter:uppercase">{today}</span>
+          <span className="first-letter:uppercase text-white/80">{today}</span>
         </p>
         <p className="hidden shrink-0 text-[11px] font-black uppercase tracking-[0.18em] text-accent-leaf sm:block">
-          Mato Grosso do Sul
+          Portal regional · Mato Grosso do Sul
         </p>
       </div>
     </div>
@@ -79,21 +80,11 @@ export default function Header() {
         <MarketBar />
       </Suspense>
       <header className="relative z-30 border-b border-black/10 bg-surface">
-        <div className="container-editorial flex items-center gap-4 py-4">
+        <div className="container-editorial flex items-center gap-4 py-3.5 sm:py-4">
           <div className="lg:hidden">
             <MobileMenu />
           </div>
-          <Link href="/" className="mx-auto flex items-center gap-3 lg:mx-0" aria-label="Portal Cerrado — página inicial">
-            <span aria-hidden="true" className="grid h-11 w-11 shrink-0 place-items-center rounded bg-accent-soil font-display text-lg font-bold text-white">
-              PC
-            </span>
-            <span className="flex flex-col leading-none">
-              <span className="font-display text-2xl font-bold tracking-tight text-text-primary">
-                Portal <span className="text-accent-soil">Cerrado</span>
-              </span>
-              <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-deep">Agro · Mercados · Mato Grosso do Sul</span>
-            </span>
-          </Link>
+          <div className="mx-auto lg:mx-0"><BrandLogo /></div>
           <div className="ml-auto flex items-center gap-3">
             <SearchControl />
             <Link href="/busca" aria-label="Buscar no Portal Cerrado" className="grid h-10 w-10 place-items-center rounded border border-black/15 text-accent-soil transition-colors hover:bg-black/5 md:hidden">
@@ -102,8 +93,8 @@ export default function Header() {
                 <line x1="16.5" y1="16.5" x2="21" y2="21" />
               </svg>
             </Link>
-            <Link href="/contato" className="hidden rounded bg-accent-soil px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-charcoal lg:inline-block">
-              Contato
+            <Link href="/contato" className="hidden rounded-sm bg-accent-soil px-5 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-charcoal lg:inline-block">
+              Fale com a redação
             </Link>
           </div>
         </div>
