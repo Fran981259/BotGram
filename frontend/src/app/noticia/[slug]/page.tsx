@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { metaDescription } from "@/lib/siteMetadata";
 import { fetchArticleBySlug, fetchNewsResponse } from '@/lib/api';
 import type { Article } from '@/lib/api';
 import {
@@ -38,11 +39,11 @@ export async function generateMetadata({
     const image = article.image_url || PATTERN_IMAGES[article.category] || PATTERN_IMAGES.general;
     return {
       title: article.title,
-      description: article.summary || article.title,
+      description: metaDescription(article.summary || article.title),
       alternates: { canonical: `${base}/noticia/${slug}` },
       openGraph: {
         title: article.title,
-        description: article.summary,
+        description: metaDescription(article.summary || article.title),
         type: 'article',
         url: `${base}/noticia/${slug}`,
         images: [{ url: image, alt: article.title }],
@@ -50,7 +51,7 @@ export async function generateMetadata({
       twitter: {
         card: 'summary_large_image',
         title: article.title,
-        description: article.summary || article.title,
+        description: metaDescription(article.summary || article.title),
         images: [{ url: image, alt: article.title }],
       },
     };

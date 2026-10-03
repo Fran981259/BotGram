@@ -44,7 +44,7 @@ export default function Footer() {
         </div>
 
         <nav aria-labelledby="footer-editorias">
-          <h4 id="footer-editorias" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Editorias</h4>
+          <h2 id="footer-editorias" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Editorias</h2>
           <ul className="mt-3 space-y-0.5 text-sm">
             {EDITORIAS.map((item) => (
               <li key={item.href}>
@@ -57,7 +57,7 @@ export default function Footer() {
         </nav>
 
         <nav aria-labelledby="footer-institucional">
-          <h4 id="footer-institucional" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Institucional</h4>
+          <h2 id="footer-institucional" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Institucional</h2>
           <ul className="mt-3 space-y-0.5 text-sm">
             {INSTITUCIONAL.map((item) => (
               <li key={item.href}>
@@ -71,7 +71,7 @@ export default function Footer() {
         </nav>
 
         <nav aria-labelledby="footer-colunistas">
-          <h4 id="footer-colunistas" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Colunistas</h4>
+          <h2 id="footer-colunistas" className="border-b border-black/10 pb-2 text-xs font-black uppercase tracking-[0.18em] text-accent-soil">Colunistas</h2>
           <ul className="mt-3 space-y-1 text-sm">
             {REPORTER_LIST.filter((r) => r.slug !== "redacao.cerrado")
               .slice(0, 7)

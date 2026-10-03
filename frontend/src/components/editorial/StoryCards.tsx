@@ -2,6 +2,19 @@ import Link from "next/link";
 import { ArticleImage } from "@/components/home/ArticleImage";
 import { ArticleMeta } from "@/components/editorial/ArticleMeta";
 import type { Article } from "@/lib/api";
+
+/**
+ * Nível do título do card.
+ *
+ * Medido na auditoria técnica: a home saltava de h1 para h3, e a página de
+ * busca também. O salto de um nível é ruído na hierarquia de títulos — tanto
+ * para leitor de tela quanto para buscador.
+ *
+ * O padrão continua h3, que é o correto quando o card está dentro de uma seção
+ * que já tem título próprio. Quem mostra o card como irmão de um h1, como a
+ * primeira dobra da home, pede h2 explicitamente.
+ */
+export type NivelTitulo = "h2" | "h3" | "h4";
 import { getCategory } from "@/lib/categories";
 
 /**
@@ -88,7 +101,8 @@ export function HeroStoryCard({
  * Imagem acima, texto abaixo. É o cartão de coluna secundária, não uma
  * versão reduzida do hero: o hero tem véu e não tem borda.
  */
-export function FeatureStoryCard({ article }: { article: Article }) {
+export function FeatureStoryCard({ article, nivel = "h3" }: { article: Article; nivel?: NivelTitulo }) {
+  const Titulo = nivel;
   const { href, target } = useArticleLink(article);
   const cat = getCategory(article.category);
   const summary = lead(article);
@@ -105,11 +119,11 @@ export function FeatureStoryCard({ article }: { article: Article }) {
       </Link>
       <div className="flex flex-1 flex-col p-5">
         <span className="text-[10px] font-black uppercase tracking-[0.18em] text-accent-leaf">{cat.label}</span>
-        <h3 className="mt-2 text-balance font-display text-xl font-black leading-tight text-text-primary transition-colors group-hover:text-accent-leaf">
+        <Titulo className="mt-2 text-balance font-display text-xl font-black leading-tight text-text-primary transition-colors group-hover:text-accent-leaf">
           <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
-        </h3>
+        </Titulo>
         {summary && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-text-muted">{summary}</p>}
         <ArticleMeta article={article} className="mt-4 border-t border-black/8 pt-3" />
       </div>
@@ -124,7 +138,8 @@ export function FeatureStoryCard({ article }: { article: Article }) {
  * fixa: é a razão que impede cartões com alturas diferentes conforme a imagem
  * de origem muda.
  */
-export function StoryCard({ article, showSummary = true }: { article: Article; showSummary?: boolean }) {
+export function StoryCard({ article, showSummary = true, nivel = "h3" }: { article: Article; showSummary?: boolean; nivel?: NivelTitulo }) {
+  const Titulo = nivel;
   const { href, target } = useArticleLink(article);
   const summary = lead(article);
 
@@ -139,11 +154,11 @@ export function StoryCard({ article, showSummary = true }: { article: Article; s
         />
       </Link>
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-balance font-display text-lg font-black leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
+        <Titulo className="text-balance font-display text-lg font-black leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
           <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
-        </h3>
+        </Titulo>
         {showSummary && summary && (
           <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-text-muted">{summary}</p>
         )}
@@ -158,7 +173,8 @@ export function StoryCard({ article, showSummary = true }: { article: Article; s
  *
  * Sem borda própria: a lista é que separa os itens, para não duplicar linha.
  */
-export function CompactStoryCard({ article, showThumbnail = true }: { article: Article; showThumbnail?: boolean }) {
+export function CompactStoryCard({ article, showThumbnail = true, nivel = "h3" }: { article: Article; showThumbnail?: boolean; nivel?: NivelTitulo }) {
+  const Titulo = nivel;
   const { href, target } = useArticleLink(article);
   const cat = getCategory(article.category);
 
@@ -183,11 +199,11 @@ export function CompactStoryCard({ article, showThumbnail = true }: { article: A
       )}
       <div className="min-w-0 flex-1">
         <span className="text-[10px] font-black uppercase tracking-[0.18em] text-accent-leaf">{cat.label}</span>
-        <h3 className="mt-1 text-balance font-display text-base font-black leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
+        <Titulo className="mt-1 text-balance font-display text-base font-black leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
           <Link href={href} target={target} className="py-1">
             {article.title}
           </Link>
-        </h3>
+        </Titulo>
       </div>
     </article>
   );

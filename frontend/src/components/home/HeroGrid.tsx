@@ -39,18 +39,20 @@ function MainCard({ article }: { article: Article }) {
 function FeatureCard({ article }: { article: Article }) {
   return (
     <div className="border-b border-black/10 pb-5 last:border-b-0 last:pb-0">
-      <StoryCard article={article} showSummary={false} />
+      {/* h2, não h3: nesta seção a manchete principal é h1 e estes cards são
+          irmãos dela. Com h3 a página saltava um nível. */}
+      <StoryCard article={article} showSummary={false} nivel="h2" />
     </div>
   );
 }
 
 /** Item da coluna "Mais recentes": lista densa, com dezoito ritmo. */
 function CompactCard({ article }: { article: Article }) {
-  return <CompactStoryCard article={article} />;
+  return <CompactStoryCard article={article} nivel="h2" />;
 }
 
 function LatestCard({ article }: { article: Article }) {
-  return <StoryCard article={article} />;
+  return <StoryCard article={article} nivel="h2" />;
 }
 
 export function HeroGrid({

@@ -7,7 +7,7 @@ import { TrendPanel } from "@/components/TrendPanel";
 import { Pagination } from "@/components/Pagination";
 import { parsePage } from "@/lib/pagination";
 import { NewsCard } from "@/components/NewsCard";
-import { DEFAULT_SOCIAL_IMAGE } from "@/lib/siteMetadata";
+import { DEFAULT_SOCIAL_IMAGE, metaDescription } from "@/lib/siteMetadata";
 import { getPublicSiteUrl } from "@/lib/siteUrl";
 
 export const revalidate = 300;
@@ -23,12 +23,12 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
   const canonical = `${base}/reporter/${slug}${currentPage > 1 ? `?page=${currentPage}` : ""}`;
   return {
     title: `${r.name} — ${r.beat}`,
-    description: r.bio,
+    description: metaDescription(r.bio),
     alternates: { canonical },
     robots: currentPage > 1 ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: {
       title: `${r.name} — ${r.beat}`,
-      description: r.bio,
+      description: metaDescription(r.bio),
       url: canonical,
       type: "profile",
       images: [DEFAULT_SOCIAL_IMAGE],

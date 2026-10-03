@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { fetchNewsResponse, fetchTrends } from "@/lib/api";
+import { metaDescription } from "@/lib/siteMetadata";
 import { NewsCard } from "@/components/NewsCard";
 import { CATEGORY_LIST, getCategory, categorySlug } from "@/lib/categories";
 import { TrendPanel } from "@/components/TrendPanel";
@@ -25,14 +26,27 @@ export async function generateMetadata({ params, searchParams }: { params: Promi
   const currentPage = parsePage(page);
   if (currentPage === null || !categorySlug(slug)) notFound();
   const canonical = `${base}/categoria/${slug}${currentPage > 1 ? `?page=${currentPage}` : ""}`;
+  // A descrição anterior media 42 caracteres, curta demais para a faixa útil
+  // dos 155 que um buscador mostra. O total vem da API; se a busca falhar, o
+  // texto cai na versão sem número em vez de prometer um dado que não temos.
+  let total: number | null = null;
+  try {
+    const r = await fetchNewsResponse({ category: slug, limit: 1 });
+    total = r.total ?? null;
+  } catch {
+    total = null;
+  }
+  const descricao = total
+    ? `${cat.label} em Mato Grosso do Sul: ${total} ${total === 1 ? "matéria publicada" : "matérias publicadas"}, com apuração da redação do Portal Cerrado.`
+    : `${cat.label} em Mato Grosso do Sul: acompanhe as principais atualizações, com contexto regional e apuração da redação do Portal Cerrado.`;
   return {
     title: cat.label,
-    description: `Notícias de ${cat.label} em Mato Grosso do Sul`,
+    description: metaDescription(descricao),
     alternates: { canonical },
     robots: currentPage > 1 ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: {
       title: `${cat.label} | Portal Cerrado`,
-      description: `Notícias de ${cat.label} em Mato Grosso do Sul`,
+      description: metaDescription(descricao),
       url: canonical,
       type: "website",
       images: [DEFAULT_SOCIAL_IMAGE],

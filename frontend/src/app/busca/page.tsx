@@ -12,7 +12,12 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const query = (q ?? "").trim();
   return {
     title: query ? `Busca: ${query} — Portal Cerrado` : "Busca — Portal Cerrado",
-    description: query ? `Resultados da busca por "${query}" no Portal Cerrado.` : "Encontre notícias no Portal Cerrado.",
+    // 48 caracteres medidos: curto demais para a faixa útil dos 155 que
+    // um buscador mostra. O texto diz o que a página é e onde buscar, sem
+    // inventar quantidade de resultados — a busca não foi feita aqui.
+    description: query
+      ? `Resultados para "${query}" no Portal Cerrado: as manchetes mais recentes sobre o tema, por editoria e por data, com apuração da redação.`
+      : "Busque notícias do Portal Cerrado por tema, palavra-chave ou editoria, com apuração da redação em Mato Grosso do Sul.",
     robots: { index: false, follow: true },
     alternates: { canonical: `${BASE}/busca` },
   };
@@ -94,6 +99,10 @@ export default async function BuscaPage({ searchParams }: { searchParams: Promis
         </p>
       ) : query ? (
         <>
+            {/* A grade traz títulos em h3. Sem este h2 a página saltava de h1
+                direto para h3, o que a auditoria técnica apontou. O rótulo
+                é só para leitor de tela e buscador, como o da home. */}
+            <h2 className="sr-only">Resultados para {q}</h2>
           <p className="mt-6 text-sm text-text-muted" role="status">
             {results.length} {results.length === 1 ? "resultado" : "resultados"} para <strong>{q}</strong> · varredura nas {scanned} publicações mais recentes do portal.
           </p>
