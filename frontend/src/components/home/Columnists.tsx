@@ -24,14 +24,19 @@ type ColumnistEntry = {
  * que já estava nos destaques, no agro ou no ranking de mais lidas — o plano
  * proíbe manchete repetida na mesma página.
  *
- * Por isso busca duas matérias por colunista e fica com a primeira que ainda não
- * apareceu. Se as duas já apareceram, o cartão é omitido: preferimos um bloco
- * menor a uma manchete repetida.
+ * Por isso busca cinco matérias por colunista e fica com a primeira que ainda
+ * não apareceu. Se as cinco já apareceram, o cartão é omitido: preferimos um
+ * bloco menor a uma manchete repetida.
+ *
+ * O limite é cinco e não dois por causa de medição: com dois, o bloco caía de 8
+ * cartões para 4, porque quase toda assinatura tinha as duas matérias mais
+ * recentes já na página. Com cinco, o bloco volta a ter largura sem repetir
+ * nenhuma manchete.
  */
 async function loadColumnists(excluded: Set<string>): Promise<ColumnistEntry[]> {
   const settled = await Promise.allSettled(
     COLUMNIST_SLUGS.map((slug) =>
-      fetchNewsResponse({ reporterSlug: slug, region: "ms", limit: 2, sortBy: "recent" }).then((res) =>
+      fetchNewsResponse({ reporterSlug: slug, region: "ms", limit: 5, sortBy: "recent" }).then((res) =>
         res.news.find((article) => !excluded.has(article.slug || article.title)),
       ),
     ),

@@ -160,9 +160,12 @@ export default async function Home() {
         O destino é /contato porque não existe endpoint de assinatura: um
         formulário que "envia" para lugar nenhum seria pior que um link honesto.
       */}
-      <section aria-label="Assine a newsletter" className="container-editorial pb-10">
+      {/* `div` e não `section`: o NewsletterBlock já é uma região com
+          aria-labelledby. Envolvê-lo numa section criava dois landmarks
+          anunciando o mesmo bloco — medido na auditoria da fase 8. */}
+      <div className="container-editorial pb-10">
         <NewsletterBlock />
-      </section>
+      </div>
 
       <script
         type="application/ld+json"
