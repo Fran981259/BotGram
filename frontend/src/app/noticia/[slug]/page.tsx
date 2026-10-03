@@ -379,7 +379,10 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
         </section>
       )}
 
-      <div className="container-custom pb-12">
+      {/* Sem espacamento inferior aqui: o wrapper externo da página já traz
+          64px de rodapé, medidos. Somar outro deixava o CTA a 136px do
+          rodapé, contra os 88px que o resto do site já usa. */}
+      <div className="container-custom">
         <NewsletterBlock
           eyebrow="Fim da matéria"
           title="Achou um erro ou tem uma pauta?"
