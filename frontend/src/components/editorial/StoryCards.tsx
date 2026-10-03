@@ -216,6 +216,7 @@ export function CompactStoryCard({ article, showThumbnail = true, nivel = "h3" }
             sizes="128px"
             className="aspect-[16/10] w-28 rounded-sm sm:w-32 xl:w-24 2xl:w-28"
             showBadge={false}
+            denso
           />
         </Link>
       )}
