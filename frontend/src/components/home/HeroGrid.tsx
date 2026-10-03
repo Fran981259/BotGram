@@ -84,13 +84,22 @@ export function HeroGrid({
         do documento (scrollWidth 1046 contra 1024). Entre 1024px e 1279px a
         home agora empilha, que é o desenho pretendido para essa largura.
       */}
-      <div className="grid gap-x-6 gap-y-7 xl:grid-cols-12">
+      <div className="grid gap-x-6 gap-y-7 xl:items-start xl:grid-cols-12">
         {main && <MainCard article={main} />}
 
+        {/*
+          Coluna de apoio: uma matéria forte e uma compacta.
+
+          Antes eram dois cartões de destaque empilhados. Medido, os dois juntos
+          davam 749px e, como a grade estica as colunas, a coluna principal
+          ficava com 328px de vazio embaixo do herói. Misturando uma forte e uma
+          compacta, as três colunas ficam dentro de cerca de 90px umas das outras.
+        */}
         {hasSide && (
-          <div className="grid gap-5 sm:grid-cols-2 xl:col-span-3 xl:grid-cols-1">
-            {side.slice(0, 2).map((article) => (
-              <FeatureCard key={article.slug || article.title} article={article} />
+          <div className="grid content-start gap-5 sm:grid-cols-2 xl:col-span-3 xl:grid-cols-1">
+            {side[0] && <FeatureCard key={side[0].slug || side[0].title} article={side[0]} />}
+            {side.slice(1, 2).map((article) => (
+              <CompactCard key={article.slug || article.title} article={article} />
             ))}
           </div>
         )}

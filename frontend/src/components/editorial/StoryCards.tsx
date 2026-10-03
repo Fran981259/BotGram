@@ -15,6 +15,28 @@ import type { Article } from "@/lib/api";
  * primeira dobra da home, pede h2 explicitamente.
  */
 export type NivelTitulo = "h2" | "h3" | "h4";
+
+/**
+ * Razão da imagem do herói.
+ *
+ * Antes esta caixa usava altura de 100% a partir do breakpoint grande, com a
+ * razão desligada. Isso dependia de um ancestral com altura definida, e não
+ * havia: o item da grade estica, porém o elemento article no meio da cadeia é
+ * um bloco comum, sem altura. A altura de 100% resolvia contra um valor
+ * indefinido e a caixa colapsava para zero — a imagem sumia e o recorte de
+ * texto era cortado pelo overflow do próprio card.
+ *
+ * Medido antes da correção, com a mesma largura de 632px em 1920, 1440, 1366,
+ * 1280 e 1024px: caixa de 632 por 0 pixels, imagem de 0 pixels. No celular a
+ * razão simples funcionava, e era por isso que o defeito só aparecia no desktop.
+ *
+ * Agora a caixa tem razão em toda largura, sem depender de altura de ancestral.
+ * A escolha de 4/3 a partir de 1280px é deliberada: o título da manchete fica
+ * sobreposto na base da imagem, então uma caixa muito alta empurraria a
+ * manchete para fora da primeira dobra. Com 632px de largura, 4/3 dá 474px —
+ * cabe numa janela de 768px de altura com a manchete ainda visível.
+ */
+const HERO_RATIO = "aspect-[4/5] sm:aspect-[16/10] xl:aspect-[4/3]";
 import { getCategory } from "@/lib/categories";
 
 /**
@@ -64,8 +86,8 @@ export function HeroStoryCard({
         <ArticleImage
           article={article}
           priority={priority}
-          sizes="(min-width: 1024px) 60vw, 100vw"
-          className="aspect-[4/5] sm:aspect-[16/10] lg:h-full lg:aspect-auto"
+          sizes="(min-width: 1280px) 50vw, (min-width: 640px) 100vw, 100vw"
+          className={HERO_RATIO}
           showBadge={false}
         />
         <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/5" />
