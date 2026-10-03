@@ -26,6 +26,14 @@
 | Contrato Swarm | aprovado | CI `run #37049823402`: Compose e stack renderizados em imagens presas ao SHA, sem `:latest`, mesmos 9 serviços |
 | Deploy e rollback em teste | adiado | decisão registrada em 02/10/2026: sai do conjunto bloqueante e passa a valer após o redesign |
 
+### Redesign do frontend
+
+> Concluído em 03/10/2026 sobre o candidato `32fb2fa`, em nove fases
+> incrementais. Regras, método de medição, retificações e pendências em
+> `PLANO_REDESIGN.md`. Nenhuma pendência aberta por lá bloqueia este plano;
+> a aprovação visual do resultado continua sendo de quem olha as capturas
+> pareadas.
+
 ### Ressalvas registradas
 
 - **O gate de dependências não pode ser validado com `--offline`.** A validação

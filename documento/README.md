@@ -5,6 +5,8 @@ Portal de noticias automatizado com backend FastAPI, fila Celery, banco PostgreS
 ## Fonte de verdade
 
 - `PLANO_ACAO.md` — gates, ordem de execução e bloqueios atuais.
+- `PLANO_REDESIGN.md` — regras e evidência das nove fases do redesign do
+  frontend. Reconstrução: o texto original vivia só na conversa de trabalho.
 - `MEMORIA.md` — fatos canônicos confirmados sobre arquitetura, runtime e restrições.
 - `OPERACAO.md` — procedimentos de backup, rotação, rollback e promoção.
 - `SPEC.md` — visão curta do produto e componentes.
