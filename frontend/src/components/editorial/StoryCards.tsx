@@ -14,7 +14,7 @@ import type { Article } from "@/lib/api";
  * que já tem título próprio. Quem mostra o card como irmão de um h1, como a
  * primeira dobra da home, pede h2 explicitamente.
  */
-export type NivelTitulo = "h2" | "h3" | "h4";
+export type NivelTitulo = "h1" | "h2" | "h3" | "h4";
 
 /**
  * Razão da imagem do herói.
@@ -71,14 +71,18 @@ export function HeroStoryCard({
   article,
   priority = true,
   showSummary = true,
+  nivel = "h1",
 }: {
   article: Article;
   priority?: boolean;
   showSummary?: boolean;
+  /** `h1` na home, onde esta manchete é o título da página. `h2` em editoria. */
+  nivel?: NivelTitulo;
 }) {
   const { href, target } = useArticleLink(article);
   const cat = getCategory(article.category);
   const summary = lead(article);
+  const Titulo = nivel;
 
   return (
     <article className="news-card-hover group relative block overflow-hidden rounded-lg bg-charcoal">
@@ -102,9 +106,9 @@ export function HeroStoryCard({
             famílias mantêm h2/h3, que é a hierarquia correta quando o card
             aparece dentro de uma seção que já tem título próprio.
           */}
-          <h1 className="mt-3 text-balance font-display text-3xl font-black leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+          <Titulo className="mt-3 text-balance font-display text-3xl font-black leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
             {article.title}
-          </h1>
+          </Titulo>
           {showSummary && summary && (
             <p className="mt-3 line-clamp-2 max-w-3xl text-sm font-medium leading-relaxed text-white/85 sm:text-base">
               {summary}

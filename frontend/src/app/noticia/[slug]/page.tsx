@@ -16,6 +16,8 @@ import { categorySlug, getCategory, PATTERN_IMAGES } from '@/lib/categories';
 import { ArticleQuickGuide } from '@/components/article/ArticleQuickGuide';
 import { ArticleImage } from '@/components/home/ArticleImage';
 import { ArticleShareActions } from '@/components/article/ArticleShareActions';
+import { StoryCard } from '@/components/editorial/StoryCards';
+import { NewsletterBlock, SectionHeader } from '@/components/editorial/SectionBlocks';
 import { ArticleSidebar } from '@/components/article/ArticleSidebar';
 import { getReporter, reporterInitials } from '@/lib/reporters';
 import { REPORTERS } from '@/lib/reporters';
@@ -83,21 +85,30 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
 
   let related: Article[] = [];
   let latest: Article[] = [];
+  let continuacao: Article[] = [];
   try {
-    const [relatedResult, latestResult] = await Promise.all([
-      fetchNewsResponse({ category: article.category, limit: 6 }),
+    // Uma consulta a mais matérias por editoria, não uma consulta a mais.
+    //
+    // A barra lateral mostra "mais recentes" e "relacionadas". A continuação
+    // abaixo do artigo precisa de matérias que não sejam nenhuma das duas — e
+    // antes eu filtrava a continuação contra a própria lista de relacionadas,
+    // o que a deixava sempre vazia. Pedindo quatorze em vez de seis, as três
+    // listas saem do mesmo conjunto sem sobreposição, e a continuação ainda
+    // fecha com quatro cartões quando a editoria tem matéria para isso.
+    const [poolResult, latestResult] = await Promise.all([
+      fetchNewsResponse({ category: article.category, limit: 14 }),
       fetchNewsResponse({ limit: 6 }),
     ]);
+
     latest = latestResult.news.filter((a) => a.slug !== slug).slice(0, 5);
 
-    // "Relacionadas" não pode repetir o que "Mais recentes" da barra lateral já
-    // traz: as duas listas são servidas por consultas diferentes e se cruzam.
-    // Medido: a mesma matéria aparecia nas duas, com o mesmo título e a mesma
-    // editoria, na mesma barra lateral.
-    const latestKeys = new Set(latest.map((article) => article.slug || article.title));
-    related = relatedResult.news
-      .filter((a) => a.slug !== slug && !latestKeys.has(a.slug || a.title))
-      .slice(0, 5);
+    const foraDaPagina = (a: Article) => a.slug !== slug && !latest.some((l) => l.slug === a.slug);
+    related = poolResult.news.filter(foraDaPagina).slice(0, 5);
+
+    const chavesVisiveis = new Set([...latest, ...related].map((a) => a.slug || a.title));
+    continuacao = poolResult.news
+      .filter((a) => !chavesVisiveis.has(a.slug || a.title))
+      .slice(0, 4);
   } catch {
     related = [];
     latest = [];
@@ -338,6 +349,41 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
           relatedArticles={related}
           reporterName={reporter.name}
           source={primarySource}
+        />
+      </div>
+
+      {/*
+        Continuação depois do artigo.
+
+        A barra lateral só ocupa o começo da coluna. Numa matéria longa, a
+        coluna principal desce muito mais que ela e a direita fica vazia por
+        um trecho longo — a página morre depois do bloco do autor. Estas quatro
+        matérias e a chamada de contato devolvem o fim da página ao mesmo
+        sistema visual da home.
+
+        O conjunto já vem excluindo o que a barra lateral mostra e a matéria
+        atual, então nenhuma manchete se repete na página.
+      */}
+      {continuacao.length > 0 && (
+        <section aria-labelledby="continuacao-heading" className="container-custom py-10">
+          <SectionHeader
+            eyebrow="Para seguir"
+            title="Mais sobre este assunto"
+            id="continuacao-heading"
+          />
+          <div className="mt-6 grid gap-x-6 gap-y-7 sm:grid-cols-2 lg:grid-cols-4">
+            {continuacao.map((article) => (
+              <StoryCard key={article.slug || article.title} article={article} nivel="h3" />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div className="container-custom pb-12">
+        <NewsletterBlock
+          eyebrow="Fim da matéria"
+          title="Achou um erro ou tem uma pauta?"
+          description="A redação do Portal Cerrado lê cada contato. Correção, sugestão de pauta ou parceria são respondidas."
         />
       </div>
     </div>

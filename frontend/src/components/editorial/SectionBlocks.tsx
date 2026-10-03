@@ -63,8 +63,6 @@ export function NewsletterBlock({
   eyebrow = "Newsletter",
   title = "Acompanhe o Cerrado",
   description = "Resumo das principais notícias de Mato Grosso do Sul, direto no seu e-mail.",
-  placeholder = "seu@email.com",
-  action = "Assinar",
   dark = false,
 }: {
   eyebrow?: string;
@@ -94,30 +92,27 @@ export function NewsletterBlock({
         {description}
       </p>
 
-      {/*
-        O destino não existe no backend: esta fase é fundação visual, e um form
-        que "envia" para lugar nenhum seria pior que um link honesto. Quando o
-        endpoint existir, este bloco vira o formulário real.
-      */}
-      <form action="/contato" method="get" className="mt-5 grid max-w-xl gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
-        <label htmlFor="newsletter-email" className="sr-only">
-          {placeholder}
-        </label>
-        <input
-          id="newsletter-email"
-          name="email"
-          type="email"
-          required
-          placeholder={placeholder}
-          className="h-11 min-w-0 rounded border border-black/15 bg-canvas px-4 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus-visible:outline-2 focus-visible:outline-accent-leaf"
-        />
-        <button
-          type="submit"
-          className="h-11 shrink-0 rounded bg-accent-leaf px-6 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-charcoal"
-        >
-          {action}
-        </button>
-      </form>
+        {/*
+          Não há inscrição em newsletter, e o destino nunca leu o endereço: a
+          rota de contato descarta o parâmetro. Um campo de e-mail com o botão
+          "Assinar" prometia uma assinatura que não existe — e o leitor podia
+          crer que o endereço tinha sido guardado.
+
+          Virou chamada de contato, que é o que o bloco de fato faz. Quando
+          existir endpoint de assinatura, aqui volta um formulário de verdade.
+        */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-3">
+          <Link
+            href="/contato"
+            className="inline-flex h-11 shrink-0 items-center gap-2 rounded bg-accent-leaf px-6 text-sm font-bold uppercase tracking-wider text-white transition-colors hover:bg-charcoal"
+          >
+            Falar com a redação
+            <span aria-hidden="true">→</span>
+          </Link>
+          <p className={`text-xs leading-relaxed ${dark ? "text-white/70" : "text-text-muted"}`}>
+            Sugestão, correção ou parceria: a resposta sai pela redação.
+          </p>
+        </div>
     </section>
   );
 }
