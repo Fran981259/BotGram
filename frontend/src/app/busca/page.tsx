@@ -107,8 +107,14 @@ export default async function BuscaPage({ searchParams }: { searchParams: Promis
             {results.length} {results.length === 1 ? "resultado" : "resultados"} para <strong>{q}</strong> · varredura nas {scanned} publicações mais recentes do portal.
           </p>
           <div className="mt-6 grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
-            {results.map((article) => (
-              <NewsCard key={article.slug || article.title} article={article} />
+            {results.map((article, index) => (
+              /*
+                Só o primeiro resultado recebe `priority`. A imagem dele é o LCP
+                da página de busca — medido, o Next acusava no console que ela
+                estava sendo detectada como LCP sem carregamento eager. Os demais
+                continuam lazy, que é o correto para o que está abaixo da dobra.
+              */
+              <NewsCard key={article.slug || article.title} article={article} priority={index === 0} />
             ))}
           </div>
         </>

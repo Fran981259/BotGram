@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArticleImage } from "@/components/home/ArticleImage";
 import { ArticleMeta } from "@/components/editorial/ArticleMeta";
 import type { Article } from "@/lib/api";
+import { articleHref, articleSummary } from "@/lib/articlePresentation";
 
 /**
  * Nível do título do card.
@@ -35,8 +36,16 @@ export type NivelTitulo = "h1" | "h2" | "h3" | "h4";
  * sobreposto na base da imagem, então uma caixa muito alta empurraria a
  * manchete para fora da primeira dobra. Com 632px de largura, 4/3 dá 474px —
  * cabe numa janela de 768px de altura com a manchete ainda visível.
+ *
+ * Este é o padrão das páginas de editoria, e ele NÃO mudou na fase de
+ * reconstrução da home. A home passa a razão dela pelo parâmetro `ratio`: a
+ * coluna principal do hero na referência é quase quadrada (medido 852px por
+ * 808px na imagem aprovada, ou 1,05), e é essa proporção que faz as três
+ * colunas do hero terminarem na mesma altura. Com o 6/5 das editorias a coluna
+ * da manchete fica cerca de 100px mais baixa que a dos três cards de apoio, e
+ * o hero termina com um degrau.
  */
-const HERO_RATIO = "aspect-[4/5] sm:aspect-[16/10] xl:aspect-[4/3]";
+const HERO_RATIO = "aspect-[4/5] sm:aspect-[16/10] xl:aspect-[6/5]";
 import { getCategory } from "@/lib/categories";
 
 /**
@@ -44,8 +53,8 @@ import { getCategory } from "@/lib/categories";
  *
  * Fontes externas continuam indo para o exterior; o resto é rota interna.
  */
-export function useArticleLink(article: Article) {
-  const href = article.slug ? `/noticia/${article.slug}` : article.url || "#";
+export function getArticleLink(article: Article) {
+  const href = articleHref(article);
   const isExternal = !article.slug && Boolean(article.url);
   return { href, isExternal, target: isExternal ? ("_blank" as const) : undefined };
 }
@@ -57,10 +66,6 @@ export function useArticleLink(article: Article) {
  * padrão da expressão aqui no comentário: o `asterisco-asterisco-eslash`
  * encerraria este bloco de documentação antes da hora.
  */
-function lead(article: Article): string {
-  return (article.summary || "").replaceAll("**", "").trim();
-}
-
 /**
  * HeroStoryCard — a matéria mais importante da página.
  *
@@ -72,41 +77,51 @@ export function HeroStoryCard({
   priority = true,
   showSummary = true,
   nivel = "h1",
+  ratio = HERO_RATIO,
+  titleClassName = "text-3xl sm:text-4xl lg:text-5xl",
 }: {
   article: Article;
   priority?: boolean;
   showSummary?: boolean;
   /** `h1` na home, onde esta manchete é o título da página. `h2` em editoria. */
   nivel?: NivelTitulo;
+  /**
+   * Razão da caixa. O padrão é o das páginas de editoria, e a home passa a
+   * dele porque a coluna principal do hero tem uma proporção diferente — ver
+   * `HeroGrid`. Sem este parâmetro, mudar o hero da home mudaria também a
+   * capa das editorias.
+   */
+  ratio?: string;
+  titleClassName?: string;
 }) {
-  const { href, target } = useArticleLink(article);
+  const { href, target } = getArticleLink(article);
   const cat = getCategory(article.category);
-  const summary = lead(article);
+  const summary = articleSummary(article);
   const Titulo = nivel;
 
   return (
-    <article className="news-card-hover group relative block overflow-hidden rounded-lg bg-charcoal">
+    <article className="news-card-hover group relative block overflow-hidden rounded-none bg-charcoal">
       <Link href={href} target={target} className="block">
         <ArticleImage
           article={article}
           priority={priority}
           sizes="(min-width: 1280px) 50vw, (min-width: 640px) 100vw, 100vw"
-          className={HERO_RATIO}
+          className={ratio}
           showBadge={false}
         />
-        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/5" />
-        <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7 lg:p-8">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-leaf px-3 py-1.5 text-[10px] font-black uppercase tracking-wider shadow-lg">
+        <div aria-hidden="true" className="media-veil absolute inset-0" />
+        <div className="absolute inset-x-0 bottom-0 p-5 text-white sm:p-7">
+          <span className="inline-flex items-center gap-1.5 rounded-none bg-accent-soil px-3 py-1.5 text-[10px] font-black uppercase tracking-wider">
             {cat.label}
           </span>
           {/*
             Nível de título: a manchete principal é o h1 da página.
-            `HeroStoryCard` é usada só aqui e na variante `hero` da fachada, que
-            não tem nenhum consumidor — trocar o rótulo é seguro. As demais
-            famílias mantêm h2/h3, que é a hierarquia correta quando o card
-            aparece dentro de uma seção que já tem título próprio.
+            `HeroStoryCard` é usada na home e na variante `hero` da fachada, que
+            não tem consumidor. As demais famílias mantêm h2/h3, que é a
+            hierarquia correta quando o card aparece dentro de uma seção que já
+            tem título próprio.
           */}
-          <Titulo className="mt-3 text-balance font-display text-3xl font-black leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+          <Titulo className={`mt-3 text-balance font-display font-black leading-[1.05] tracking-tight text-white transition-colors group-hover:text-gold ${titleClassName}`}>
             {article.title}
           </Titulo>
           {showSummary && summary && (
@@ -114,7 +129,7 @@ export function HeroStoryCard({
               {summary}
             </p>
           )}
-          <ArticleMeta article={article} className="mt-4 text-white/75" />
+          <ArticleMeta article={article} showUpdated={false} className="mt-4 text-white/75" />
         </div>
       </Link>
     </article>
@@ -127,19 +142,19 @@ export function HeroStoryCard({
  * Imagem acima, texto abaixo. É o cartão de coluna secundária, não uma
  * versão reduzida do hero: o hero tem véu e não tem borda.
  */
-export function FeatureStoryCard({ article, nivel = "h3" }: { article: Article; nivel?: NivelTitulo }) {
+export function FeatureStoryCard({ article, nivel = "h3", imageClassName = "aspect-[16/10]" }: { article: Article; nivel?: NivelTitulo; /** Razão da imagem; o padrão não muda quem já usa este card. */ imageClassName?: string }) {
   const Titulo = nivel;
-  const { href, target } = useArticleLink(article);
+  const { href, target } = getArticleLink(article);
   const cat = getCategory(article.category);
-  const summary = lead(article);
+  const summary = articleSummary(article);
 
   return (
-    <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-lg border border-black/10 bg-surface">
+    <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-none bg-surface">
       <Link href={href} target={target} className="block" tabIndex={-1} aria-hidden="true">
         <ArticleImage
           article={article}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="aspect-[16/10]"
+          className={imageClassName}
           showBadge={false}
         />
       </Link>
@@ -151,7 +166,7 @@ export function FeatureStoryCard({ article, nivel = "h3" }: { article: Article; 
           </Link>
         </Titulo>
         {summary && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-text-muted">{summary}</p>}
-        <ArticleMeta article={article} className="mt-4 border-t border-black/8 pt-3" />
+        <ArticleMeta article={article} className="mt-auto border-t border-line pt-2.5" />
       </div>
     </article>
   );
@@ -164,16 +179,17 @@ export function FeatureStoryCard({ article, nivel = "h3" }: { article: Article; 
  * fixa: é a razão que impede cartões com alturas diferentes conforme a imagem
  * de origem muda.
  */
-export function StoryCard({ article, showSummary = true, nivel = "h3" }: { article: Article; showSummary?: boolean; nivel?: NivelTitulo }) {
+export function StoryCard({ article, showSummary = true, nivel = "h3", priority = false }: { article: Article; showSummary?: boolean; nivel?: NivelTitulo; priority?: boolean }) {
   const Titulo = nivel;
-  const { href, target } = useArticleLink(article);
-  const summary = lead(article);
+  const { href, target } = getArticleLink(article);
+  const summary = articleSummary(article);
 
   return (
-    <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-lg border border-black/10 bg-surface">
+    <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-none bg-surface">
       <Link href={href} target={target} className="block" tabIndex={-1} aria-hidden="true">
         <ArticleImage
           article={article}
+          priority={priority}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           className="aspect-[16/10]"
           showBadge={false}
@@ -188,7 +204,7 @@ export function StoryCard({ article, showSummary = true, nivel = "h3" }: { artic
         {showSummary && summary && (
           <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-text-muted">{summary}</p>
         )}
-        <ArticleMeta article={article} className="mt-auto border-t border-black/8 pt-3" />
+        <ArticleMeta article={article} className="mt-auto border-t border-line pt-2.5" />
       </div>
     </article>
   );
@@ -201,11 +217,11 @@ export function StoryCard({ article, showSummary = true, nivel = "h3" }: { artic
  */
 export function CompactStoryCard({ article, showThumbnail = true, nivel = "h3" }: { article: Article; showThumbnail?: boolean; nivel?: NivelTitulo }) {
   const Titulo = nivel;
-  const { href, target } = useArticleLink(article);
+  const { href, target } = getArticleLink(article);
   const cat = getCategory(article.category);
 
   return (
-    <article className="group flex items-start gap-4 border-b border-black/10 py-3 last:border-b-0 last:pb-0">
+    <article className="group flex items-start gap-4 border-b border-line py-3 last:border-b-0 last:pb-0">
       {/*
           A miniatura encolhe a partir de 1280px porque é aí que este card
           aparece: dentro do rail de 3 colunas, que mede 288px. Com a
@@ -242,12 +258,12 @@ export function CompactStoryCard({ article, showThumbnail = true, nivel = "h3" }
  * Empilha no mobile e vira linha no `sm`. É o cartão de ritmo de meio de página.
  */
 export function HorizontalStoryCard({ article }: { article: Article }) {
-  const { href, target } = useArticleLink(article);
+  const { href, target } = getArticleLink(article);
   const cat = getCategory(article.category);
-  const summary = lead(article);
+  const summary = articleSummary(article);
 
   return (
-    <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-lg border border-black/10 bg-surface sm:flex-row">
+    <article className="news-card-hover group flex h-full flex-col overflow-hidden rounded-none bg-surface sm:flex-row">
       <Link href={href} target={target} className="block shrink-0 sm:w-2/5" tabIndex={-1} aria-hidden="true">
         <ArticleImage
           article={article}
@@ -264,48 +280,7 @@ export function HorizontalStoryCard({ article }: { article: Article }) {
           </Link>
         </h3>
         {summary && <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-text-muted">{summary}</p>}
-        <ArticleMeta article={article} className="mt-auto pt-3" />
-      </div>
-    </article>
-  );
-}
-
-/**
- * RankedStoryItem — item de ranking ("Mais lidas").
- *
- * O número é o elemento editorial. Não tem imagem: em lista de ranking, a
- * imagem rouba a atenção do número.
- */
-export function RankedStoryItem({
-  article,
-  rank,
-  showCategory = false,
-}: {
-  article: Article;
-  rank: number;
-  showCategory?: boolean;
-}) {
-  const { href, target } = useArticleLink(article);
-
-  return (
-    <article className="group flex items-start gap-4 border-b border-black/10 py-4 last:border-b-0 last:pb-0">
-      <span
-        aria-hidden="true"
-        className="font-display text-3xl font-black leading-none text-accent-leaf/35 tabular-nums"
-      >
-        {rank}
-      </span>
-      <div className="min-w-0 flex-1">
-        {showCategory && (
-          <span className="text-[10px] font-black uppercase tracking-[0.18em] text-accent-leaf">
-            {article.category}
-          </span>
-        )}
-        <h3 className="text-balance font-display text-base font-bold leading-snug text-text-primary transition-colors group-hover:text-accent-leaf">
-          <Link href={href} target={target} className="py-1">
-            {article.title}
-          </Link>
-        </h3>
+        <ArticleMeta article={article} className="mt-auto pt-2.5" />
       </div>
     </article>
   );

@@ -1,5 +1,8 @@
 # RELATÓRIO DO REDESIGN - Portal Cerrado
 
+> Relatório histórico do candidato `823fc06`. As medições e afirmações desta
+> página não representam automaticamente o checkout atual nem o ambiente ativo.
+
 Relatório de entrega, para quem precisa **verificar** o trabalho e não apenas
 lê-lo. O plano e o raciocínio de cada decisão estão em `PLANO_REDESIGN.md`; aqui
 está o que foi feito, como checar, e o que ficou de fora.
@@ -120,7 +123,7 @@ Declarado porque ausência de número é diferente de número ausente:
 | Pendência | Depende de |
 | --- | --- |
 | Aprovação visual das capturas | De quem julga |
-| `RankedStoryItem` sem uso desde a Fase 2 | Decisão de remover código morto |
+| `RankedStoryItem` sem uso desde a Fase 2 | Removido na higienização posterior |
 | Ferramentas do auditor não versionadas | Decisão de versionamento |
 | Vulnerabilidade alta fora de produção (`brace-expansion`) | Autorizar `overrides` no `package.json` |
 | Gate 8: imagem publicada e rollback em teste | Ver seção seguinte |

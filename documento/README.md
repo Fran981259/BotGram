@@ -2,30 +2,31 @@
 
 Portal de noticias automatizado com backend FastAPI, fila Celery, banco PostgreSQL e frontend Next.js.
 
-## Fonte de verdade
+## Governança documental
 
-- `PLANO_ACAO.md` — gates, ordem de execução e bloqueios atuais.
-- `PLANO_REDESIGN.md` — regras e evidência das nove fases do redesign do
-  frontend. Reconstrução: o texto original vivia só na conversa de trabalho.
-- `RELATORIO_REDESIGN.md` — relatório de entrega: o que foi feito,
-  como reproduzir a verificação e o que ficou de fora.
-- `MEMORIA.md` — fatos canônicos confirmados sobre arquitetura, runtime e restrições.
-- `OPERACAO.md` — procedimentos de backup, rotação, rollback e promoção.
-- `SPEC.md` — visão curta do produto e componentes.
-- `EVIDENCIAS_VALIDACAO.md` — evidências datadas; não substitui a execução atual.
-- `PRONTIDAO_CANDIDATO.md` — snapshot histórico, válido apenas para o SHA registrado.
+| Papel | Documento | Regra de uso |
+| --- | --- | --- |
+| Plano vivo | `PLANO_ACAO.md` | Prioridades, critérios de pronto e próximos passos. |
+| Fatos canônicos | `MEMORIA.md` | Arquitetura, separação teste/produção e restrições permanentes. |
+| Operação | `OPERACAO.md` | Backup, rotação, rollback e promoção; não substitui checagem ao vivo. |
+| Evidência datada | `EVIDENCIAS_VALIDACAO.md` | Resultado associado a data, ambiente e comando. |
+| Especificação | `SPEC.md` | Limites e objetivo de produto, sem status operacional. |
+| Histórico | `PLANO_REDESIGN.md`, `RELATORIO_REDESIGN.md` | Não descrevem automaticamente o checkout ou runtime atual. |
+| Referência futura | `PLANO_ML.md`, `REFERENCIA_ML_NOTICIAS_CURTAS_PTB.md` | Não autorizam implementação, deploy ou promoção. |
 
-Os documentos de ML são planejamento futuro e não autorizam implementação nem promoção.
+Em caso de conflito, a precedência é: código e testes do commit atual;
+instruções de `AGENTS.md`; `PLANO_ACAO.md`; `MEMORIA.md`; `OPERACAO.md`; e,
+por fim, evidências e snapshots datados.
 
-Quando houver conflito, prevalece: código/testes no commit atual, `PLANO_ACAO.md`, `MEMORIA.md`, `OPERACAO.md` e demais documentos datados.
+## Estado de referência local — 04/10/2026
 
-## Estado auditado em 29/09/2026
-
-- Branch: `codex/otimizacao-completa`; base: `850cdd6`.
-- Checkout limpo no início da otimização.
-- Ruff, Mypy, compileall, ESLint e build frontend aprovados nesta sessão.
-- Suíte completa: 145 testes aprovados em ambiente limpo Python 3.12 com as restrições atuais de dependências.
-- Docker indisponível nesta sessão; Compose, Swarm e smoke externo permanecem não verificados.
+- A higienização e o refinamento visual ainda estão sem commit; o checkout não
+  deve ser descrito como limpo até existir um candidato identificado por SHA.
+- Ruff, lint, TypeScript, build Next e `git diff --check` passaram nesta árvore.
+- A suíte Python passou com 149 testes; há um aviso transitivo de depreciação do
+  `TestClient`/Starlette.
+- O ambiente de teste tem evidência histórica de uma stack Swarm `cerrado_test`
+  saudável. Seu estado presente deve ser consultado no host antes de qualquer ação.
 
 ## Stack
 - FastAPI

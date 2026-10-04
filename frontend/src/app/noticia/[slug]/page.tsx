@@ -17,7 +17,7 @@ import { ArticleQuickGuide } from '@/components/article/ArticleQuickGuide';
 import { ArticleImage } from '@/components/home/ArticleImage';
 import { ArticleShareActions } from '@/components/article/ArticleShareActions';
 import { StoryCard } from '@/components/editorial/StoryCards';
-import { NewsletterBlock, SectionHeader } from '@/components/editorial/SectionBlocks';
+import { NewsroomCtaBlock, SectionHeader } from '@/components/editorial/SectionBlocks';
 import { ArticleSidebar } from '@/components/article/ArticleSidebar';
 import { getReporter, reporterInitials } from '@/lib/reporters';
 import { REPORTERS } from '@/lib/reporters';
@@ -383,7 +383,7 @@ export default async function NoticiaPage({ params }: { params: Promise<{ slug: 
           64px de rodapé, medidos. Somar outro deixava o CTA a 136px do
           rodapé, contra os 88px que o resto do site já usa. */}
       <div className="container-custom">
-        <NewsletterBlock
+        <NewsroomCtaBlock
           eyebrow="Fim da matéria"
           title="Achou um erro ou tem uma pauta?"
           description="A redação do Portal Cerrado lê cada contato. Correção, sugestão de pauta ou parceria são respondidas."

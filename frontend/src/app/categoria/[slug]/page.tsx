@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { fetchNewsResponse, fetchTrends } from "@/lib/api";
 import { metaDescription } from "@/lib/siteMetadata";
-import { FeatureStoryCard, HeroStoryCard, StoryCard } from "@/components/editorial/StoryCards";
+import { HeroStoryCard, HorizontalStoryCard, StoryCard } from "@/components/editorial/StoryCards";
 import { SectionHeader } from "@/components/editorial/SectionBlocks";
 import { CATEGORY_LIST, getCategory, categorySlug } from "@/lib/categories";
 import { TrendPanel } from "@/components/TrendPanel";
@@ -109,7 +109,7 @@ export default async function CategoriaPage({ params, searchParams }: { params: 
         </div>
       ) : (
         <>
-          <div className="grid gap-x-6 gap-y-7 lg:grid-cols-12 lg:items-start">
+          <div className="grid gap-x-6 gap-y-7 lg:grid-cols-12 lg:items-stretch">
             {destaque && (
               <div className="lg:col-span-7">
                 <HeroStoryCard article={destaque} nivel="h2" />
@@ -117,9 +117,9 @@ export default async function CategoriaPage({ params, searchParams }: { params: 
             )}
 
             {apoio.length > 0 && (
-              <div className="grid content-start gap-5 lg:col-span-5">
+              <div className="grid gap-5 lg:col-span-5 lg:h-full lg:grid-rows-2">
                 {apoio.map((a) => (
-                  <FeatureStoryCard key={a.slug || a.title} article={a} nivel="h3" />
+                  <HorizontalStoryCard key={a.slug || a.title} article={a} />
                 ))}
               </div>
             )}

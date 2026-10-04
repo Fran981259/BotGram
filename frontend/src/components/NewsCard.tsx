@@ -16,17 +16,16 @@ import {
  * páginas de categoria, busca e repórter continuam importando daqui sem mudar
  * nada e passam a ter razão de imagem estável e metadados padronizados.
  *
- * A implementação antiga está preservada em `components/legacy/NewsCard.tsx`
- * para comparação e para reverter esta etapa com um único comando. A remoção
- * de ambos é o último passo do redesign, quando `NewsCard` não tiver mais
- * importações.
  */
 export function NewsCard({
   article,
   variant = "default",
+  priority = false,
 }: {
   article: Article;
   variant?: "hero" | "default" | "compact" | "feature";
+  /** Primeiro resultado de uma lista: a imagem acima da dobra é o LCP. */
+  priority?: boolean;
 }) {
   switch (variant) {
     case "hero":
@@ -36,6 +35,6 @@ export function NewsCard({
     case "feature":
       return <FeatureStoryCard article={article} />;
     default:
-      return <StoryCard article={article} />;
+      return <StoryCard article={article} priority={priority} />;
   }
 }

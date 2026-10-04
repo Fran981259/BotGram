@@ -1,5 +1,8 @@
 # MEMORIA - Portal Cerrado
 
+> Documento canônico de arquitetura e restrições. Estado externo só é válido
+> quando acompanhado de data e evidência; este arquivo não autoriza deploy.
+
 ## Canonico
 - Nome do projeto: Portal Cerrado.
 - Backend: FastAPI + Celery + Redis + PostgreSQL.
@@ -33,24 +36,30 @@
 
 ## Estado auditado
 
-- Última auditoria: 29/09/2026.
-- Base: `850cdd6`, branch `codex/otimizacao-completa`.
-- A suíte completa de testes não foi aprovada: há travamento no primeiro teste administrativo.
-- Resultados anteriores registrados neste diretório são históricos e precisam ser repetidos no candidato atual.
+- Última validação local: 04/10/2026.
+- A suíte completa passou com 149 testes; houve somente um aviso de depreciação
+  transitivo do `TestClient`/Starlette.
+- Resultados anteriores registrados neste diretório são históricos e não
+  substituem a validação do candidato atual.
 
-## Migração Swarm Pendente
+## Histórico e migração Swarm
 - O destino oficial é Docker Swarm, com stack `cerrado`; nenhuma nova configuração deve introduzir o nome `botgram`.
 - O runtime legado confirmado em 2026-09-18 é Docker Compose, projeto `botgram`, em `/home/razuk/BotGram`, com rede bridge `botgram_portal_cerrado_net` e volumes `botgram_postgres_data` e `botgram_app_data`.
 - Esse legado não pode ser parado, removido, renomeado ou alterado até haver aprovação explícita de cutover e encerramento da janela de rollback.
 - AP2WEB ocupa a porta pública 8000 no Swarm. Portal Cerrado não deve publicar API nessa porta.
 - A porta 443 está ocupada por Tailscale no host. Antes do corte público, definir a estratégia TLS/proxy: liberar 443, usar outro IP/host, ou usar Tailscale Serve/Funnel. Não assumir que Caddy pode bindar 443.
-- Para validação em ambiente de teste, a abordagem recomendada é uma stack paralela `cerrado_test`: rede overlay isolada, PostgreSQL e Redis novos, sem reutilizar volumes `botgram_*`, Caddy exposto somente em porta temporária não conflitante (por exemplo 8081) e API/frontend internos.
-- A stack Swarm de teste atual usa `portal_cerrado`, `celery_worker`, `celery_beat`, `flower`, `frontend` e `caddy`, com DNS de serviço e sem `container_name`. Nomes finais de produção ainda são decisão pendente; não tratá-los como runtime atual.
+- Para validação, a stack paralela `cerrado_test` usa rede e volumes isolados,
+  sem reutilizar `botgram_*`. As portas e serviços publicados devem ser lidos do
+  manifesto aplicado e do estado do host, nunca presumidos a partir deste texto.
+- A stack Swarm de teste declarada usa nove serviços: `postgres`, `redis`,
+  `portal_cerrado`, `celery_worker`, `celery_beat`, `celery_monitoring`,
+  `flower`, `frontend` e `caddy`; ela não usa `container_name`. Nomes finais
+  de produção continuam pendentes e não devem ser inferidos a partir do teste.
 - Antes de qualquer rollout: concluir validações locais, gerar imagens imutáveis por SHA, validar migrations em banco novo e legado simulado, confirmar espaço em disco e documentar backup, rollback e verificação.
 - Preflight remoto de 2026-09-18: Swarm manager ativo, cerca de 6,5 GB livres no host, nenhuma stack Swarm `cerrado` ativa e nenhum Caddy do Portal em execução.
 
 ## Separação Teste e Produção
-- O repositório remoto de teste é `git@github.com:Fran981259/cerrado_test.git`; produção deve usar um repositório/branch definido explicitamente antes do cutover.
+- O repositório remoto de teste anterior foi descontinuado. Antes de qualquer novo deploy, definir e validar explicitamente a origem Git e a branch do ambiente; produção deve ter origem e branch próprias antes do cutover.
 - A stack de teste usa `cerrado_test`, volumes `cerrado_test_*`, rede isolada e portas externas 8100 (API), 3100 (frontend), 8181 (HTTP) e 8843 (HTTPS).
 - Produção deve trocar nome da stack, volumes, portas públicas, `SITE_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_API_URL` e `CORS_ALLOWED_ORIGINS` antes da aplicação.
 - Imagens de produção devem ser publicadas no registry aprovado por digest SHA-256; nunca promover `latest` nem reutilizar imagens do teste.

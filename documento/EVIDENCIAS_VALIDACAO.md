@@ -7,7 +7,7 @@ decisões, gates e critérios; esta página guarda evidências extensas.
 
 Cada evidência é histórica e vale somente para o SHA, data, ambiente e comando registrados. Nenhum resultado desta página substitui a execução no candidato atual.
 
-## Auditoria atual — 29/09/2026
+## Snapshot histórico — 29/09/2026
 
 - Base: `850cdd6`, branch `codex/otimizacao-completa`.
 - Ruff: aprovado com `./venv/bin/ruff check app tests scripts`.
@@ -20,7 +20,19 @@ Cada evidência é histórica e vale somente para o SHA, data, ambiente e comand
 - A falha anterior do `.venv` local foi reproduzida como incompatibilidade de Starlette 1.x com o TestClient; a restrição `starlette<1.0.0` resolveu o problema no ambiente limpo.
 - Docker: indisponível na sessão; validações Compose, Swarm, healthcheck real e rollback não foram executadas.
 
-## CI, imagens e performance
+## Validação local — 04/10/2026
+
+- Escopo: checkout com refinamentos visuais e higienização ainda não agrupados em
+  candidato Git; portanto esta entrada não aprova deploy ou promoção.
+- Frontend: `npm run lint`, `npx tsc --noEmit` e `npm run build` passaram; o
+  build Next gerou 37 rotas.
+- Backend: `ruff check app tests scripts` passou e `pytest -q` executou 149
+  testes com sucesso.
+- Integridade: `git diff --check` passou.
+- Aviso residual: uma depreciação transitiva do `TestClient`/Starlette, sem
+  falha de teste.
+
+## Snapshot de CI, imagens e performance — 29/09/2026
 
 - CI publicado com todos os jobs verdes; manifests GHCR consultados no host de teste e digests registrados no relatório de prontidão. Nenhuma stack foi aplicada.
 - Auditoria local de performance/SEO: Lighthouse não está instalado; o build produziu 1,36 MB de assets estáticos e 2,06 MB de server bundle, não há tags `<img>` cruas no frontend, as três rotas de metadata existem e `npm audit` offline não encontrou vulnerabilidades altas.

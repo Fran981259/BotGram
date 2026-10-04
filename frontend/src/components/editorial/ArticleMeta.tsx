@@ -16,17 +16,20 @@ export function ArticleMeta({
   article,
   variant = "default",
   showCategory = false,
+  /** Some com a linha "atualizado …", que é ruído em peça editorial densa. */
+  showUpdated = true,
   className = "",
 }: {
   article: Article;
   /** `inline` é para listas densas; `stack` empilha em telas estreitas. */
   variant?: "default" | "inline" | "stack";
   showCategory?: boolean;
+  showUpdated?: boolean;
   className?: string;
 }) {
   const reporter = getReporter(article.reporter_slug);
   const published = formatMarketTime(article.published_at);
-  const updated = formatMarketTime(article.updated_at);
+  const updated = showUpdated ? formatMarketTime(article.updated_at) : "";
 
   // Sem reporter e sem data não há linha de metadados que valha a pena.
   if (!reporter.name && !published) return null;

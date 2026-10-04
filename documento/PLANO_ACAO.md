@@ -339,3 +339,18 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 - Saída: relatório de arquivos removidos/consolidados, contratos preservados, validações e risco residual.
 - Evidência atual: ambiente limpo Python 3.12 com `requirements.txt` restrito executou 145 testes em 19,79s; Ruff, Mypy, compileall, ESLint, TypeScript e build frontend passaram.
 - Risco residual: Docker/Swarm, smoke externo, Lighthouse e promoção permanecem não executados por regra de entrega; continuam gates separados da otimização.
+
+## Fase 12 — Governança documental contínua
+
+- Estado: em andamento em 04/10/2026.
+- Objetivo: manter documentação curta, datada e escalável sem duplicar estado
+  de runtime ou transformar relatórios históricos em instruções operacionais.
+- Regras:
+  1. `README.md` classifica cada documento como vivo, canônico, operacional,
+     evidência, histórico ou referência futura.
+  2. `MEMORIA.md` registra apenas arquitetura, restrições e fatos confirmados.
+  3. `OPERACAO.md` descreve procedimento; status de host exige consulta ao vivo.
+  4. Todo resultado de comando deve incluir data, ambiente e candidato quando
+     for usado como evidência de promoção.
+  5. Mudanças de rota, serviço, variável de ambiente ou contrato devem atualizar
+     o mapa do projeto e o documento canônico correspondente no mesmo commit.

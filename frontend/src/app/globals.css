@@ -1,38 +1,66 @@
 @import "tailwindcss";
 
-/*
- * A implementação pré-redesign do NewsCard foi preservada em
- * `components/legacy/` para permitir reversão, mas nenhuma página a importa.
- * Sem esta exclusão o Tailwind continua varrendo o arquivo e emite as classes
- * do card antigo para o bundle de produção — CSS morto que ninguém pediu e
- * ninguém usa. Se um dia o card legado voltar a ser importado, apague esta
- * linha; sem ela o estilo some silenciosamente em vez de falhar alto.
- */
-@source not "../components/legacy";
-
 @theme {
-  /* Editorial claro — papel, Cerrado profundo, dourado, carvão */
-  --color-canvas: #f6f2e8;
+  /* ─────────────────────────────────────────────────────────────────────────
+     PALETA EDITORIAL — referência visual aprovada
+     ─────────────────────────────────────────────────────────────────────────
+
+     Antes desta fase o projeto tinha UM verde (`--color-accent-soil`) fazendo
+     três-paperéis: fundo da faixa de cotações, fundo do rodapé e cor de botão.
+     Cada uso escolhia uma opacidade e o resultado eram três verdes
+     ligeiramente diferentes.
+
+     Agora o verde é uma ESCALA com nomes, e cada papel tem o seu:
+
+       green-deep   #13261a  faixa de cotações, faixa escura, rodapé
+       green-dark   #1a3123  painel da faixa escura
+       accent-soil  #1f4a30  verde médio — botões, selos, réguas, acentos
+       accent-leaf  #1f4a30  alias histórico, mesmo valor (ver nota abaixo)
+
+     O dourado também foi alinhado à referência, de #c88a2c para #b8923a: menos
+     laranja, mais ocre. E o papel passou de #f6f2e8 para #f7f5ef, que é
+     exatamente a cor da referência.
+
+     `accent-leaf` e `accent-soil` são o MESMO valor de propósito. Eles
+     coexistiam há várias fases com valores próximos e diferentes; unificá-los
+     aqui é o que impede a divergência voltar.
+     ───────────────────────────────────────────────────────────────────────── */
+  --color-canvas: #f7f5ef;
   --color-surface: #ffffff;
-  --color-text-primary: #161a16;
-  --color-text-muted: #4f554e;
-  --color-accent-soil: #1e4620;
-  --color-accent-leaf: #1e4620;
-  --color-gold: #c88a2c;
-  --color-gold-deep: #8a530a;
+  --color-paper-alt: #efece3;
+  --color-text-primary: #1a1a1a;
+  --color-text-muted: #5f6159;
+  --color-line: #e2dfd4;
+
+  --color-green-deep: #13261a;
+  --color-green-dark: #1a3123;
+  --color-accent-soil: #1f4a30;
+  --color-accent-leaf: #1f4a30;
+
+  --color-gold: #b8923a;
+  --color-gold-deep: #8a6420;
   --color-charcoal: #1a1d20;
+
+  /* Variação de mercado: verde e vermelho próprios, e não as cores genéricas
+     do Tailwind. A referência trata alta e baixa como informação, não como
+     decoração. */
+  --color-market-up: #1f7a3d;
+  --color-market-down: #b3392b;
+
   --font-display: "Zilla Slab", Georgia, serif;
   --font-sans: "Inter", Arial, sans-serif;
 
-  /* Arredondamento sóbrio, editorial */
+  /* Arredondamento mínimo, editorial.
+     A referência não tem canto arredondado visível em nenhuma peça. Antes
+     `--radius-lg` valia 6px e os cards saíam visivelmente "app". */
   --radius-sm: 0.125rem;
-  --radius-md: 0.25rem;
-  --radius-lg: 0.375rem;
-  --radius-xl: 0.5rem;
-  --radius-2xl: 0.75rem;
-  --radius-3xl: 1rem;
+  --radius-md: 0.125rem;
+  --radius-lg: 0.125rem;
+  --radius-xl: 0.1875rem;
+  --radius-2xl: 0.25rem;
+  --radius-3xl: 0.375rem;
   --radius-full: 9999px;
-  --radius: 0.25rem;
+  --radius: 0.125rem;
 
   /* ─────────────────────────────────────────────────────────────────────────
      FASE 1 — FUNDAÇÃO DE DESIGN SYSTEM
@@ -70,8 +98,19 @@
      `--container-narrow` era `.container-custom`, `--container-editorial` era
      `.container-editorial`. As duas larguras foram mantidas de propósito —
      unificá-las em um único número já é decisão visual de redesign. */
-  --container-narrow: 1280px;
-  --container-editorial: 1344px;
+  /* Larguras de conteúdo.
+     `--container-narrow` era `.container-custom`, `--container-editorial` era
+     `.container-editorial`. As duas lived em 1360px e 1480px: 120px de
+     diferença entre o cabeçalho e o corpo, que é exatamente o tipo de desalinho
+     que a auditoria visual pointed e que ninguém notava conscientemente.
+
+     Agora as duas são 1480px, para dar densidade editorial ao desktop sem
+     quebrar o alinhamento. Alinhar os dois containers é o que faz o cabeçalho, o hero, as
+     seções, o CTA e o rodapé compartilharem a mesma margem esquerda — o
+     requisito de "coluna controlada" da referência, e não de "tudo ocupa a
+     largura da tela". */
+  --container-narrow: 1480px;
+  --container-editorial: 1480px;
   --container-gutter: 1.25rem;
   --container-gutter-lg: 1.5rem;
 
@@ -94,6 +133,11 @@
      contraste entre papel, cartão e linha fique explícito em vez de implícito. */
   --color-border: color-mix(in srgb, var(--color-text-primary) 12%, transparent);
   --color-border-strong: color-mix(in srgb, var(--color-text-primary) 24%, transparent);
+
+  /* Régua editorial fina. A referência separa tudo com um traço de 1px em
+     #e2dfd4, e é isso que substitui as caixas: a hierarquia vem do filete, não
+     da borda da caixa. */
+  --rule-hairline: 1px;
 }
 
 * { scrollbar-width: thin; scrollbar-color: #cfc7b4 transparent; }
@@ -163,6 +207,52 @@ body {
 }
 .eyebrow-light {
   color: var(--color-gold);
+}
+
+/* Cabeçalho de coluna editorial.
+   A referência repete exatamente esta forma quatro vezes na página: um filete
+   de 2px sob o título, o "Ver mais" alinhado à direita e nada mais. Sem caixa,
+   sem fundo, sem cantos. */
+.rule-heading {
+  border-bottom: 2px solid var(--color-accent-soil);
+}
+.rule-heading-dark {
+  border-bottom-color: color-mix(in srgb, var(--color-gold) 55%, transparent);
+}
+
+/* Filete fino entre itens de uma mesma lista. */
+.hairline > * + * {
+  border-top: 1px solid var(--color-line);
+}
+.hairline-dark > * + * {
+  border-top: 1px solid color-mix(in srgb, #ffffff 16%, transparent);
+}
+
+/* Sobreposição de leitura sobre imagem.
+   Um único gradiente para todas as peças com texto sobre foto: sem ele, cada
+   card repetia a mesma rampa com intensidades diferentes.
+
+   A rampa é forte de propósito. Medido na feature da home: com o degradê
+   anterior, manchetes brancas ficavam competindo com o texto que JÁ estava na
+   fotografia — no caso, a placa "E.E. SEBASTIÃO SANTANA DA SILVEIRA" de uma
+   foto de escola, que saía legível por cima da manchete. Uma manchete que
+   perde para o letreiro do fundo não é manchete. */
+.media-veil {
+  background: linear-gradient(
+    to top,
+    rgba(8, 14, 10, 0.95) 0%,
+    rgba(8, 14, 10, 0.8) 26%,
+    rgba(8, 14, 10, 0.35) 58%,
+    rgba(8, 14, 10, 0.08) 82%,
+    transparent 100%
+  );
+}
+
+/* Sem arredondamento e sem sombra: as duas coisas que faziam a home parecer
+   um painel de aplicativo em vez de um jornal. */
+.editorial-surface {
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .masthead-rule {

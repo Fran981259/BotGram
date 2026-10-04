@@ -12,6 +12,15 @@
 - Regra atual: o bloqueio global por aprovação prévia de todos os gates não se aplica mais à fase atual; produção e cortes de ambiente continuam exigindo validação atual e aprovação explícita.
 - Toda mudança relevante deve registrar validação e risco residual; os gates seguem como critérios de qualidade, não como bloqueio automático de desenvolvimento.
 
+## Documentation Governance
+
+- `documento/README.md` classifica os documentos e define a precedência entre
+  plano vivo, fatos canônicos, operação, evidências e snapshots históricos.
+- Atualize este mapa, `documento/MEMORIA.md` e `documento/OPERACAO.md` no mesmo
+  commit quando uma mudança alterar contrato, rota, serviço ou procedimento.
+- Evidências de teste e de produção precisam registrar data, ambiente e SHA;
+  nunca inferir o estado atual de um relatório antigo.
+
 ## Folder Structure
 
 - app/ → API, editorial pipeline, persistence and background tasks
@@ -104,12 +113,16 @@
 - frontend/next.config.ts → allowlist explícita de hosts de imagem
 - frontend/package.json → scripts oficiais de lint, TypeScript e build
 - frontend/src/app/page.tsx → home dinâmica por depender de cotações no-store
+- frontend/src/components/home/EditorialColumns.tsx → colunas editoriais triplas com manchete e apoios
+- frontend/src/components/home/FeatureBand.tsx → faixa destacada de reportagens principais
+- frontend/src/components/home/MarketStrip.tsx → barra horizontal de cotações e commodities
+- frontend/src/lib/articleDedupKey.ts → deduplicação determinística de artigos na home
+- frontend/src/lib/articlePresentation.ts → formatação e apresentação editorial de artigos
 - frontend/src/app/robots.ts → metadata de robots
 - frontend/src/app/sitemap.ts → sitemap público
 - frontend/src/app/news-sitemap.xml/route.ts → sitemap de notícias com fallback 503
 - frontend/src/app/not-found.tsx → fallback editorial de rota inexistente
 - frontend/src/app/noticia/[slug]/loading.tsx → skeleton da leitura de notícia
-- documento/PRONTIDAO_CANDIDATO.md → gates finais e bloqueios para promoção
 - Caddyfile → CSP, Permissions-Policy e headers HTTP de segurança
 - tests/unit/test_security_headers.py → contrato estático dos headers do proxy
 - docker-compose.local.yml → override local com bridge e portas temporárias
@@ -173,12 +186,8 @@
 - frontend/src/lib/adminApi.ts → cliente HTTP do painel admin (tipagens + fetch)
 - frontend/src/styles/admin.css → design system dark mode exclusivo do admin
 
-## Last updated: 2026-09-29
-
-- news_articles · reporters · publication_logs · scraping_tasks · editorial_trend_signals
-
-## Data Retention
+## Data retention
 
 - Backups operacionais: retenção de 30 dias; restore de teste obrigatório antes de expurgo.
 
-## Last updated: 2026-09-30
+## Last updated: 2026-10-04

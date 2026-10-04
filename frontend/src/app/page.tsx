@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { fetchNewsResponse, rankHomepageArticles, type Article } from "@/lib/api";
 import { prioritizeElectionCoverage, selectPoliticalCoverage } from "@/lib/electionCoverage";
-import { HeroGrid, MostReadBlock } from "@/components/home/HeroGrid";
-import { NewsletterBlock } from "@/components/editorial/SectionBlocks";
-import { AgroModule } from "@/components/home/AgroModule";
+import { HeroGrid } from "@/components/home/HeroGrid";
+import { FeatureBand } from "@/components/home/FeatureBand";
+import { EditorialColumns, type EditorialColumn } from "@/components/home/EditorialColumns";
+import { MarketStrip } from "@/components/home/MarketStrip";
 import { PoderModule } from "@/components/home/PoderModule";
 import { Columnists } from "@/components/home/Columnists";
+import { NewsroomCtaBlock } from "@/components/editorial/SectionBlocks";
 import { DEFAULT_SOCIAL_IMAGE } from "@/lib/siteMetadata";
 import { getPublicSiteUrl } from "@/lib/siteUrl";
+import { articleDedupKey, uniqueArticles } from "@/lib/articleDedupKey";
 
 const BASE = getPublicSiteUrl();
 
@@ -33,17 +36,56 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-function pickHero(recent: Article[]): { main?: Article; side: Article[]; rail: Article[]; latest: Article[] } {
-  const unique = recent.filter((article, index, all) => {
-    const key = article.slug || article.title;
-    return all.findIndex((item) => (item.slug || item.title) === key) === index;
-  });
+/**
+ * Hero: uma manchete, três apoios e o trilho de últimas.
+ *
+ * A ordem aqui é a ordem da página. O que o hero consome é retirado do mesmo
+ * conjunto que o resto da página usa, e cada bloco marca no conjunto o que
+ * pegou — é o que garante que nenhuma manchete apareça duas vezes.
+ */
+function pickHero(recent: Article[]): {
+  main?: Article;
+  side: Article[];
+  rail: Article[];
+} {
+  const unique = uniqueArticles(prioritizeElectionCoverage(rankHomepageArticles(recent)));
   return {
     main: unique[0],
-    side: unique.slice(1, 3),
-    rail: unique.slice(3, 6),
-    latest: unique.slice(6, 10),
+    side: unique.slice(1, 4),
+    rail: unique.slice(4, 11),
   };
+}
+
+/**
+ * Colunas editoriais.
+ *
+ * As quatro editorias são reais e existem como rota: Política, Agronegócio,
+ * Tecnologia e Geral. Nenhuma foi inventada, e nenhuma matéria se repete nem
+ * entre colunas nem com o que já está acima — o `taken` é compartilhado e cada
+ * coluna só recebe o que ainda não foi exibido.
+ *
+ * Se uma editoria tiver menos de quatro matérias disponíveis depois da
+ * deduplicação, a coluna mostra o que tem. A contagem se adapta; nada é
+ * inventado para completar a grade.
+ */
+function buildColumns(
+  sources: { slug: string; label: string; articles: Article[] }[],
+  taken: Set<string>,
+  consume: (...articles: (Article | undefined)[]) => void,
+): EditorialColumn[] {
+  return sources
+    .map(({ slug, label, articles }) => {
+      const fresh = rankHomepageArticles(
+        uniqueArticles(articles.filter((article) => !taken.has(articleDedupKey(article)))),
+      ).slice(0, 4);
+      // Registrar pelo MESMO caminho dos outros blocos. Uma chamada direta a
+      // `taken.add` aqui marcava a chave mas não a matéria, e a faixa escura
+      // seguinte — que exclui pela lista de matérias — exibia de novo a manchete
+      // da coluna de Política.
+      consume(...fresh);
+      return { slug, label, articles: fresh };
+    })
+    .filter((column) => column.articles.length > 0);
 }
 
 const ORGANIZATION_JSON_LD = {
@@ -74,97 +116,168 @@ const ORGANIZATION_JSON_LD = {
 };
 
 export default async function Home() {
+  /*
+    Cinco buscas em paralelo. Todas independentes, todas com `Promise.allSettled`:
+    uma editoria que falha não pode derrubar a página, porque a home é montada
+    por blocos e cada bloco trata o seu conjunto como possivelmente vazio.
+  */
   const settled = await Promise.allSettled([
-    fetchNewsResponse({ region: "ms", limit: 20, sortBy: "recent" }),
-    fetchNewsResponse({ region: "ms", category: "agriculture", limit: 5, sortBy: "recent" }),
-    fetchNewsResponse({ region: "ms", category: "politics", limit: 24, sortBy: "recent" }),
+    fetchNewsResponse({ region: "ms", limit: 24, sortBy: "recent" }),
+    fetchNewsResponse({ region: "ms", category: "agriculture", limit: 10, sortBy: "recent" }),
+    fetchNewsResponse({ region: "ms", category: "politics", limit: 28, sortBy: "recent" }),
+    fetchNewsResponse({ region: "ms", category: "tech", limit: 10, sortBy: "recent" }),
+    fetchNewsResponse({ region: "ms", category: "general", limit: 12, sortBy: "recent" }),
   ]);
 
-  const [recentResult, agroResult, politicsResult] = settled;
+  const [recentResult, agroResult, politicsResult, techResult, generalResult] = settled;
+
   const recent = recentResult.status === "fulfilled" ? recentResult.value.news : [];
   const agro = agroResult.status === "fulfilled" ? agroResult.value.news : [];
   const politics = politicsResult.status === "fulfilled" ? politicsResult.value.news : [];
-
-  const { main, side, rail, latest } = pickHero(prioritizeElectionCoverage(rankHomepageArticles(recent)));
-  const heroArticles = [main, ...side, ...rail, ...latest].filter((article): article is Article => Boolean(article));
-  // O agro também precisa excluir os destaques. A política já fazia isso; o agro
-  // não, e o resultado era a mesma matéria no topo da página e no bloco de
-  // agronegócio — medido em uma manchete por carga da home.
-  const heroKeys = new Set(heroArticles.map((article) => article.slug || article.title));
-  const rankedAgro = rankHomepageArticles(agro.filter((article) => !heroKeys.has(article.slug || article.title)));
-  const politicalCoverage = selectPoliticalCoverage(politics, [...heroArticles, ...rankedAgro], 6);
-
-  // "Mais lidas" não repete matéria já mostrada acima. A exclusão é feita sobre
-  // os mesmos conjuntos que a política usa, então nenhuma manchete aparece duas
-  // vezes na página — o risco apontado pelo plano §25.
-  const alreadyShown = new Set(
-    [...heroArticles, ...rankedAgro, ...politicalCoverage].map((article) => article.slug || article.title),
-  );
-  const mostRead = recent.filter(
-    (article) => !alreadyShown.has(article.slug || article.title) && (article.engagement_score ?? 0) > 0,
-  );
-
-  // O bloco de colunistas também precisa saber do que a página já trata: ele
-  // busca a matéria mais recente de cada assinatura por conta própria e, sem a
-  // lista, repetia 6 manchetes já mostradas acima.
-  const shownBeforeColumnists = new Set([
-    ...alreadyShown,
-    ...mostRead.map((article) => article.slug || article.title),
-  ]);
+  const tech = techResult.status === "fulfilled" ? techResult.value.news : [];
+  const general = generalResult.status === "fulfilled" ? generalResult.value.news : [];
 
   const hardError = settled.every((result) => result.status === "rejected");
+
+  /*
+    Registro de consumo. `shown` guarda as MATÉRIAS já exibidas e `taken` as
+    chaves; os dois crescem juntos. Existe o par porque `selectPoliticalCoverage`
+    recebe artigos para excluir, enquanto os blocos de EditorialColumns
+    consultam por chave — manter só um dos dois exigiria converter de um para o
+    outro a cada bloco, e é essa conversão que costuma vazar uma repetição.
+  */
+  const shown: Article[] = [];
+  const taken = new Set<string>();
+  const consume = (...articles: (Article | undefined)[]) => {
+    for (const article of articles) {
+      if (!article) continue;
+      const key = articleDedupKey(article);
+      if (taken.has(key)) continue;
+      taken.add(key);
+      shown.push(article);
+    }
+  };
+
+  /* ── 1. Hero ───────────────────────────────────────────────────────────── */
+  const { main, side, rail } = pickHero(recent);
+  consume(main, ...side, ...rail);
+
+  /* ── 2. Mais lidas + feature ────────────────────────────────────────────── */
+  const mostRead = uniqueArticles(
+    recent
+      .filter((article) => !taken.has(articleDedupKey(article)) && (article.engagement_score ?? 0) > 0)
+      .sort((a, b) => (b.engagement_score ?? 0) - (a.engagement_score ?? 0))
+      .slice(0, 5),
+  );
+
+  /*
+    A feature é a matéria de maior relevância entre as que ainda não apareceram.
+    Não há "Especial" no Portal Cerrado — não existe campo, curadoria ou série
+    com esse nome na API — então o rótulo exibido é a editoria real, e a peça
+    mantém a forma da referência: imagem grande, manchete em serifa, resumo.
+  */
+  const mostReadKeys = new Set(mostRead.map(articleDedupKey));
+  const featurePool = uniqueArticles(
+    recent.filter(
+      (article) => !taken.has(articleDedupKey(article)) && !mostReadKeys.has(articleDedupKey(article)),
+    ),
+  );
+  const feature = featurePool[0];
+  const related = featurePool.slice(1, 5);
+
+  consume(feature, ...related, ...mostRead);
+
+  /* ── 3. Quatro colunas editoriais ───────────────────────────────────────── */
+  const columns = buildColumns(
+    [
+      { slug: "politics", label: "Política", articles: politics },
+      { slug: "agriculture", label: "Agronegócio", articles: agro },
+      { slug: "tech", label: "Tecnologia", articles: tech },
+      { slug: "general", label: "Geral", articles: general },
+    ],
+    taken,
+    consume,
+  );
+
+  /* ── 4. Faixa escura ───────────────────────────────────────────────────── */
+  /*
+    A faixa escura é "Poder e eleições", conceito editorial real do projeto. A
+    mesma consulta de política alimenta a faixa e a coluna de Política.
+
+    A ordem de consumo é faixa primeiro: as quatro matérias mais relevantes da
+    faixa vêm de `selectPoliticalCoverage`, e a coluna de Política fica com o
+    que sobrou. A exclusão é passada como ARTIGOS, e não como um conjunto de
+    slugs, porque é a assinatura que `selectPoliticalCoverage` já usa — passar
+    uma lista de strings silenciosamente não excluiria nada.
+  */
+  const politicalCoverage = selectPoliticalCoverage(politics, shown, 4);
+  consume(...politicalCoverage);
+
+  /* ── 5. Assinaturas ────────────────────────────────────────────────────── */
+  const shownBeforeColumnists = shown.map(articleDedupKey);
 
   return (
     <div className="bg-canvas">
       {hardError && (
         <div className="container-editorial pt-6" role="alert">
-          <p className="rounded border border-red-700/25 bg-red-50 px-5 py-4 text-sm font-semibold text-red-800">
+          <p className="border-l-2 border-gold px-4 py-3 text-sm font-semibold text-text-primary">
             A API de notícias não respondeu neste momento. As cotações de mercado seguem carregando de fontes independentes.
           </p>
         </div>
       )}
 
-      <HeroGrid main={main} side={side} rail={rail} latest={latest} />
+      <HeroGrid main={main} side={side} rail={rail} latest={[]} />
 
-      {/* Agro e política já são blocos de matéria; o ranking entra entre eles
-          para quebrar o padrão de "grade de cards + faixa escura". */}
-      <MostReadBlock articles={mostRead} />
+      {/*
+        A feature aceita `main` ausente: com poucas matérias no feed, a faixa
+        ainda mostra "Mais lidas" sozinho, sem buraco de 9 colunas.
+      */}
+      {(mostRead.length > 0 || feature) && (
+        <FeatureBand
+          mostReadId="mais-lidas-heading"
+          mostRead={mostRead}
+          feature={feature}
+          related={related}
+        />
+      )}
 
-      <AgroModule articles={rankedAgro} />
+      <EditorialColumns columns={columns} />
 
-      <PoderModule articles={politicalCoverage} />
+      <MarketStrip />
+
+      <PoderModule
+        articles={politicalCoverage}
+        eyebrow="Poder e eleições"
+        title="Política que influencia Mato Grosso do Sul"
+        description="Acompanhamento de política nacional, eleições e decisões com impacto no estado."
+        href="/categoria/politics"
+        linkLabel="Ver todas"
+        headingId="poder-heading"
+      />
 
       <Suspense
         fallback={
-          <section aria-label="Carregando colunistas" className="container-editorial py-10">
-            <div className="h-2 w-28 rounded bg-black/10" />
-            <div className="mt-2 h-7 w-72 rounded bg-black/10" />
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                <div key={i} className="rounded-md">
-                  <div className="aspect-[16/10] rounded-md bg-black/10" />
-                  <div className="mt-4 h-3 w-1/4 rounded bg-black/10" />
-                  <div className="mt-3 h-5 w-11/12 rounded bg-black/10" />
-                  <div className="mt-2 h-5 w-3/4 rounded bg-black/10" />
+          <section aria-label="Carregando assinaturas" className="container-editorial py-7">
+            <div className="rule-heading h-6 w-48 animate-pulse bg-black/5" />
+            <div className="mt-4 grid gap-x-5 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-3 lg:block">
+                  <div className="aspect-[4/3] w-24 shrink-0 animate-pulse bg-black/5 lg:aspect-[16/10] lg:w-full" />
+                  <div className="h-3 flex-1 animate-pulse bg-black/5" />
                 </div>
               ))}
             </div>
           </section>
         }
       >
-        <Columnists exclude={[...shownBeforeColumnists]} />
+        <Columnists exclude={shownBeforeColumnists} />
       </Suspense>
 
-      {/*
-        Fecha a página com chamada de assinatura, como o plano §11.4 pede.
-        O destino é /contato porque não existe endpoint de assinatura: um
-        formulário que "envia" para lugar nenhum seria pior que um link honesto.
-      */}
-      {/* `div` e não `section`: o NewsletterBlock já é uma região com
-          aria-labelledby. Envolvê-lo numa section criava dois landmarks
-          anunciando o mesmo bloco — medido na auditoria da fase 8. */}
-      <div className="container-editorial pb-10">
-        <NewsletterBlock />
+      {/* `div` e não `section`: o NewsroomCtaBlock já é uma região com
+          aria-labelledby. Envolvê-lo numa section criaria dois landmarks
+          anunciando o mesmo bloco. */}
+      <div className="container-editorial pb-8">
+        <NewsroomCtaBlock />
       </div>
 
       <script

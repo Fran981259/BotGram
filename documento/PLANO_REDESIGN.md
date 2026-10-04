@@ -1,5 +1,9 @@
 # PLANO DE REDESIGN - Portal Cerrado
 
+> Registro histórico das nove fases concluídas em 03/10/2026. Refinamentos
+> visuais e higienização posteriores são registrados no plano vivo e não
+> reabrem este snapshot.
+
 ## Proveniência deste documento
 
 > **O texto original do plano não estava no repositório.** Ele existia apenas na
@@ -74,7 +78,7 @@ Cada fase foi um commit. O CI gera evidência de gate sozinho por `push` em
 | # | Commit | Entrega | Evidência que a fechou |
 | --- | --- | --- | --- |
 | 1 | `9264bfc` | Fundação de tokens: escala de espaço, contêiner, leitura, cor de borda | Diff do CSS compilado: 240 regras de utilitário antes e depois, **0 adicionadas, 0 removidas** — provado sem mudança visual |
-| 2 | `3be97e8` | Nove famílias de card editorial, todas com razão de aspecto em vez de altura fixa | `NewsCard` passa a ser fachada; implementação antiga preservada em `components/legacy/` |
+| 2 | `3be97e8` | Nove famílias de card editorial, todas com razão de aspecto em vez de altura fixa | `NewsCard` passa a ser fachada; a implementação antiga foi removida na higienização posterior, após confirmação de ausência de consumidores |
 | 3 | `5809059` | Barra utilitária com data real, busca responsiva, landmarks de navegação | Medido: `/busca` a 360px tinha `scrollWidth` 379 contra 360; depois 360 = 360 |
 | 4 | `7b0bb20` | Hero por razão, bloco "Mais lidas" por engajamento real, newsletter | Ordenação por `engagement_score`, campo que a API pública já entrega |
 | 5 | `a285a26` | Figura do artigo com recorte escolhido; dobra sem altura ociosa | Medido em produção e no build local, mesmo artigo: vão da dobra caiu de 210/163/84px para 170/123/64px |
@@ -168,8 +172,8 @@ Erros de ferramental que produziram leitura errada, corrigidos antes de reportar
 
 1. **Aprovação visual** depende de olhar as capturas pareadas em
    `tools/fase8/{antes,depois}/`. Nenhum número substitui esse passo.
-2. **`RankedStoryItem`** está definido em `StoryCards.tsx` e sem nenhum
-   consumidor desde a Fase 2.
+2. **`RankedStoryItem`** estava definido em `StoryCards.tsx` sem consumidor
+   desde a Fase 2; foi removido na higienização posterior.
 3. **As ferramentas do auditor seguem não versionadas.** Decisão de versionamento
    é de quem mantém os dois projetos.
 4. **O gate 8 de `PLANO_ACAO.md` continua adiado** por decisão registrada em

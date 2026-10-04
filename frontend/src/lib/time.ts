@@ -35,3 +35,18 @@ export function formatCampoGrandeDate(iso?: string | null, opts?: Intl.DateTimeF
 export function formatMarketTime(iso?: string | null): string {
   return formatCampoGrandeDate(iso, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
 }
+
+/**
+ * Só a hora, no fuso de Campo Grande.
+ *
+ * Existe para o trilho "Últimas notícias" da home, cuja linha é
+ * `16:24  Manchete` — hora na coluna estreita, manchete ocupando o resto. Com
+ * `formatMarketTime` a data inteira ocupava a coluna e a manchete ficava com
+ * 55px de largura.
+ *
+ * O fuso é o mesmo dos demais formatos de data do site, então a hora que o
+ * leitor vê é a de Campo Grosso do Sul, e não a do navegador dele.
+ */
+export function formatTimeOnly(iso?: string | null): string {
+  return formatCampoGrandeDate(iso, { hour: "2-digit", minute: "2-digit" });
+}

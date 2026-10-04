@@ -1,10 +1,15 @@
 # OPERACAO - Portal Cerrado
 
-## Status Consolidado
-- Os números históricos de validação devem ser consultados em `EVIDENCIAS_VALIDACAO.md` e não representam automaticamente o candidato atual.
-- Na auditoria de 29/09/2026, Ruff, Mypy, compileall, ESLint, build frontend e a suíte completa passaram; foram 145 testes em ambiente limpo Python 3.12.
-- Docker não estava disponível nesta sessão; o estado do Swarm, serviços externos, banco de produção e provider LLM permanece desconhecido.
-- O pipeline mede e retorna a duração de scan, classificação, reescrita, publicação e total por execução.
+## Estado e escopo
+
+- Este é um runbook. Ele não confirma o estado atual de Docker, Swarm, banco,
+  provedor LLM ou serviços externos; confirme-os no host antes de operar.
+- Em 04/10/2026, a validação local passou com Ruff, lint, TypeScript, build
+  Next e 149 testes Python. Isso não substitui smoke test do ambiente de teste.
+- A evidência de 28/09/2026 registra os nove serviços `cerrado_test` em `1/1`;
+  ela é histórica e não autoriza produção.
+- O pipeline mede e retorna a duração de scan, classificação, reescrita,
+  publicação e total por execução.
 
 ## Stack em Produção
 - Backend: FastAPI + Celery + Redis + PostgreSQL
@@ -58,7 +63,7 @@
 | 3 - Frontend | done | API/URL/metadata errados | frontend usa API real |
 | 4 - Build e Registry | done | imagem nao publicada | build local funcional |
 | 5 - Portainer/Swarm | done | stack fora do contrato | services 1/1 |
-| 6 - Validacao Final | snapshot histórico | divergência entre ambiente local e produção | 84 testes; Ruff, mypy, ESLint e build Next aprovados em 20/09/2026; repetir no candidato atual |
+| 6 - Validacao Final | depende do candidato | divergência entre ambiente local e produção | executar validação atual, registrar risco residual e obter aprovação antes de produção |
 
 ## Guia Operacional
 1. Validar banco, API e frontend.
@@ -92,10 +97,10 @@ A chave nunca deve aparecer em logs, commits, tickets ou mensagens de operação
 
 ## Checklist de Promoção para Produção
 
-Antes de promover `cerrado_test` para produção:
+Antes de promover a stack de teste para produção:
 
-1. Confirmar o repositório e branch oficiais de produção; o remote
-   `git@github.com:Fran981259/cerrado_test.git` é exclusivo do teste.
+1. Confirmar o repositório e a branch oficiais de produção; a origem Git do
+   ambiente de teste não deve ser reutilizada sem validação explícita.
 2. Publicar novas imagens no registry aprovado e registrar os digests SHA-256 do
    backend e frontend; nunca reutilizar a tag `latest`.
 3. Alterar nome da stack, portas públicas, URLs, CORS e domínios para os valores
@@ -118,7 +123,7 @@ Antes de promover `cerrado_test` para produção:
 - O serviço Caddy usa o Docker Config `caddyfile` definido no manifesto; não depende de bind mount no diretório interno do Portainer.
 - No teste, o Config aponta para `Caddyfile.test`: somente HTTP na porta publicada e sem emissão ACME para o domínio de produção.
 - Docker Config é imutável no Swarm; ao alterar seu conteúdo, versionar o nome (`caddyfile_test_http_vN`) em vez de tentar atualizar o objeto existente.
-- Após alterar o manifesto, atualizar o repositório Git da stack `cerrado_test` e executar redeploy pelo Portainer.
+- Após alterar o manifesto, atualizar a origem Git configurada para a stack e executar redeploy pelo Portainer.
 - A stack de teste é isolada por nomes de volumes, rede e portas; não remover os containers standalone existentes.
 - As imagens GHCR são privadas e exigem um registry endpoint no Portainer com usuário GitHub e token de leitura `read:packages`; não colocar esse token no compose, `.env` ou Git.
 - O redeploy só é considerado aprovado quando cada serviço de imagem SHA estiver `1/1`; falha `No such image` significa autenticação/pull pendente e bloqueia o aceite.
