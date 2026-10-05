@@ -6,8 +6,6 @@ import time
 from datetime import datetime, timezone
 from typing import Dict, List
 
-import yaml
-
 from app.miner_constants import MIN_ARTICLES_PER_DAY
 from app.miner_global import GlobalNewsMiner
 from app.miner_volume import VolumeManager
@@ -27,8 +25,7 @@ class MinerPipeline:
         self._load_routing()
 
     def _load_routing(self):
-        with open("config/portals_global.yml", "r", encoding="utf-8") as f:
-            config = yaml.safe_load(f)
+        config = self.miner.config
         routing = config.get("global_miner", {}).get("reporter_routing", {})
         self.reporter_map = {cat: info.get("reporter") for cat, info in routing.items()}
 

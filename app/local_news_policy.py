@@ -45,7 +45,7 @@ def _host(url: str) -> str:
 def local_source_hosts() -> frozenset[str]:
     """Read the regional source registry; foreign entries are deliberately excluded."""
     config = yaml.safe_load((ROOT / "config" / "portals_capital_ms.yml").read_text(encoding="utf-8")) or {}
-    hosts: set[str] = {"g1.globo.com", "agenciadenoticias.ms.gov.br", "msnews.com.br"}
+    hosts: set[str] = set()
     for entries in (config.get("portals_ms") or {}).values():
         for entry in entries or []:
             city = str(entry.get("city") or "").strip().lower()

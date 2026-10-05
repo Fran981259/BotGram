@@ -148,12 +148,12 @@ export default function Header() {
           </div>
 
           {/*
-            Abaixo de `xl` a navegação não cabe na mesma linha sem espremer os
-            rótulos até ficarem ilegíveis. Ela ganha uma segunda linha —
-            simples, com filete — em vez de ser espremida. Acima de `xl` ela
-            volta para a linha única, que é o desenho da referência.
+            Entre `lg` e `xl` a navegação não cabe na mesma linha sem espremer
+            os rótulos até ficarem ilegíveis. Ela ganha uma segunda linha —
+            simples, com filete — em vez de ser espremida. No mobile, o drawer
+            é a única navegação; acima de `xl`, a lista volta para a linha única.
           */}
-          <div className="border-t border-line py-1.5 xl:hidden">
+          <div className="hidden border-t border-line py-1.5 lg:block xl:hidden">
             <Suspense fallback={null}>
               <DesktopNav />
             </Suspense>

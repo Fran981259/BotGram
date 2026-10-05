@@ -19,6 +19,9 @@ def _scan_and_persist() -> tuple[dict, dict]:
     articles = results.get("articles", [])
     logger.info("[SCAN] Coletados %s artigos", len(articles))
     persisted = _persist_articles(articles)
+    from app.source_health import record_scan_health
+
+    record_scan_health(results, persisted)
     logger.info("[SCAN] Persistidos: %s", persisted)
     return results, persisted
 

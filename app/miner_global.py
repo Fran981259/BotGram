@@ -24,15 +24,22 @@ class GlobalNewsMiner(GlobalNewsParsingMixin):
     - Garante variedade na pauta diária
     """
 
-    def __init__(self, config_path: str = "config/portals_global.yml"):
+    def __init__(self, config_path: str | None = None):
         self.config = self._load_config(config_path)
         self.classifier = NewsClassifier()
         self.session = httpx.Client(timeout=30.0, headers={"User-Agent": "PortalCerrado-Miner/1.0"})
         self._load_glossary()
 
-    def _load_config(self, path: str) -> Dict:
-        with open(path, "r", encoding="utf-8") as f:
-            return yaml.safe_load(f)
+    def _load_config(self, path: str | None) -> Dict:
+        if path is None:
+            return {"global_miner": {"enabled": False, "portals": {}, "language": {}}}
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return yaml.safe_load(f) or {}
+        except FileNotFoundError:
+            # O catálogo global foi removido: o módulo é mantido apenas por
+            # compatibilidade, explicitamente inativo.
+            return {"global_miner": {"enabled": False, "portals": {}, "language": {}}}
 
     def _load_glossary(self):
         cfg_lang = self.config.get("global_miner", {}).get("language", {})

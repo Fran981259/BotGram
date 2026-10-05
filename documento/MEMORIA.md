@@ -15,6 +15,9 @@
 - Classificador: heuristico com keywords PT-BR e EN, normalizado via contracts.category_name().
 - Categorias canônicas: tech, culture, health, science, sports, politics, economy, security, agriculture, education, clima, world e general.
 - Repórteres digitais são definidos em config/reporters.yml, inclusive cobertura internacional para world.
+- A coleta automática é local: Campo Grande, Dourados, Três Lagoas, Corumbá e
+  Ponta Porã, com complemento estadual de MS. Não há catálogo global ou dos EUA
+  ativo; `world` é apenas uma categoria canônica para compatibilidade histórica.
 - O repositório contém Compose para uso local/teste e uma stack Swarm dedicada para teste. A execução produtiva e o cutover continuam pendentes de evidência e aprovação.
 
 ## Regras Fixas

@@ -13,6 +13,7 @@ from app.contracts import as_utc, category_name, sources_list
 from app.database import get_session
 from app.local_news_policy import local_story_decision
 from app.schema import ArticleIdentity, NewsArticle, Reporter
+from app.source_health import image_is_hotlink_blocked
 
 logger = logging.getLogger(__name__)
 
@@ -70,11 +71,19 @@ def persist_articles(articles: list, fetch_details: bool = True) -> dict:
     """Persiste artigos coletados como rascunhos e informa o resultado agregado."""
     db = get_session()
     counters = _empty_counters()
+    counters["by_source"] = {}
     try:
         fetcher = _build_fetcher(fetch_details)
         recent_titles = _recent_titles(db)
         for article_data in articles:
+            source = str(article_data.get("source") or "Fonte sem nome")
+            before = {key: counters[key] for key in ("inserted", "duplicates", "errors", "image_blocked")}
             _persist_one_article(db, article_data, fetcher, recent_titles, counters)
+            source_counters = counters["by_source"].setdefault(
+                source, {"inserted": 0, "duplicates": 0, "errors": 0, "image_blocked": 0}
+            )
+            for key, value in before.items():
+                source_counters[key] += counters[key] - value
         db.commit()
         return counters
     except Exception as error:
@@ -86,7 +95,7 @@ def persist_articles(articles: list, fetch_details: bool = True) -> dict:
 
 
 def _empty_counters() -> dict:
-    return {"inserted": 0, "duplicates": 0, "errors": 0, "fetched": 0, "fetch_miss": 0}
+    return {"inserted": 0, "duplicates": 0, "errors": 0, "fetched": 0, "fetch_miss": 0, "image_blocked": 0}
 
 
 def _build_fetcher(fetch_details: bool):
@@ -140,6 +149,8 @@ def _persist_local_article(db, article_data: dict, fetcher, recent_titles: list[
         if article is None:
             db.rollback()
             return
+        if article.image_url and image_is_hotlink_blocked(article_data.get("url", ""), article.image_url):
+            counters["image_blocked"] += 1
         db.add(article)
         db.flush()
         identity.article_id = article.id

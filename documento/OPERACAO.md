@@ -10,6 +10,8 @@
   ela é histórica e não autoriza produção.
 - O pipeline mede e retorna a duração de scan, classificação, reescrita,
   publicação e total por execução.
+- O scanner usa somente `config/portals_capital_ms.yml`: Campo Grande, Dourados,
+  Três Lagoas, Corumbá, Ponta Porã e fontes públicas estaduais complementares.
 
 ## Stack em Produção
 - Backend: FastAPI + Celery + Redis + PostgreSQL
@@ -71,6 +73,19 @@
 3. Validar exportacao do frontend.
 4. Validar healthchecks e logs.
 5. Validar deploy pela stack oficial do ambiente.
+
+## Saúde das Fontes e Saneamento do Feed
+
+- Cada scan grava em `scraping_tasks` os artigos encontrados, inseridos,
+  duplicados, erros, taxas de sucesso/duplicação, bloqueios de `robots.txt` e
+  bloqueios de imagem por hotlink.
+- Analise a taxa de sucesso e duplicação por fonte antes de mantê-la no catálogo;
+  bloqueio recorrente exige remover a fonte, sem tentar contornar o controle do
+  publicador.
+- Para auditar matérias de fontes removidas: `venv/bin/python
+  scripts/quarantine_misclassified_global_articles.py`.
+- Para ocultar os itens auditados sem apagar o histórico: repita o comando com
+  `--apply`, sempre depois de um backup e de revisar a lista impressa.
 
 ## Backup e Restore do Banco
 

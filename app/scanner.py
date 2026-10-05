@@ -38,48 +38,9 @@ class RealPortalScanner(ScannerArticleMethods):
     CATEGORY_KEYWORDS = CATEGORY_KEYWORDS
     REPORTER_BY_CATEGORY = REPORTER_BY_CATEGORY
 
-    PORTALS = [
-        {
-            "name": "MS News",
-            "url": "https://www.msnews.com.br",
-            "default_category": "general",
-            "selectors": {
-                "article": "article, .post, .noticia, .news-item",
-                "title": "h1, h2, h3, .title, .titulo",
-                "link": "a",
-            },
-        },
-        {
-            "name": "MS Todo Dia",
-            "url": "https://www.mstododia.com.br",
-            "default_category": "general",
-            "selectors": {
-                "article": "article, .post, .noticia",
-                "title": "h1, h2, h3, .title",
-                "link": "a",
-            },
-        },
-        {
-            "name": "G1 MS",
-            "url": "https://g1.globo.com/ms/",
-            "default_category": "general",
-            "selectors": {
-                "article": "article, .post, .noticia",
-                "title": "h1, h2, h3, .title",
-                "link": "a",
-            },
-        },
-        {
-            "name": "O Estado Online",
-            "url": "https://www.oestadoonline.com.br",
-            "default_category": "general",
-            "selectors": {
-                "article": "article, .post, .noticia",
-                "title": "h1, h2, h3, .title",
-                "link": "a",
-            },
-        },
-    ]
+    # O catálogo YAML é a fonte única de verdade. Manter portais também aqui
+    # duplicava a coleta e permitia que praças removidas continuassem ativas.
+    PORTALS: list[dict] = []
 
     _ms_lock = threading.Lock()
 
@@ -94,14 +55,13 @@ class RealPortalScanner(ScannerArticleMethods):
             if getattr(cls, "_ms_loaded", False):
                 return
 
-            # Carregar portais do MS
+            # Carregar somente as praças editoriais curadas.
             cfg_ms = os.path.join(os.path.dirname(__file__), "..", "config", "portals_capital_ms.yml")
             cfg_ms = os.path.abspath(cfg_ms)
 
             seen = {_normalize_url(p["url"]) for p in cls.PORTALS}
             added = 0
 
-            # 1. Portais MS
             if os.path.exists(cfg_ms):
                 try:
                     with open(cfg_ms, "r", encoding="utf-8") as f:

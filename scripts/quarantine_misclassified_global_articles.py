@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Move para revisão matérias globais que foram rotuladas como ``ms``.
+"""Move para revisão matérias de fontes fora do catálogo editorial ativo.
 
 Use primeiro sem argumentos para auditar. Só use ``--apply`` após revisar a
 lista: a operação tira as matérias encontradas da área pública, sem apagá-las.
 """
 
 import argparse
+import json
 import sys
 from pathlib import Path
 from urllib.parse import urlparse
@@ -14,43 +15,26 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-# O bootstrap de sys.path permite executar o script diretamente na raiz do projeto.
-import yaml  # noqa: E402
-from sqlalchemy.exc import OperationalError  # noqa: E402
+from sqlalchemy import text  # noqa: E402
 
+# O bootstrap de sys.path permite executar o script diretamente na raiz do projeto.
 from app.database import get_session  # noqa: E402
-from app.schema import NewsArticle  # noqa: E402
+from app.local_news_policy import local_source_hosts  # noqa: E402
 
 
 def host(url: str) -> str:
     return (urlparse(url or "").hostname or "").lower().removeprefix("www.")
 
 
-def configured_global_hosts() -> set[str]:
-    hosts: set[str] = set()
-    for file_name in ("portals_global.yml", "portals_us.yml"):
-        config = yaml.safe_load((ROOT / "config" / file_name).read_text(encoding="utf-8")) or {}
-        groups = config.get("global_miner", {}).get("portals", {}) if file_name == "portals_global.yml" else config.get("portals_us", {})
-        for entries in groups.values():
-            for entry in entries or []:
-                value = host(entry.get("url", ""))
-                if value:
-                    hosts.add(value)
-    capital_config = yaml.safe_load((ROOT / "config" / "portals_capital_ms.yml").read_text(encoding="utf-8")) or {}
-    for entries in (capital_config.get("portals_ms") or {}).values():
-        for entry in entries or []:
-            city = str(entry.get("city") or "").strip().lower()
-            if city in {"nacional", "fortaleza"}:
-                value = host(str(entry.get("url", "")))
-                if value:
-                    hosts.add(value)
-    return hosts
-
-
-def article_source_hosts(article: NewsArticle) -> set[str]:
+def article_source_hosts(sources: object) -> set[str]:
+    if isinstance(sources, str):
+        try:
+            sources = json.loads(sources)
+        except json.JSONDecodeError:
+            sources = []
     return {
         value
-        for source in article.sources or []
+        for source in sources or []
         if isinstance(source, dict)
         for value in [host(str(source.get("url", "")))]
         if value
@@ -62,30 +46,35 @@ def main() -> int:
     parser.add_argument("--apply", action="store_true", help="tira as matérias encontradas da área pública")
     args = parser.parse_args()
 
-    global_hosts = configured_global_hosts()
+    # Textos originalmente publicados pela própria redação não dependem de um
+    # portal coletado e permanecem fora da quarentena de fontes externas.
+    active_hosts = local_source_hosts() | {"portalcerrado.com.br"}
     db = get_session()
     try:
         candidates = []
-        try:
-            articles = db.query(NewsArticle).filter(NewsArticle.region == "ms", NewsArticle.status == "published").all()
-        except OperationalError as exc:
-            if "news_articles.region" in str(exc):
-                print("Banco sem a coluna region. Execute 'alembic upgrade head' no ambiente alvo antes da auditoria.")
-                return 2
-            raise
+        # Não depende de ``region``: bancos legados podem não ter a coluna e a
+        # origem é a fonte de verdade para esta higiene.
+        articles = db.execute(
+            text("SELECT id, slug, title, sources FROM news_articles WHERE status = :status"),
+            {"status": "published"},
+        ).mappings().all()
 
         for article in articles:
-            matched = article_source_hosts(article) & global_hosts
-            if matched:
-                candidates.append((article, sorted(matched)))
+            source_hosts = article_source_hosts(article["sources"])
+            # Artigos com ao menos uma fonte ativa continuam disponíveis. Os
+            # demais vão para revisão, sem apagar histórico nem texto.
+            if source_hosts and source_hosts.isdisjoint(active_hosts):
+                candidates.append((article, sorted(source_hosts)))
 
         for article, matched in candidates:
-            print(f"{article.id}\t{article.slug}\t{', '.join(matched)}\t{article.title}")
+            print(f"{article['id']}\t{article['slug']}\t{', '.join(matched)}\t{article['title']}")
 
         if args.apply and candidates:
             for article, _ in candidates:
-                article.status = "review"
-                article.visibility = "private"
+                db.execute(
+                    text("UPDATE news_articles SET status = :status, visibility = :visibility WHERE id = :id"),
+                    {"status": "review", "visibility": "private", "id": article["id"]},
+                )
             db.commit()
             print(f"\n{len(candidates)} matéria(s) movida(s) para revisão e removida(s) da área pública.")
         else:

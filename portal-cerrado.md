@@ -69,9 +69,11 @@
 - app/tasks/scan_tasks.py → orquestração Celery do pipeline de coleta
 - app/translation_glossary.py → glossário compartilhado de tradução LLM
 - app/tasks/scan_persistence.py → persistência e deduplicação de rascunhos coletados
+- app/source_health.py → telemetria por fonte: sucesso, duplicação, robots e hotlink
+- config/portals_capital_ms.yml → catálogo editorial ativo das praças prioritárias
 - alembic/versions/b3a8e4f7c2d1_add_news_title_fts_index.py → índice FTS PostgreSQL para fontes relacionadas
 - app/personality.py → evolução temporal dos repórteres com datas normalizadas
-- scripts/quarantine_misclassified_global_articles.py → auditoria segura de fontes globais
+- scripts/quarantine_misclassified_global_articles.py → quarentena reversível de fontes fora do catálogo ativo
 - scripts/quarantine_english_articles.py → auditoria e quarentena de títulos em inglês
 - app/duplicate_detection.py → regras compartilhadas de duplicação e conteúdo sensível
 - app/trend_models.py → sinais e modelo de tendências editoriais
@@ -93,8 +95,8 @@
 - app/article_body.py → corpo textual, fallback e limpeza de leads
 - app/miner.py → fachada pública compatível do minerador
 - app/miner_constants.py → constantes de volume e randomização
-- app/miner_global.py → orquestração de coleta global
-- app/miner_global_parsing.py → parsing RSS, Google News e relevância
+- app/miner_global.py → compatibilidade para o minerador global aposentado (inativo)
+- app/miner_global_parsing.py → parsing legado do minerador global aposentado
 - app/miner_volume.py → balanceamento de volume editorial
 - app/miner_pipeline.py → classificação, tradução e roteamento
 - app/publisher.py → publication and public feed rules
