@@ -31,11 +31,11 @@ def _calculate_timeline(db, start_date: datetime, end_date: datetime, days: int)
     try:
         pvs = (
             db.query(
-                func.strftime("%Y-%m-%d", PageView.created_at).label("day"),
+                func.date(PageView.created_at).label("day"),
                 func.count().label("n"),
             )
             .filter(PageView.created_at >= start_date)
-            .group_by("day")
+            .group_by(func.date(PageView.created_at))
             .all()
         )
         for row in pvs:
@@ -49,14 +49,14 @@ def _calculate_timeline(db, start_date: datetime, end_date: datetime, days: int)
     try:
         arts = (
             db.query(
-                func.strftime("%Y-%m-%d", NewsArticle.published_at).label("day"),
+                func.date(NewsArticle.published_at).label("day"),
                 func.count().label("n"),
             )
             .filter(
                 NewsArticle.status == "published",
                 NewsArticle.published_at >= start_date,
             )
-            .group_by("day")
+            .group_by(func.date(NewsArticle.published_at))
             .all()
         )
         for row in arts:
@@ -249,7 +249,9 @@ def analytics_overview(
             "categories": _get_category_distribution(db),
             "reporters": _get_reporter_performance(db),
             "top_referrers": _get_top_referrers(db, limit=5),
-            "audience": audience_insights(db, start_date, now, days),
+            # O enriquecimento de audiência nunca pode impedir a visualização
+            # dos KPIs históricos já existentes.
+            "audience": _safe_audience_insights(db, start_date, now, days),
         }
     except Exception as exc:
         logger.error("analytics_overview falhou (%s)", type(exc).__name__)
@@ -257,3 +259,17 @@ def analytics_overview(
     finally:
         if owns_session:
             db.close()
+
+
+def _safe_audience_insights(db, start_date: datetime, now: datetime, days: int) -> Dict:
+    try:
+        return audience_insights(db, start_date, now, days)
+    except Exception as exc:
+        logger.error("analytics audience enrichment failed (%s)", type(exc).__name__)
+        return {
+            "previous_pageviews": 0,
+            "pageview_change_percent": None,
+            "traffic_channels": [],
+            "top_pages": [],
+            "tracked_note": "Dados de audiência detalhados temporariamente indisponíveis.",
+        }

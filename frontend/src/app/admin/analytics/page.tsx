@@ -142,7 +142,7 @@ export default function AdminAnalyticsPage() {
               <div style={{ height: 6, background: "var(--adm-surface-2)", borderRadius: 4, marginTop: 5 }}><div style={{ width: `${item.percentage}%`, height: "100%", borderRadius: 4, background: "var(--adm-info)" }} /></div>
             </div>
           ))}
-          {!audience?.traffic_channels.length && <p className="adm-text-muted adm-text-sm">Ainda não há tráfego registrado neste período.</p>}
+          {!audience?.traffic_channels?.length && <p className="adm-text-muted adm-text-sm">Ainda não há tráfego registrado neste período.</p>}
         </div>
         <div className="adm-card" style={{ padding: "20px" }}>
           <h3 style={{ margin: "0 0 14px", fontSize: "15px" }}>🚪 Páginas de entrada e interesse</h3>
@@ -151,7 +151,7 @@ export default function AdminAnalyticsPage() {
               <span style={{ maxWidth: "75%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.path || "/"}</span><strong>{item.views}</strong>
             </div>
           ))}
-          {!audience?.top_pages.length && <p className="adm-text-muted adm-text-sm">As páginas mais acessadas aparecerão quando houver eventos.</p>}
+          {!audience?.top_pages?.length && <p className="adm-text-muted adm-text-sm">As páginas mais acessadas aparecerão quando houver eventos.</p>}
         </div>
       </div>
 
