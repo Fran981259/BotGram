@@ -60,6 +60,8 @@ export default function AdminAnalyticsPage() {
     avg_importance_score: 0,
     avg_engagement_score: 0,
   };
+  const audience = data?.audience;
+  const variation = audience?.pageview_change_percent;
 
   return (
     <div>
@@ -68,9 +70,9 @@ export default function AdminAnalyticsPage() {
       {/* Header */}
       <div className="adm-page-header">
         <div>
-          <h1 className="adm-page-title">Analytics & Alcance Editorial</h1>
+          <h1 className="adm-page-title">Inteligência de Audiência</h1>
           <p className="adm-page-sub">
-            Métricas de visualização de páginas, produção editorial e engajamento dos leitores.
+            Audiência agregada, canais de aquisição e desempenho editorial — sem identificar leitores.
           </p>
         </div>
         <div className="adm-flex" style={{ gap: "10px" }}>
@@ -109,27 +111,51 @@ export default function AdminAnalyticsPage() {
           color="var(--adm-info)"
         />
         <StatCard
-          label="Artigos Publicados"
-          value={kpis.period_published}
-          icon="📰"
-          sub={`Total no acervo: ${kpis.total_published}`}
+          label="Variação de audiência"
+          value={variation === null || variation === undefined ? "Novo" : `${variation > 0 ? "+" : ""}${variation}%`}
+          icon={variation && variation < 0 ? "↘️" : "↗️"}
+          sub={`${audience?.previous_pageviews.toLocaleString("pt-BR") || 0} views no período anterior`}
           color="var(--adm-accent)"
         />
         <StatCard
-          label="Score Médio de Importância"
-          value={`${kpis.avg_importance_score} / 100`}
-          icon="⭐"
-          sub="Relevância calculada por IA"
+          label="Produção no período"
+          value={kpis.period_published}
+          icon="📰"
+          sub={`${kpis.total_published} matérias no acervo`}
           color="var(--adm-warning)"
         />
         <StatCard
-          label="Score Médio de Engajamento"
+          label="Engajamento editorial"
           value={`${kpis.avg_engagement_score} / 100`}
           icon="🔥"
-          sub="Potencial de viralização"
+          sub={`Importância média: ${kpis.avg_importance_score} / 100`}
           color="var(--adm-danger)"
         />
       </div>
+
+      <div className="adm-grid-2" style={{ marginBottom: "20px" }}>
+        <div className="adm-card" style={{ padding: "20px" }}>
+          <h3 style={{ margin: "0 0 14px", fontSize: "15px" }}>🧭 Canais de aquisição</h3>
+          {(audience?.traffic_channels || []).map((item) => (
+            <div key={item.channel} style={{ marginBottom: "11px" }}>
+              <div className="adm-flex-between adm-text-sm"><strong>{item.channel}</strong><span>{item.views} views · {item.percentage}%</span></div>
+              <div style={{ height: 6, background: "var(--adm-surface-2)", borderRadius: 4, marginTop: 5 }}><div style={{ width: `${item.percentage}%`, height: "100%", borderRadius: 4, background: "var(--adm-info)" }} /></div>
+            </div>
+          ))}
+          {!audience?.traffic_channels.length && <p className="adm-text-muted adm-text-sm">Ainda não há tráfego registrado neste período.</p>}
+        </div>
+        <div className="adm-card" style={{ padding: "20px" }}>
+          <h3 style={{ margin: "0 0 14px", fontSize: "15px" }}>🚪 Páginas de entrada e interesse</h3>
+          {(audience?.top_pages || []).slice(0, 5).map((item) => (
+            <div key={item.path} className="adm-flex-between adm-text-sm" style={{ padding: "8px 0", borderBottom: "1px solid var(--adm-border)" }}>
+              <span style={{ maxWidth: "75%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.path || "/"}</span><strong>{item.views}</strong>
+            </div>
+          ))}
+          {!audience?.top_pages.length && <p className="adm-text-muted adm-text-sm">As páginas mais acessadas aparecerão quando houver eventos.</p>}
+        </div>
+      </div>
+
+      <p className="adm-text-sm adm-text-muted" style={{ margin: "-8px 0 20px" }}>🔒 {audience?.tracked_note || "Dados agregados e first-party."}</p>
 
       {/* Timeline Chart */}
       <div style={{ marginBottom: "20px" }}>

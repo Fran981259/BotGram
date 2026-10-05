@@ -87,6 +87,16 @@
 - Para ocultar os itens auditados sem apagar o histórico: repita o comando com
   `--apply`, sempre depois de um backup e de revisar a lista impressa.
 
+## Inteligência de Audiência
+
+- `/admin/analytics` consolida visualizações agregadas, comparação com o período
+  anterior, canais de aquisição, páginas de maior interesse e desempenho editorial.
+- Os números só passam a aparecer após o tracker alcançar a API; quando o
+  backend estiver indisponível, o frontend descarta o evento de modo seguro e o
+  painel deve mostrar ausência de dados, não estimativas.
+- Não adicionar IP, fingerprint, cookie persistente ou user-agent a essa coleta
+  sem revisão explícita de LGPD, retenção e finalidade.
+
 ## Backup e Restore do Banco
 
 - O utilitário oficial é `venv/bin/python scripts/database_backup.py`.

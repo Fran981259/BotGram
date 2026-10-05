@@ -161,7 +161,8 @@
 - frontend/src/components/admin/AnalyticsTimelineChart.tsx → gráfico vetorial de tendências (Fase 5 ✅)
 - frontend/src/components/admin/AnalyticsDistribution.tsx → distribuição de categorias e repórteres (Fase 5 ✅)
 - frontend/src/lib/adminAnalyticsApi.ts → cliente de dados de analytics (Fase 5 ✅)
-- app/admin_analytics_routes.py → agregação de KPIs, timeline e rankings (Fase 5 ✅)
+- app/admin_analytics_routes.py → inteligência agregada de audiência, canais, páginas e rankings (Fase 5 ✅)
+- app/admin_analytics_audience.py → classificação de canais de tráfego e agregação first-party
 - frontend/src/app/admin/redes-sociais/page.tsx → Twitter/X e distribuição social (Fase 6 ✅)
 - frontend/src/components/admin/SocialPostModal.tsx → modal de tweet manual com preview (Fase 6 ✅)
 - frontend/src/lib/adminSocialApi.ts → cliente de API para redes sociais (Fase 6 ✅)

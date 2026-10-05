@@ -11,6 +11,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from loguru import logger
 from sqlalchemy import func
 
+from app.admin_analytics_audience import audience_insights
 from app.contracts import iso_utc
 from app.database import get_db, get_session
 from app.schema import NewsArticle, PageView, Reporter
@@ -248,6 +249,7 @@ def analytics_overview(
             "categories": _get_category_distribution(db),
             "reporters": _get_reporter_performance(db),
             "top_referrers": _get_top_referrers(db, limit=5),
+            "audience": audience_insights(db, start_date, now, days),
         }
     except Exception as exc:
         logger.error("analytics_overview falhou (%s)", type(exc).__name__)

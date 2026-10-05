@@ -106,6 +106,9 @@ def test_admin_analytics_overview(client, auth_headers):
         assert "timeline" in data
         assert "top_articles" in data
         assert "categories" in data
+        assert "audience" in data
+        assert "traffic_channels" in data["audience"]
+        assert "top_pages" in data["audience"]
 
 
 def test_admin_social_status_and_history(client, auth_headers):

@@ -57,6 +57,13 @@ export type AnalyticsOverview = {
   categories: CategoryMetric[];
   reporters: ReporterMetric[];
   top_referrers: ReferrerMetric[];
+  audience: {
+    previous_pageviews: number;
+    pageview_change_percent: number | null;
+    traffic_channels: { channel: string; views: number; percentage: number }[];
+    top_pages: { path: string; views: number; type: string }[];
+    tracked_note: string;
+  };
 };
 
 export async function fetchAnalyticsOverview(

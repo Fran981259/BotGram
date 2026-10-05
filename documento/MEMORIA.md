@@ -18,6 +18,8 @@
 - A coleta automática é local: Campo Grande, Dourados, Três Lagoas, Corumbá e
   Ponta Porã, com complemento estadual de MS. Não há catálogo global ou dos EUA
   ativo; `world` é apenas uma categoria canônica para compatibilidade histórica.
+- Analytics é first-party e agregado: guarda página e origem de tráfego, sem IP,
+  cookie persistente, user-agent ou identificador individual de visitante.
 - O repositório contém Compose para uso local/teste e uma stack Swarm dedicada para teste. A execução produtiva e o cutover continuam pendentes de evidência e aprovação.
 
 ## Regras Fixas
