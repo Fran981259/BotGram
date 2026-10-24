@@ -173,6 +173,19 @@ class ArticleIdentity(Base):
     article_id = Column(Integer, ForeignKey("news_articles.id", ondelete="CASCADE"), nullable=True)
 
 
+class CategoryCorrection(Base):
+    """Correções manuais de categoria feitas pelo admin — usadas no retreino do ML."""
+
+    __tablename__ = "category_corrections"
+
+    id = Column(Integer, primary_key=True, index=True)
+    article_id = Column(Integer, ForeignKey("news_articles.id", ondelete="CASCADE"), nullable=False, index=True)
+    original_category = Column(String(50), nullable=False)
+    corrected_category = Column(String(50), nullable=False)
+    used_in_training = Column(Boolean, default=False, nullable=False, index=True)
+    created_at = Column(DateTime, default=utcnow, nullable=False)
+
+
 class PageView(Base):
     """Registro de visualização de página (Analytics Interno)."""
 

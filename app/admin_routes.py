@@ -17,7 +17,7 @@ from sqlalchemy import func
 from app.contracts import CATEGORIES, category_name, iso_utc
 from app.database import get_db, get_session
 from app.publisher import ArticlePublisher
-from app.schema import NewsArticle, PublicationLog, Reporter
+from app.schema import CategoryCorrection, NewsArticle, PublicationLog, Reporter
 from app.security import require_api_key
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
@@ -254,6 +254,79 @@ def admin_archive_article(slug: str, db=Depends(get_db), _auth=Depends(require_a
     except Exception as exc:
         db.rollback()
         logger.error("admin_archive_article falhou (%s)", type(exc).__name__)
+        raise HTTPException(status_code=503, detail="Erro interno") from None
+    finally:
+        if owns_session:
+            db.close()
+
+
+# ─── Correção de categoria (feedback loop ML) ────────────────────────────────
+
+
+class CategoryCorrectionRequest(BaseModel):
+    category: str = Field(..., min_length=1, max_length=50)
+
+
+@router.post("/articles/{slug}/correct-category")
+def admin_correct_category(
+    slug: str,
+    data: CategoryCorrectionRequest,
+    db=Depends(get_db),
+    _auth=Depends(require_api_key),
+):
+    """Registra correção manual de categoria e atualiza o artigo.
+
+    O sinal é armazenado em `category_corrections` e incluído no próximo retreino do modelo ML.
+    """
+    owns_session = False
+    if not hasattr(db, "query"):
+        db = get_session()
+        owns_session = True
+    try:
+        article = (
+            db.query(NewsArticle)
+            .filter(NewsArticle.slug == slug)
+            .with_for_update()
+            .first()
+        )
+        if not article:
+            raise HTTPException(status_code=404, detail="Artigo não encontrado")
+
+        new_cat = category_name(data.category)
+        if new_cat not in CATEGORIES:
+            raise HTTPException(status_code=422, detail="Categoria inválida")
+        if new_cat == article.category:
+            return {"status": "ok", "slug": slug, "category": new_cat, "changed": False}
+
+        original = article.category or "general"
+        db.add(CategoryCorrection(
+            article_id=article.id,
+            original_category=original,
+            corrected_category=new_cat,
+        ))
+        article.category = new_cat
+        article.updated_at = datetime.now(timezone.utc)
+        db.add(PublicationLog(
+            article_id=article.id,
+            action="category_correction",
+            reporter_id=article.reporter_id,
+            details=f"Categoria corrigida: {original} → {new_cat}",
+        ))
+        db.commit()
+
+        # Recarrega modelo em background se nova correção disponível
+        try:
+            from app.ml.category_model import reload_model
+            reload_model()
+        except Exception:
+            pass
+
+        return {"status": "ok", "slug": slug, "category": new_cat, "changed": True}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        db.rollback()
+        logger.error("admin_correct_category falhou (%s)", type(exc).__name__)
         raise HTTPException(status_code=503, detail="Erro interno") from None
     finally:
         if owns_session:

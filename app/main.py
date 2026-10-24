@@ -23,12 +23,14 @@ import uvicorn
 from fastapi import Depends, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from loguru import logger
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.admin_analytics_routes import router as admin_analytics_router
 from app.admin_audit_routes import router as admin_audit_router
 from app.admin_config_routes import router as admin_config_router
+from app.admin_media_routes import router as admin_media_router
 from app.admin_pipeline_routes import router as admin_pipeline_router
 from app.admin_reporter_routes import router as admin_reporter_router
 from app.admin_routes import router as admin_router
@@ -141,12 +143,18 @@ app.include_router(operations_router)
 app.include_router(editorial_router)
 app.include_router(analytics_router)
 app.include_router(admin_router)
+app.include_router(admin_media_router)
 app.include_router(admin_pipeline_router)
 app.include_router(admin_reporter_router)
 app.include_router(admin_analytics_router)
 app.include_router(admin_social_router)
 app.include_router(admin_audit_router)
 app.include_router(admin_config_router)
+
+# Serve uploaded media files
+_media_dir = os.getenv("MEDIA_DIR", "/app/data/media")
+os.makedirs(_media_dir, exist_ok=True)
+app.mount("/media", StaticFiles(directory=_media_dir), name="media")
 
 
 @app.get("/")

@@ -6,6 +6,8 @@ import type { AdminArticle } from "@/lib/adminApi";
 import { patchAdminArticle, getAdminArticle } from "@/lib/adminApi";
 import { ConfirmModal } from "./AdminShared";
 import { useAdminAuth } from "./AdminAuthGuard";
+import { ImageUploader } from "./ImageUploader";
+import { RichTextEditor } from "./RichTextEditor";
 
 type EditableFields = {
   title: string;
@@ -194,32 +196,17 @@ export function ArticleEditModal({ article, onClose, onSaved }: Props) {
 
             {/* Imagem */}
             <div>
-              <label className="adm-label" htmlFor="edit-image">URL da imagem</label>
-              <input
-                id="edit-image"
-                className="adm-input"
-                type="url"
+              <label className="adm-label">Imagem</label>
+              <ImageUploader
                 value={fields.image_url}
-                onChange={(e) => set("image_url", e.target.value)}
-                placeholder="https://..."
+                onChange={(url) => set("image_url", url)}
               />
-              {fields.image_url && (
-                <div style={{ marginTop: 8, borderRadius: 6, overflow: "hidden", height: 80 }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={fields.image_url}
-                    alt="Preview"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                  />
-                </div>
-              )}
             </div>
 
             {/* Conteúdo */}
             <div>
               <div className="adm-flex-between" style={{ marginBottom: 4 }}>
-                <label className="adm-label" htmlFor="edit-content">Conteúdo (HTML)</label>
+                <label className="adm-label">Conteúdo</label>
                 {!contentLoaded && (
                   <button
                     className="adm-btn adm-btn-ghost"
@@ -232,14 +219,11 @@ export function ArticleEditModal({ article, onClose, onSaved }: Props) {
                   </button>
                 )}
               </div>
-              <textarea
-                id="edit-content"
-                className="adm-textarea"
+              <RichTextEditor
                 value={fields.content}
-                onChange={(e) => set("content", e.target.value)}
-                rows={10}
-                placeholder={contentLoaded ? "" : "Clique em 'Carregar conteúdo' para editar"}
+                onChange={(html) => set("content", html)}
                 disabled={!contentLoaded}
+                placeholder={isLoading ? "Carregando…" : "Clique em 'Carregar conteúdo' para editar"}
               />
             </div>
           </div>

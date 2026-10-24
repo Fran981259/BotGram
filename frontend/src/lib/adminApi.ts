@@ -264,6 +264,25 @@ export async function fetchPipelineTaskResult(apiKey: string, taskId: string): P
   return apiFetch<TaskResultResponse>(`/api/admin/pipeline/task/${encodeURIComponent(taskId)}`, apiKey);
 }
 
+// ─── Upload de imagem ─────────────────────────────────────────────────────────
+
+export async function uploadAdminImage(apiKey: string, file: File): Promise<{ url: string }> {
+  const form = new FormData();
+  form.append("file", file);
+  const res = await fetch("/api/admin/upload-image", {
+    method: "POST",
+    headers: { "X-API-Key": apiKey },
+    body: form,
+    cache: "no-store",
+  });
+  if (res.status === 401) throw new Error("Chave inválida ou sem permissão.");
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error((body as { detail?: string }).detail ?? `Erro ${res.status}`);
+  }
+  return res.json() as Promise<{ url: string }>;
+}
+
 // ─── Auth helper ─────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = "admin_api_key";

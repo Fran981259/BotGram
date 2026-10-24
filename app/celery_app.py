@@ -33,6 +33,7 @@ celery_app = Celery(
         "app.tasks.auditor_tasks",
         "app.tasks.maintenance",
         "app.tasks.social_tasks",
+        "app.tasks.ml_tasks",
     ],
 )
 
@@ -111,6 +112,13 @@ celery_app.conf.update(
         "evolve-reporters": {
             "task": "app.tasks.auditor_tasks.evolve_reporters",
             "schedule": crontab(hour=2, minute=0),  # 02:00 todo dia
+        },
+        # ================================
+        # RETREINO DO CLASSIFICADOR ML (1x por semana, domingo 01:00)
+        # ================================
+        "retrain-category-classifier": {
+            "task": "app.tasks.ml_tasks.retrain_category_classifier",
+            "schedule": crontab(hour=1, minute=0, day_of_week=0),  # domingo 01:00
         },
     },
 )

@@ -2,6 +2,7 @@
     respond /healthz 200
 
     reverse_proxy /api/* portal_cerrado:8000
+    reverse_proxy /media/* portal_cerrado:8000
     reverse_proxy /* frontend:3000
 
     header {
