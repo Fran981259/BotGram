@@ -1,0 +1,25 @@
+app/ml/train_classifier.py
+  s_f2cc3d394227a7::t_a14c569f46be05 62
+app/tasks/ml_tasks.py
+  s_f2cc3d394227a7::t_8fc1ca315c9bf0 24
+frontend/src/components/admin/RichTextEditor.tsx
+  s_f2cc3d394227a7::t_6aff9b29926fab 76
+app/admin_media_routes.py
+  s_f2cc3d394227a7::t_049daacfe94153 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "94fc1e8a33aaf0de09fa55fd2c806125bee46cf5",
+  "prompts": {},
+  "sessions": {
+    "s_f2cc3d394227a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a704f373-45e8-46f7-8279-d9ff049a6c80",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
