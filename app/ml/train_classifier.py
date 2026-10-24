@@ -59,12 +59,12 @@ def _build_dataset(session) -> tuple[list[str], list[str]]:
 
 def train_and_save(session=None) -> dict[str, Any]:
     """Treina o modelo e salva em MODEL_PATH. Retorna métricas."""
+    import joblib
     from sklearn.feature_extraction.text import TfidfVectorizer
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import accuracy_score
     from sklearn.model_selection import train_test_split
     from sklearn.pipeline import Pipeline
-    import joblib
 
     from app.database import get_session
 

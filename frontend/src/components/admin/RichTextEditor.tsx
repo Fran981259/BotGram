@@ -73,7 +73,7 @@ export function RichTextEditor({ value, onChange, disabled = false, placeholder 
     const current = editor.getHTML();
     if (value === current) return;
     skipUpdate.current = true;
-    editor.commands.setContent(value || "<p></p>", false);
+    editor.commands.setContent(value || "<p></p>");
     skipUpdate.current = false;
   }, [editor, value]);
 

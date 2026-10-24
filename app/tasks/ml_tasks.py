@@ -20,8 +20,8 @@ def retrain_category_classifier(self):
     POST /api/admin/ml/retrain.
     """
     try:
-        from app.ml.train_classifier import train_and_save
         from app.ml.category_model import reload_model
+        from app.ml.train_classifier import train_and_save
 
         logger.info("[ML] Iniciando retreino do classificador de categorias")
         result = train_and_save()
