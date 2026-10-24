@@ -1,0 +1,33 @@
+CLAUDE.md
+  s_4a91727fde8924::t_f3a108df7fd28d 1-26
+.gitignore
+  s_37b24665e51c22::t_acc929ca09bed1 53-57
+Caddyfile
+  s_4a91727fde8924::t_6a204767233596 5-13
+portal-cerrado.md
+  s_4a91727fde8924::t_fd64a722288d84 6-7,9-12,15-21,24-49,51,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7c1a216c69d8c04aeec43db93255fd9894a570c8",
+  "prompts": {},
+  "sessions": {
+    "s_37b24665e51c22": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ad1c80f3-2fcd-484f-beed-365438448bb5",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    },
+    "s_4a91727fde8924": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "31985894-5a99-417a-99c1-bf876543047a",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
