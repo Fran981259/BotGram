@@ -2,6 +2,15 @@
     email razuk@portalcerrado.com.br
 }
 
+http://localhost, http://127.0.0.1 {
+    handle /healthz {
+        respond 200
+    }
+    handle {
+        respond 404
+    }
+}
+
 portalcerrado.com.br, www.portalcerrado.com.br {
     handle /healthz {
         respond 200
