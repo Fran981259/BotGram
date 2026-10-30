@@ -1,0 +1,19 @@
+documento/PLANO_ACAO.md
+  s_faf7d962c246b9::t_12be715fcde6ff 172,203-207,229-234,306-309
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1fb422d1c08b7881723a9f20a6571726c4985de",
+  "prompts": {},
+  "sessions": {
+    "s_faf7d962c246b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02e84e12-6dc9-4a15-8a4d-c5f3f2ebf202",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
