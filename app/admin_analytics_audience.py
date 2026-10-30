@@ -31,7 +31,8 @@ def audience_insights(db, start_date: datetime, now: datetime, days: int) -> Dic
         .group_by(PageView.path, PageView.referrer)
         .all()
     )
-    path_views, channels = {}, {}
+    path_views: dict[str, int] = {}
+    channels: dict[str, int] = {}
     for row in rows:
         views = int(row.views)
         path_views[row.path] = path_views.get(row.path, 0) + views

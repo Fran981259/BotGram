@@ -9,17 +9,17 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
 MODEL_PATH = Path(os.getenv("MODEL_PATH", "/app/data/models/category_classifier.joblib"))
 
-_pipeline = None          # Pipeline carregado
-_model_mtime: float = 0.0  # mtime do arquivo na última carga
+_pipeline: Optional[Any] = None  # Pipeline sklearn carregado
+_model_mtime: float = 0.0
 
 
-def _load() -> Optional[object]:
+def _load() -> Optional[Any]:
     """Carrega (ou recarrega) o modelo se o arquivo existe e mudou."""
     global _pipeline, _model_mtime
     if not MODEL_PATH.exists():
