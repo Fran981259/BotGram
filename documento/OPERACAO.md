@@ -16,7 +16,7 @@
 ## Stack em Produção
 - Backend: FastAPI + Celery + Redis + PostgreSQL
 - Frontend: Next.js + Tailwind
-- Infra: Docker Swarm via Tailscale (100.95.111.24)
+- Infra: Docker Swarm (Contabo VPS 13.140.149.158)
 - LLM: provider configurável (`gemini`, `groq` ou `openai`) por `LLM_PROVIDER`, com fallback em `LLM_FALLBACK_CHAIN`.
 - Deploy: via update.sh (docker stack deploy)
 

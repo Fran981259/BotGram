@@ -7,7 +7,7 @@
 - Nome do projeto: Portal Cerrado.
 - Backend: FastAPI + Celery + Redis + PostgreSQL.
 - Frontend: Next.js + Tailwind.
-- Infra: Docker Swarm via Tailscale (100.95.111.24).
+- Infra: Docker Swarm (Contabo VPS 13.140.149.158).
 
 ## Runtime Real
 - O código suporta `gemini`, `groq` e `openai`; o provider ativo é definido por `LLM_PROVIDER` e a ordem de fallback por `LLM_FALLBACK_CHAIN`.
@@ -41,9 +41,9 @@
 
 ## Estado auditado
 
-- Última validação local: 04/10/2026.
-- A suíte completa passou com 149 testes; houve somente um aviso de depreciação
-  transitivo do `TestClient`/Starlette.
+- Última validação local: 30/10/2026 — candidato `d1fb422`.
+- 149 testes passando; Ruff 0 violações; mypy 80 arquivos sem erros.
+- Frontend: lint, tsc e build ok; `npm audit --omit=dev` 0 vulnerabilidades (next 16.4.3).
 - Resultados anteriores registrados neste diretório são históricos e não
   substituem a validação do candidato atual.
 
@@ -52,7 +52,7 @@
 - O runtime legado confirmado em 2026-09-18 é Docker Compose, projeto `botgram`, em `/home/razuk/BotGram`, com rede bridge `botgram_portal_cerrado_net` e volumes `botgram_postgres_data` e `botgram_app_data`.
 - Esse legado não pode ser parado, removido, renomeado ou alterado até haver aprovação explícita de cutover e encerramento da janela de rollback.
 - AP2WEB ocupa a porta pública 8000 no Swarm. Portal Cerrado não deve publicar API nessa porta.
-- A porta 443 está ocupada por Tailscale no host. Antes do corte público, definir a estratégia TLS/proxy: liberar 443, usar outro IP/host, ou usar Tailscale Serve/Funnel. Não assumir que Caddy pode bindar 443.
+- Confirmar disponibilidade da porta 443 no host Contabo (13.140.149.158) antes do cutover; a nota histórica sobre Tailscale ocupando 443 pode não refletir o estado atual — verificar no host.
 - Para validação, a stack paralela `cerrado_test` usa rede e volumes isolados,
   sem reutilizar `botgram_*`. As portas e serviços publicados devem ser lidos do
   manifesto aplicado e do estado do host, nunca presumidos a partir deste texto.
