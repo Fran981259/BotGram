@@ -1,0 +1,21 @@
+documento/MEMORIA.md
+  s_faf7d962c246b9::t_f4b9318f7c2dc8 10,44-46,55
+documento/OPERACAO.md
+  s_faf7d962c246b9::t_9955b22b19060a 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fbcd0f4ba9bf47c0e835b4c1660feacc6fc88a48",
+  "prompts": {},
+  "sessions": {
+    "s_faf7d962c246b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02e84e12-6dc9-4a15-8a4d-c5f3f2ebf202",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
