@@ -169,7 +169,7 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ### Fase 5 — Segurança e administração editorial
 
-- Estado: em andamento; CORS fail-closed em produção.
+- Estado: em andamento; CORS fail-closed em produção. Mypy zerado em 30/10/2026.
 - Escopo: CORS, proxy, endpoint editorial, analytics, imagens externas e variáveis de ambiente.
 - Ações:
   1. Exigir `CORS_ALLOWED_ORIGINS` em produção sem defaults locais.
@@ -200,6 +200,11 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   A autenticação suporta rotação sem downtime via `PUBLISH_API_KEY_PREVIOUS`, com
   remoção obrigatória após a janela de transição; a rotina foi coberta por 3 testes
   de segurança.
+  Em 30/10/2026 (commit f0099a9): mypy zerado em 80 arquivos após correção de
+  `app/ml/category_model.py` (Optional[Any]) e `app/admin_analytics_audience.py`
+  (anotações dict[str,int]); o erro preexistente de `scan_persistence.py:45`
+  estava já corrigido — não existe mais. Validação nativa do Caddy continua
+  pendente (binário não instalado neste ambiente).
 
 ### Fase 6 — Consolidar frontend e SEO
 
@@ -221,6 +226,12 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   entram no resultado (1 teste aprovado).
   O smoke test servido não pôde ser executado neste sandbox: `next start` recebeu
   `EPERM` ao abrir a porta local, embora o build tenha concluído com 27 rotas.
+  Em 30/10/2026 (commit f0099a9): next atualizado de 16.3.8 para 16.4.3 (corrige
+  GHSA-2464 RCE em SVG, GHSA-p3m5 DoS Server Actions, GHSA-673q RCE use cache);
+  dompurify 3.4.17, sharp 0.35.5, source-map-js 1.2.2, zod 4.6.7 atualizados.
+  `npm audit --omit=dev --audit-level=high` retornou 0 vulnerabilidades com rede.
+  Build Next.js revalidado: `✓ Compiled successfully`, 25 rotas, lint e tsc limpos.
+  Inspeção manual de XML e Lighthouse continuam pendentes para ambiente servido.
 
 ### Fase 7 — Separar runtime local e Swarm
 
@@ -292,6 +303,10 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 - A execução Mypy sobre todo `app/` revelou dois usos equivalentes em
   `app/personality.py`; ambos foram centralizados em `_age_days` com tratamento
   explícito de data ausente.
+- Em 30/10/2026 (commit f0099a9): mypy passou em 80 arquivos sem erros (corrigidos
+  2 erros novos em `app/ml/category_model.py` e `app/admin_analytics_audience.py`
+  introduzidos pelos feats de ML/WYSIWYG). Ruff: 0 violações. Suite completa:
+  149 testes em 21s. Esses são os números válidos para o candidato `f0099a9`.
 - A validação frontend passou em `npm run lint`, TypeScript (`npx tsc --noEmit`) e
   `npm run build`; o Next.js compilou 27 rotas, incluindo `news-sitemap.xml`,
   `sitemap.xml` e `robots.txt`, sem iniciar servidor ou publicar artefato.
