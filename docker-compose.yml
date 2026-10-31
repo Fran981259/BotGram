@@ -246,8 +246,6 @@ services:
       args:
         NEXT_PUBLIC_API_URL: http://portal_cerrado:8000
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?NEXT_PUBLIC_SITE_URL obrigatorio}
-        NEXT_PUBLIC_MATOMO_URL: ${NEXT_PUBLIC_MATOMO_URL:-https://analytics.portalcerrado.com.br/}
-        NEXT_PUBLIC_MATOMO_SITE_ID: ${NEXT_PUBLIC_MATOMO_SITE_ID:-1}
     container_name: portal_cerrado_frontend
     restart: unless-stopped
     logging: *default-logging
@@ -257,8 +255,6 @@ services:
       NEXT_PUBLIC_API_URL: http://portal_cerrado:8000
       API_URL: http://portal_cerrado:8000
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?NEXT_PUBLIC_SITE_URL obrigatorio}
-      NEXT_PUBLIC_MATOMO_URL: ${NEXT_PUBLIC_MATOMO_URL:-https://analytics.portalcerrado.com.br/}
-      NEXT_PUBLIC_MATOMO_SITE_ID: ${NEXT_PUBLIC_MATOMO_SITE_ID:-1}
     depends_on:
       portal_cerrado:
         condition: service_healthy
@@ -270,53 +266,6 @@ services:
       timeout: 15s
       retries: 3
       start_period: 45s
-
-  matomo_db:
-    image: mariadb:10.11
-    container_name: portal_cerrado_matomo_db
-    restart: unless-stopped
-    logging: *default-logging
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MATOMO_DB_ROOT_PASSWORD:?MATOMO_DB_ROOT_PASSWORD obrigatorio}
-      MYSQL_DATABASE: matomo
-      MYSQL_USER: ${MATOMO_DB_USER:?MATOMO_DB_USER obrigatorio}
-      MYSQL_PASSWORD: ${MATOMO_DB_PASSWORD:?MATOMO_DB_PASSWORD obrigatorio}
-    volumes:
-      - matomo_db_data:/var/lib/mysql
-    networks:
-      portal_cerrado_net:
-        aliases: [matomo_db]
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  matomo:
-    image: matomo:5
-    container_name: portal_cerrado_matomo
-    restart: unless-stopped
-    logging: *default-logging
-    environment:
-      MATOMO_DATABASE_HOST: matomo_db
-      MATOMO_DATABASE_DBNAME: matomo
-      MATOMO_DATABASE_USERNAME: ${MATOMO_DB_USER:?MATOMO_DB_USER obrigatorio}
-      MATOMO_DATABASE_PASSWORD: ${MATOMO_DB_PASSWORD:?MATOMO_DB_PASSWORD obrigatorio}
-    volumes:
-      - matomo_data:/var/www/html
-    depends_on:
-      matomo_db:
-        condition: service_healthy
-    networks:
-      portal_cerrado_net:
-        aliases: [matomo]
-    healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost/matomo.php?module=API&method=API.getMatomoVersion&format=json || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
 
   caddy:
     image: caddy:2-alpine
@@ -335,15 +284,12 @@ services:
       - portal_cerrado_net
     depends_on:
       - frontend
-      - matomo
 
 volumes:
   postgres_data:
   app_data:
   caddy_data:
   caddy_config:
-  matomo_data:
-  matomo_db_data:
 
 networks:
   portal_cerrado_net:
