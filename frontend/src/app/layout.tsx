@@ -36,9 +36,17 @@ export const metadata: Metadata = {
 import { Tracker } from "@/components/Tracker";
 
 const SITE_URL = getPublicSiteUrl();
+
+// ================================================================
+// MATOMO ANALYTICS
+// Painel:  https://analytics.portalcerrado.com.br
+// Site ID: 1  |  Rastreamento SPA: src/components/Tracker.tsx
+// Variáveis: NEXT_PUBLIC_MATOMO_URL  NEXT_PUBLIC_MATOMO_SITE_ID
+// ================================================================
 const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "https://analytics.portalcerrado.com.br/").replace(/\/?$/, "/");
 const MATOMO_SITE_ID = process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? "1";
-const matomoInit = `var _paq=window._paq=window._paq||[];_paq.push(["enableLinkTracking"]);(function(){var u="${MATOMO_URL}";_paq.push(["setTrackerUrl",u+"matomo.php"]);_paq.push(["setSiteId","${MATOMO_SITE_ID}"]);var d=document,g=d.createElement("script"),s=d.getElementsByTagName("script")[0];g.async=true;g.src=u+"matomo.js";s.parentNode.insertBefore(g,s);})();`;
+const matomoInit = `var _paq=window._paq=window._paq||[];_paq.push(["trackPageView"]);_paq.push(["enableLinkTracking"]);(function(){var u="${MATOMO_URL}";_paq.push(["setTrackerUrl",u+"matomo.php"]);_paq.push(["setSiteId","${MATOMO_SITE_ID}"]);var d=document,g=d.createElement("script"),s=d.getElementsByTagName("script")[0];g.async=true;g.src=u+"matomo.js";s.parentNode.insertBefore(g,s);})();`;
+// ================================================================
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
@@ -61,7 +69,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
+        {/* ── MATOMO ANALYTICS ── */}
         <script dangerouslySetInnerHTML={{ __html: matomoInit }} />
+        {/* ── END MATOMO ── */}
       </head>
       <body className="min-h-full flex flex-col font-sans antialiased">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-accent-soil focus:px-4 focus:py-2 focus:text-white">Pular para o conteúdo</a>
