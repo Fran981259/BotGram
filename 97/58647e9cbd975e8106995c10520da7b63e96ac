@@ -1,0 +1,33 @@
+alembic/versions/e3b7f1a9c251_add_city_time_on_page_to_pageview.py
+  s_21773df8e842b4::t_8d1242eec93f44 1-31
+app/admin_analytics_routes.py
+  s_21773df8e842b4::t_f6827757b8f369 172-227,308-310
+app/analytics_routes.py
+  s_21773df8e842b4::t_d89fc6c8b1c080 1,4-5,7,20,28-32,35,42-46,50-57,59-60,66-138,146-147
+app/schema.py
+  s_21773df8e842b4::t_18b1683d9fb126 197-200
+frontend/src/app/admin/analytics/page.tsx
+  s_21773df8e842b4::t_3c8bfcb376d06d 105,134-146,173-217
+frontend/src/components/Tracker.tsx
+  s_21773df8e842b4::t_d928ed95260c98 3-7,9-68
+frontend/src/lib/adminAnalyticsApi.ts
+  s_21773df8e842b4::t_baa4545e4729cd 51-62,72-74
+frontend/src/styles/admin.css
+  s_21773df8e842b4::t_ba3cfcde6ae7cd 469,473-475
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9758647e9cbd975e8106995c10520da7b63e96ac",
+  "prompts": {},
+  "sessions": {
+    "s_21773df8e842b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "33267c2a-c1a9-4111-9770-d38f2cfa1ce5",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
