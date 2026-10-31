@@ -35,10 +35,34 @@ export const metadata: Metadata = {
 
 import { Tracker } from "@/components/Tracker";
 
+const SITE_URL = getPublicSiteUrl();
+const MATOMO_URL = (process.env.NEXT_PUBLIC_MATOMO_URL ?? "https://analytics.portalcerrado.com.br/").replace(/\/?$/, "/");
+const MATOMO_SITE_ID = process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? "1";
+const matomoInit = `var _paq=window._paq=window._paq||[];_paq.push(["enableLinkTracking"]);(function(){var u="${MATOMO_URL}";_paq.push(["setTrackerUrl",u+"matomo.php"]);_paq.push(["setSiteId","${MATOMO_SITE_ID}"]);var d=document,g=d.createElement("script"),s=d.getElementsByTagName("script")[0];g.async=true;g.src=u+"matomo.js";s.parentNode.insertBefore(g,s);})();`;
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "NewsMediaOrganization",
+  "@id": `${SITE_URL}/#organization`,
+  name: "Portal Cerrado",
+  url: SITE_URL,
+  description: "Portal de notícias independente com foco em Mato Grosso do Sul.",
+  foundingLocation: { "@type": "Place", name: "Campo Grande, MS, Brasil" },
+  areaServed: { "@type": "State", name: "Mato Grosso do Sul" },
+  inLanguage: "pt-BR",
+  publishingPrinciples: `${SITE_URL}/sobre`,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className="h-full">
-      <head />
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script dangerouslySetInnerHTML={{ __html: matomoInit }} />
+      </head>
       <body className="min-h-full flex flex-col font-sans antialiased">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-accent-soil focus:px-4 focus:py-2 focus:text-white">Pular para o conteúdo</a>
         <Tracker />
