@@ -1,0 +1,19 @@
+Caddyfile
+  s_21773df8e842b4::t_25272be908cb36 41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7fda1bdbfd8f4824fe1e217bd75677614e47c959",
+  "prompts": {},
+  "sessions": {
+    "s_21773df8e842b4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "33267c2a-c1a9-4111-9770-d38f2cfa1ce5",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
