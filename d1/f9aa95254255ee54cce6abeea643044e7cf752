@@ -1,0 +1,27 @@
+Caddyfile
+  s_6323fdddd1f6e5::t_6adaa3456e1ab7 14-23,51
+docker-compose.yml
+  s_6323fdddd1f6e5::t_dc7a1f25c161c3 249-250,260-261,274-320,338,345-346
+frontend/Dockerfile
+  s_6323fdddd1f6e5::t_c040d69bd64fc2 7-8,12-13
+frontend/src/app/layout.tsx
+  s_6323fdddd1f6e5::t_4327f7837b6529 38-55,59-65
+frontend/src/components/Tracker.tsx
+  s_6323fdddd1f6e5::t_a970506cb8aad1 6-11,20-23,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1f9aa95254255ee54cce6abeea643044e7cf752",
+  "prompts": {},
+  "sessions": {
+    "s_6323fdddd1f6e5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "666356eb-7fed-4961-aa7f-18f43edecf6e",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
