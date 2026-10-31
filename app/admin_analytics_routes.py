@@ -169,6 +169,62 @@ def _get_reporter_performance(db) -> List[Dict]:
         return []
 
 
+def _get_city_distribution(db, start_date: datetime, limit: int = 10) -> List[Dict]:
+    """Retorna cidades com mais acessos no período."""
+    try:
+        rows = (
+            db.query(PageView.city, func.count().label("views"))
+            .filter(PageView.created_at >= start_date, PageView.city.isnot(None))
+            .group_by(PageView.city)
+            .order_by(func.count().desc())
+            .limit(limit)
+            .all()
+        )
+        total = sum(r.views for r in rows) or 1
+        return [
+            {"city": r.city, "views": r.views, "percentage": round((r.views / total) * 100, 1)}
+            for r in rows
+        ]
+    except Exception:
+        return []
+
+
+def _get_device_distribution(db, start_date: datetime) -> List[Dict]:
+    """Retorna distribuição de acessos por tipo de dispositivo."""
+    try:
+        rows = (
+            db.query(PageView.device_type, func.count().label("views"))
+            .filter(PageView.created_at >= start_date, PageView.device_type.isnot(None))
+            .group_by(PageView.device_type)
+            .order_by(func.count().desc())
+            .all()
+        )
+        total = sum(r.views for r in rows) or 1
+        return [
+            {"device": r.device_type, "views": r.views, "percentage": round((r.views / total) * 100, 1)}
+            for r in rows
+        ]
+    except Exception:
+        return []
+
+
+def _get_avg_time_on_page(db, start_date: datetime) -> float | None:
+    """Retorna tempo médio na página em segundos (só views com dado)."""
+    try:
+        result = (
+            db.query(func.avg(PageView.time_on_page))
+            .filter(
+                PageView.created_at >= start_date,
+                PageView.time_on_page.isnot(None),
+                PageView.time_on_page > 0,
+            )
+            .scalar()
+        )
+        return round(float(result), 1) if result is not None else None
+    except Exception:
+        return None
+
+
 def _get_top_referrers(db, limit: int = 5) -> List[Dict]:
     """Retorna principais fontes de tráfego."""
     try:
@@ -249,6 +305,9 @@ def analytics_overview(
             "categories": _get_category_distribution(db),
             "reporters": _get_reporter_performance(db),
             "top_referrers": _get_top_referrers(db, limit=5),
+            "cities": _get_city_distribution(db, start_date, limit=10),
+            "devices": _get_device_distribution(db, start_date),
+            "avg_time_on_page": _get_avg_time_on_page(db, start_date),
             # O enriquecimento de audiência nunca pode impedir a visualização
             # dos KPIs históricos já existentes.
             "audience": _safe_audience_insights(db, start_date, now, days),

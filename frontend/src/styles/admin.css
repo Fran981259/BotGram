@@ -466,11 +466,13 @@
 .adm-empty-sub { font-size: 13px; color: var(--adm-text-muted); }
 
 /* ── Utility ─────────────────────────────────────────────────── */
+.adm-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
 .adm-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .adm-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .adm-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-@media (max-width: 1024px) { .adm-grid-4 { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 640px)  { .adm-grid-4, .adm-grid-3, .adm-grid-2 { grid-template-columns: 1fr; } }
+@media (max-width: 1280px) { .adm-grid-5 { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1024px) { .adm-grid-5, .adm-grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px)  { .adm-grid-5, .adm-grid-4, .adm-grid-3, .adm-grid-2 { grid-template-columns: 1fr; } }
 
 .adm-flex { display: flex; align-items: center; gap: 12px; }
 .adm-flex-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

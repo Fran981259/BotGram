@@ -194,5 +194,9 @@ class PageView(Base):
     id = Column(Integer, primary_key=True, index=True)
     path = Column(String(500), nullable=False, index=True)
     referrer = Column(String(500), nullable=True)
+    city = Column(String(100), nullable=True, index=True)
+    country = Column(String(100), nullable=True)
+    time_on_page = Column(Integer, nullable=True)   # segundos
+    device_type = Column(String(20), nullable=True)  # mobile | desktop | tablet
 
     created_at = Column(DateTime, default=utcnow, nullable=False, index=True)

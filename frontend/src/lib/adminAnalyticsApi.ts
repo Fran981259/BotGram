@@ -48,6 +48,18 @@ export type ReferrerMetric = {
   views: number;
 };
 
+export type CityMetric = {
+  city: string;
+  views: number;
+  percentage: number;
+};
+
+export type DeviceMetric = {
+  device: string;
+  views: number;
+  percentage: number;
+};
+
 export type AnalyticsOverview = {
   period_days: number;
   generated_at: string;
@@ -57,6 +69,9 @@ export type AnalyticsOverview = {
   categories: CategoryMetric[];
   reporters: ReporterMetric[];
   top_referrers: ReferrerMetric[];
+  cities: CityMetric[];
+  devices: DeviceMetric[];
+  avg_time_on_page: number | null;
   audience: {
     previous_pageviews: number;
     pageview_change_percent: number | null;

@@ -102,7 +102,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="adm-grid-4" style={{ marginBottom: "20px" }}>
+      <div className="adm-grid-5" style={{ marginBottom: "20px" }}>
         <StatCard
           label="Visualizações no Período"
           value={kpis.period_pageviews.toLocaleString("pt-BR")}
@@ -131,6 +131,19 @@ export default function AdminAnalyticsPage() {
           sub={`Importância média: ${kpis.avg_importance_score} / 100`}
           color="var(--adm-danger)"
         />
+        <StatCard
+          label="Tempo médio na página"
+          value={
+            data?.avg_time_on_page != null
+              ? data.avg_time_on_page >= 60
+                ? `${Math.floor(data.avg_time_on_page / 60)}m ${Math.round(data.avg_time_on_page % 60)}s`
+                : `${Math.round(data.avg_time_on_page)}s`
+              : "—"
+          }
+          icon="⏱️"
+          sub="Média das visitas com dado registrado"
+          color="var(--adm-accent)"
+        />
       </div>
 
       <div className="adm-grid-2" style={{ marginBottom: "20px" }}>
@@ -156,6 +169,51 @@ export default function AdminAnalyticsPage() {
       </div>
 
       <p className="adm-text-sm adm-text-muted" style={{ margin: "-8px 0 20px" }}>🔒 {audience?.tracked_note || "Dados agregados e first-party."}</p>
+
+      {/* Cidade e Dispositivos */}
+      <div className="adm-grid-2" style={{ marginBottom: "20px" }}>
+        <div className="adm-card" style={{ padding: "20px" }}>
+          <h3 style={{ margin: "0 0 14px", fontSize: "15px" }}>📍 Cidades com mais acessos</h3>
+          {(data?.cities ?? []).length > 0 ? (
+            (data!.cities).map((item) => (
+              <div key={item.city} style={{ marginBottom: "11px" }}>
+                <div className="adm-flex-between adm-text-sm">
+                  <strong>{item.city}</strong>
+                  <span>{item.views.toLocaleString("pt-BR")} · {item.percentage}%</span>
+                </div>
+                <div style={{ height: 6, background: "var(--adm-surface-2)", borderRadius: 4, marginTop: 5 }}>
+                  <div style={{ width: `${item.percentage}%`, height: "100%", borderRadius: 4, background: "var(--adm-accent)" }} />
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="adm-text-muted adm-text-sm">Dados de localização aparecerão após as primeiras visitas.</p>
+          )}
+        </div>
+
+        <div className="adm-card" style={{ padding: "20px" }}>
+          <h3 style={{ margin: "0 0 14px", fontSize: "15px" }}>📱 Dispositivos</h3>
+          {(data?.devices ?? []).length > 0 ? (
+            (data!.devices).map((item) => {
+              const icon = item.device === "mobile" ? "📱" : item.device === "tablet" ? "💻" : "🖥️";
+              const label = item.device === "mobile" ? "Celular" : item.device === "tablet" ? "Tablet" : "Desktop";
+              return (
+                <div key={item.device} style={{ marginBottom: "11px" }}>
+                  <div className="adm-flex-between adm-text-sm">
+                    <strong>{icon} {label}</strong>
+                    <span>{item.views.toLocaleString("pt-BR")} · {item.percentage}%</span>
+                  </div>
+                  <div style={{ height: 6, background: "var(--adm-surface-2)", borderRadius: 4, marginTop: 5 }}>
+                    <div style={{ width: `${item.percentage}%`, height: "100%", borderRadius: 4, background: "var(--adm-info)" }} />
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p className="adm-text-muted adm-text-sm">Dados de dispositivo aparecerão após as primeiras visitas.</p>
+          )}
+        </div>
+      </div>
 
       {/* Timeline Chart */}
       <div style={{ marginBottom: "20px" }}>
