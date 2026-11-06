@@ -1,0 +1,19 @@
+tests/conftest.py
+  s_f38e7a6f9be804::t_f5ec1eef615622 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "16d588d5687db8f80c225b5fddca764967724a08",
+  "prompts": {},
+  "sessions": {
+    "s_f38e7a6f9be804": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9277938-0a02-4131-83a8-d85d4fcb07ce",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
