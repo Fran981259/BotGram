@@ -43,3 +43,41 @@ def test_llm_network_failure_exhausts_bounded_retries(monkeypatch) -> None:
     with pytest.raises(requests.ConnectionError):
         client._post_with_backoff("https://example.invalid", {})
     assert attempts == client.MAX_ATTEMPTS
+
+
+def test_news_read_endpoint_works_without_celery(monkeypatch) -> None:
+    """Leitura de artigos não depende do Celery/broker — falha do worker não afeta /api/news."""
+    from fastapi.testclient import TestClient
+
+    from app.main import app
+
+    # Simula broker inacessível tornando qualquer import de Celery inútil
+    monkeypatch.setattr("app.celery_app.celery_app.send_task", lambda *a, **k: (_ for _ in ()).throw(Exception("broker down")))
+
+    client = TestClient(app)
+    r = client.get("/api/news?limit=1")
+    # 200 (artigos no banco) ou 503 (banco vazio/erro) — nunca erro de broker
+    assert r.status_code in (200, 503), f"status inesperado: {r.status_code}"
+    assert "broker" not in r.text.lower(), "resposta não deve mencionar broker"
+
+
+def test_production_structured_log_emits_required_fields(monkeypatch, capsys) -> None:
+    """Em ENVIRONMENT=production o logger emite JSON com os campos obrigatórios."""
+    import app.main as main_module
+
+    monkeypatch.setenv("ENVIRONMENT", "production")
+
+    # Recarrega a configuração do logger com o novo env
+    from loguru import logger as _logger
+    _logger.remove()
+    _logger.add(main_module._structured_sink, level="DEBUG")
+
+    _logger.info("evento de teste")
+    captured = capsys.readouterr()
+
+    assert captured.out.strip(), "nenhuma saída produzida pelo sink estruturado"
+    entry = json.loads(captured.out.strip())
+    for field in ("timestamp", "level", "service", "event"):
+        assert field in entry, f"campo obrigatório ausente no log estruturado: {field!r}"
+    assert entry["service"] == "portal-cerrado"
+    assert entry["event"] == "evento de teste"

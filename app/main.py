@@ -11,6 +11,8 @@ try:
     load_dotenv()
 except Exception:
     pass
+# Configurar Loguru
+import json as _json
 import sys
 import threading
 import time
@@ -44,12 +46,32 @@ from app.publisher import ArticlePublisher
 from app.schema import NewsArticle
 from app.security import trusted_proxy_hosts
 
-# Configurar Loguru
+
+def _structured_sink(message) -> None:  # noqa: ANN001
+    record = message.record
+    entry = {
+        "timestamp": record["time"].isoformat(),
+        "level": record["level"].name,
+        "service": "portal-cerrado",
+        "event": record["message"],
+        "module": record["name"],
+        "function": record["function"],
+        "line": record["line"],
+    }
+    if record["extra"]:
+        entry.update({k: v for k, v in record["extra"].items() if k != "record"})
+    print(_json.dumps(entry, ensure_ascii=False), flush=True)  # noqa: T201
+
+
 logger.remove()
-logger.add(
-    sys.stdout,
-    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-)
+_log_env = os.getenv("ENVIRONMENT", "development")
+if _log_env == "production":
+    logger.add(_structured_sink, level="INFO")
+else:
+    logger.add(
+        sys.stdout,
+        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+    )
 
 # Sentry
 SENTRY_DSN = os.getenv("SENTRY_DSN")
