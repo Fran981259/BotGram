@@ -73,6 +73,9 @@ export function MobileMenu() {
           <Link href="/" onClick={() => setOpen(false)} className="block border-b border-black/8 py-3 font-display text-xl font-bold text-text-primary hover:text-accent-soil">
             Início
           </Link>
+          <Link href="/busca" onClick={() => setOpen(false)} className="block border-b border-black/8 py-3 font-display text-xl font-bold text-text-primary hover:text-accent-soil">
+            Buscar
+          </Link>
           {CAPITAL_MENU.map((item) =>
             item.href ? (
               <Link key={item.label} href={item.href} onClick={() => setOpen(false)} className="block border-b border-black/8 py-3 font-display text-xl font-bold text-text-primary hover:text-accent-soil">

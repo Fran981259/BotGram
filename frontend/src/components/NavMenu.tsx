@@ -35,11 +35,20 @@ export const CAPITAL_MENU: MenuItem[] = [
   { label: "Segurança", href: "/categoria/security" },
   { label: "Economia", href: "/categoria/economy" },
   { label: "Agronegócio", href: "/categoria/agriculture" },
-  { label: "Tecnologia", href: "/categoria/tech" },
   { label: "Saúde", href: "/categoria/health" },
-  { label: "Geral", href: "/categoria/general" },
+  { label: "Tecnologia", href: "/categoria/tech" },
   { label: "Cultura", href: "/categoria/culture" },
   { label: "Esportes", href: "/categoria/sports" },
+  {
+    label: "Mais",
+    subs: [
+      { label: "Educação", slug: "education" },
+      { label: "Ciência", slug: "science" },
+      { label: "Clima", slug: "clima" },
+      { label: "Entretenimento", slug: "entertainment" },
+      { label: "Geral", slug: "general" },
+    ],
+  },
 ];
 
 /**
@@ -57,73 +66,82 @@ const linkCls = (on: boolean) =>
       : "text-text-muted after:bg-transparent hover:text-text-primary hover:after:bg-line"
   }`;
 
-function DesktopLinks() {
+// Itens principais (sem o "Mais") — vivem dentro do container overflow-x-auto
+function MainLinks() {
   const path = usePathname();
   const active = path.startsWith("/categoria/") ? path.split("/")[2] : path === "/" ? null : "";
+  const mainItems = CAPITAL_MENU.filter((item) => item.href);
   return (
     <>
       <Link href="/" aria-current={active === null ? "page" : undefined} className={linkCls(active === null)}>
         Início
       </Link>
-      {CAPITAL_MENU.map((item, idx) => {
-        if (item.href) {
-          const slug = item.href.split("/").pop() || "";
-          const on = active === slug;
-          return (
-            <Link key={item.label} href={item.href} aria-current={on ? "page" : undefined} className={linkCls(on)}>
-              {item.label}
-            </Link>
-          );
-        }
-        const subs = item.subs || [];
-        const moreOn = subs.some((s) => s.slug === active);
-        const alignRight = idx >= CAPITAL_MENU.length - 3;
+      {mainItems.map((item) => {
+        const slug = item.href!.split("/").pop() || "";
+        const on = active === slug;
         return (
-          <div key={item.label} className="group relative">
-            <button aria-haspopup="true" className={`${linkCls(moreOn)} inline-flex cursor-pointer items-center gap-1 bg-transparent`}>
-              {item.label}
-              <svg width="10" height="6" viewBox="0 0 10 6" className="transition-transform group-hover:rotate-180" aria-hidden="true">
-                <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              </svg>
-            </button>
-            <div className={`invisible absolute top-full z-50 w-64 translate-y-2 rounded-none border border-line bg-surface p-2 opacity-0 shadow-[0_18px_50px_-16px_rgba(22,26,22,0.35)] transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100 ${alignRight ? "right-0" : "left-0"}`}>
-              {subs.map((s) => {
-                const on = active === s.slug;
-                return (
-                  <Link
-                    key={s.label}
-                    href={`/categoria/${s.slug}`}
-                    aria-current={on ? "page" : undefined}
-                    className={`block px-3 py-2 text-[12px] font-bold uppercase tracking-wider transition-colors ${on ? "bg-accent-soil text-white" : "text-text-muted hover:bg-black/5 hover:text-text-primary"}`}
-                  >
-                    {s.label}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+          <Link key={item.label} href={item.href!} aria-current={on ? "page" : undefined} className={linkCls(on)}>
+            {item.label}
+          </Link>
         );
       })}
     </>
   );
 }
 
-export function DesktopNav() {
-  /*
-    `justify-center` só a partir de `xl`, e `overflow-x-auto` em toda largura.
-
-    A barra é centralizada por padrão porque é o que a referência faz, mas
-    centralizar um conteúdo mais largo que a caixa transborda dos DOIS LADOS — e
-    o transbordo da esquerda passava por cima da marca. Abaixo de `xl` a barra
-    alinha à esquerda e vira rolável: nove itens de editoria dão 655px contra
-    357px disponíveis em um celular de 393px, e sem isso o documento inteiro
-    media 553px de `scrollWidth` contra 393px de `clientWidth`.
-  */
+// Dropdown "Mais" — fora do overflow-x-auto para não ser cortado
+function MaisDropdown() {
+  const path = usePathname();
+  const active = path.startsWith("/categoria/") ? path.split("/")[2] : "";
+  const maisItem = CAPITAL_MENU.find((item) => !item.href && item.subs);
+  if (!maisItem) return null;
+  const subs = maisItem.subs || [];
+  const moreOn = subs.some((s) => s.slug === active);
   return (
-    <nav className="no-scrollbar relative flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-8 after:bg-gradient-to-l after:from-surface after:to-transparent xl:justify-center xl:after:hidden" aria-label="Editorias">
+    <div className="group relative shrink-0">
+      <button
+        aria-haspopup="true"
+        aria-label="Mais editorias"
+        className={`${linkCls(moreOn)} inline-flex cursor-pointer items-center gap-1 bg-transparent`}
+      >
+        {maisItem.label}
+        <svg width="10" height="6" viewBox="0 0 10 6" className="transition-transform group-hover:rotate-180" aria-hidden="true">
+          <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        </svg>
+      </button>
+      <div className="invisible absolute right-0 top-full z-50 w-52 translate-y-2 border border-line bg-surface p-2 opacity-0 shadow-[0_18px_50px_-16px_rgba(22,26,22,0.35)] transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+        {subs.map((s) => {
+          const on = active === s.slug;
+          return (
+            <Link
+              key={s.label}
+              href={`/categoria/${s.slug}`}
+              aria-current={on ? "page" : undefined}
+              className={`block px-3 py-2 text-[12px] font-bold uppercase tracking-wider transition-colors ${on ? "bg-accent-soil text-white" : "text-text-muted hover:bg-black/5 hover:text-text-primary"}`}
+            >
+              {s.label}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export function DesktopNav() {
+  return (
+    <div className="relative flex min-w-0 flex-1 items-center xl:justify-center">
+      <nav
+        className="no-scrollbar relative flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-8 after:bg-gradient-to-l after:from-surface after:to-transparent xl:justify-center xl:after:hidden"
+        aria-label="Editorias"
+      >
+        <Suspense>
+          <MainLinks />
+        </Suspense>
+      </nav>
       <Suspense>
-        <DesktopLinks />
+        <MaisDropdown />
       </Suspense>
-    </nav>
+    </div>
   );
 }

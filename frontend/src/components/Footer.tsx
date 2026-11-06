@@ -9,10 +9,14 @@ const EDITORIAS = [
   { label: "Segurança e Justiça", href: "/categoria/security" },
   { label: "Economia", href: "/categoria/economy" },
   { label: "Agronegócio", href: "/categoria/agriculture" },
-  { label: "Cotidiano e Clima", href: "/categoria/clima" },
+  { label: "Saúde", href: "/categoria/health" },
+  { label: "Educação", href: "/categoria/education" },
+  { label: "Ciência", href: "/categoria/science" },
+  { label: "Tecnologia", href: "/categoria/tech" },
+  { label: "Clima", href: "/categoria/clima" },
   { label: "Cultura", href: "/categoria/culture" },
-  { label: "Ciência e Tecnologia", href: "/categoria/tech" },
-  { label: "Esporte", href: "/categoria/sports" },
+  { label: "Entretenimento", href: "/categoria/entertainment" },
+  { label: "Esportes", href: "/categoria/sports" },
 ];
 
 const INSTITUCIONAL = [

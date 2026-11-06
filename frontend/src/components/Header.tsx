@@ -108,7 +108,7 @@ export default function Header() {
         <MarketBar />
       </Suspense>
 
-      <header className="relative z-30 border-b border-line bg-surface">
+      <header className="sticky top-0 z-40 border-b border-line bg-surface/95 shadow-[0_1px_8px_rgba(0,0,0,0.06)] backdrop-blur-sm">
         <div className="container-editorial">
           <div className="flex items-center gap-4 py-3.5 xl:gap-6">
             <div className="shrink-0 lg:hidden">
