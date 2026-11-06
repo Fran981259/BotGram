@@ -244,7 +244,7 @@ def get_article(slug: str, db=Depends(get_db)):
     try:
         article = (
             db.query(NewsArticle)
-            .filter(NewsArticle.slug == slug, NewsArticle.status == "published", NewsArticle.region == "ms")
+            .filter(NewsArticle.slug == slug, NewsArticle.status == "published", NewsArticle.visibility == "public", NewsArticle.region == "ms")
             .first()
         )
 
