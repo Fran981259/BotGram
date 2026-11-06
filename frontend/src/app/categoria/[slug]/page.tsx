@@ -12,6 +12,7 @@ import { parsePage } from "@/lib/pagination";
 import { Icon } from "@/components/Icon";
 import { DEFAULT_SOCIAL_IMAGE } from "@/lib/siteMetadata";
 import { getPublicSiteUrl } from "@/lib/siteUrl";
+import { buildBreadcrumbJsonLd, buildCategoryItemListJsonLd } from "@/lib/articleSeo";
 
 export const revalidate = 60;
 
@@ -80,8 +81,24 @@ export default async function CategoriaPage({ params, searchParams }: { params: 
   const totalPages = Math.max(1, Math.ceil((newsResult.total || 0) / perPage));
   if (currentPage > totalPages) notFound();
 
+  const base = getPublicSiteUrl();
+  const breadcrumb = buildBreadcrumbJsonLd([
+    { name: "Home", url: base },
+    { name: "Editorias", url: `${base}/categoria` },
+    { name: cat.label, url: `${base}/categoria/${slug}` },
+  ]);
+  const itemList = buildCategoryItemListJsonLd(articles, cat.label, base);
+
   return (
     <div className="bg-canvas py-7 sm:py-9">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+      />
       <div className="container-editorial">
         <header className="border-b-2 border-charcoal pb-5">
           <span className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.22em] text-gold-deep"><Icon name={cat.iconClass} /> Editoria</span>

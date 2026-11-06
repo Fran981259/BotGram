@@ -29,6 +29,8 @@ const CATEGORY_ALIASES: Record<string, CategorySlug> = {
   science: "science",
   clima: "clima",
   general: "general",
+  government: "politics",
+  governance: "politics",
 };
 
 export type CategorySlug = keyof typeof CATEGORIES;
@@ -48,6 +50,10 @@ export function categorySlug(value: unknown): string | null {
     technology: "tech",
     entertainment: "culture",
     ciencia: "science",
+    governanca: "politics",
+    "governança": "politics",
+    government: "politics",
+    governance: "politics",
   };
   const slug = Object.hasOwn(aliases, value) ? aliases[value] : value;
   return Object.hasOwn(CATEGORIES, slug) ? slug : null;

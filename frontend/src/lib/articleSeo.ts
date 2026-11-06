@@ -1,5 +1,40 @@
 import type { Article } from '@/lib/api';
 
+type BreadcrumbItem = { name: string; url: string };
+
+export function buildBreadcrumbJsonLd(items: BreadcrumbItem[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+export function buildCategoryItemListJsonLd(
+  articles: Article[],
+  categoryLabel: string,
+  siteUrl: string,
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${categoryLabel} — Portal Cerrado`,
+    itemListElement: articles
+      .filter((a) => a.slug)
+      .map((a, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: a.title,
+        url: `${siteUrl}/noticia/${a.slug}`,
+      })),
+  };
+}
+
 type ArticleJsonLdOptions = {
   article: Article;
   canonicalUrl: string;
