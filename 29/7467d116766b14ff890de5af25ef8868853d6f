@@ -1,0 +1,21 @@
+app/main.py
+  s_f38e7a6f9be804::t_4ea3bf71d7c9e3 14-15,49-65,67-74
+tests/unit/test_failure_simulations.py
+  s_f38e7a6f9be804::t_341d7e777ed5af 46-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "297467d116766b14ff890de5af25ef8868853d6f",
+  "prompts": {},
+  "sessions": {
+    "s_f38e7a6f9be804": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9277938-0a02-4131-83a8-d85d4fcb07ce",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
