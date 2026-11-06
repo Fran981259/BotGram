@@ -1,0 +1,19 @@
+tests/unit/test_runtime_contract.py
+  s_f38e7a6f9be804::t_e8bc86be84d86f 5-11,14-19,21-25,31-32,40-44,53-114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fc16ac771967d1ab8d14b897ebdf69fde26ac03a",
+  "prompts": {},
+  "sessions": {
+    "s_f38e7a6f9be804": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9277938-0a02-4131-83a8-d85d4fcb07ce",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
