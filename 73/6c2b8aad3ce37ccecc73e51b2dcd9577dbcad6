@@ -1,0 +1,23 @@
+documento/MEMORIA.md
+  s_f38e7a6f9be804::t_aa18eb02ffe170 44-45
+documento/PLANO_ACAO.md
+  s_f38e7a6f9be804::t_0a30eb6dde5f6b 396,408-414
+tests/unit/test_documentation_governance.py
+  s_f38e7a6f9be804::t_6119ec79031baa 1-117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "736c2b8aad3ce37ccecc73e51b2dcd9577dbcad6",
+  "prompts": {},
+  "sessions": {
+    "s_f38e7a6f9be804": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9277938-0a02-4131-83a8-d85d4fcb07ce",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
