@@ -1,0 +1,23 @@
+app/main.py
+  s_f38e7a6f9be804::t_f76b9e3dbb01fe 247
+frontend/tests/seo-builders.test.mts
+  s_f38e7a6f9be804::t_4d75e06afb7ccf 1-109
+tests/unit/test_seo_api_contracts.py
+  s_f38e7a6f9be804::t_cc4d7ffda91501 1-152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f95f576045a65f1b96fc0713a7c9c7b87d919733",
+  "prompts": {},
+  "sessions": {
+    "s_f38e7a6f9be804": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c9277938-0a02-4131-83a8-d85d4fcb07ce",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
