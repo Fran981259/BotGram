@@ -387,7 +387,8 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   7. validar backend, frontend, migrations, runtime e documentação no mesmo commit.
 - Regra: nenhuma remoção será feita apenas por nome, tamanho ou baixa frequência aparente; cada remoção deve ter busca de referências, teste ou evidência equivalente.
 - Saída: relatório de arquivos removidos/consolidados, contratos preservados, validações e risco residual.
-- Evidência atual: ambiente limpo Python 3.12 com `requirements.txt` restrito executou 145 testes em 19,79s; Ruff, Mypy, compileall, ESLint, TypeScript e build frontend passaram.
+- Evidência original (29/09/2026): ambiente limpo Python 3.12 com `requirements.txt` restrito executou 145 testes em 19,79s; Ruff, Mypy, compileall, ESLint, TypeScript e build frontend passaram.
+- Re-validado em 06/11/2026 (commit 430d99b): suíte expandida para 175 testes (fases 5–10 adicionaram contratos SEO, Swarm, CI, falha e release); Ruff 0 violações; Mypy 0 erros em 80 arquivos; documentos canônicos presentes (`documento/README.md`, `documento/MEMORIA.md`, `documento/OPERACAO.md`). Os objetivos de consolidação e remoção de código morto permanecem válidos.
 - Risco residual: Docker/Swarm, smoke externo, Lighthouse e promoção permanecem não executados por regra de entrega; continuam gates separados da otimização.
 
 ## Fase 12 — Governança documental contínua
