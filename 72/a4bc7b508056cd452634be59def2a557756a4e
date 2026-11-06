@@ -1,0 +1,25 @@
+frontend/src/components/Footer.tsx
+  s_faf7d962c246b9::t_8ac117322b19c0 12-16,18-19
+frontend/src/components/Header.tsx
+  s_faf7d962c246b9::t_80e9cadef728f4 111
+frontend/src/components/NavMenu.tsx
+  s_faf7d962c246b9::t_25c221a3ffcaa8 39,42-51,69-70,73,79-81,83-85,92-129,131,133-141,143,145
+frontend/src/components/home/MobileMenu.tsx
+  s_faf7d962c246b9::t_1f087ab44e9927 76-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "72a4bc7b508056cd452634be59def2a557756a4e",
+  "prompts": {},
+  "sessions": {
+    "s_faf7d962c246b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02e84e12-6dc9-4a15-8a4d-c5f3f2ebf202",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
