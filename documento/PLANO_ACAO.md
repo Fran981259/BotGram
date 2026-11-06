@@ -246,7 +246,7 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ### Fase 7 — Separar runtime local e Swarm
 
-- Estado: em andamento; contratos local e Swarm separados e validados sem deploy.
+- Estado: concluída em 06/11/2026 (commit fc16ac7); 9 contratos cobertos. Pendências residuais: `docker compose config`, `docker stack config` e deploy real com healthchecks 1/1 — requerem Docker no host de destino.
 - Escopo: `docker-compose.local.yml`, Compose de teste, nova stack Swarm dedicada, Caddy e CI.
 - Ações:
   1. Manter Compose somente para desenvolvimento e teste local.
@@ -264,6 +264,10 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   O contrato automático de runtime confirmou sete serviços obrigatórios, réplicas
   unitárias, healthchecks, placeholders que exigem digest e ausência de volumes
   legados; 3 testes passaram.
+  Em 06/11/2026 (commit fc16ac7): 6 novos contratos — ausência de build/container_name/
+  depends_on no Swarm, todos os serviços na rede overlay, env vars críticas com :?,
+  portas internas parametrizadas, Compose local usa bridge e não referencia volumes
+  Swarm. Total: 9 testes. Suíte completa: 159 testes. Ruff: 0 violações.
 
 ### Fase 8 — CI, imagens e promoção controlada
 
