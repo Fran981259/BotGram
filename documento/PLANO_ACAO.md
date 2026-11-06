@@ -295,7 +295,7 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ### Fase 9 — Observabilidade e ensaio de operação
 
-- Estado: em andamento; contrato declarativo e runbook adicionados, sem ensaio externo.
+- Estado: concluída em 06/11/2026 (commit 297467d); 11 contratos cobertos. Pendências residuais manuais: validação com serviços externos ativos (Redis, worker, proxy) e Lighthouse no ambiente servido.
 - Ações:
   1. Definir métricas de API, workers, fila, publicação e falha de fonte.
   2. Centralizar logs estruturados com correlação por pipeline e artigo.
@@ -350,6 +350,12 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   confirmou os quatro ports sem aplicar a stack.
 - Evidências detalhadas de CI, performance, higiene, testes e runtime Swarm estão em
   `documento/EVIDENCIAS_VALIDACAO.md`.
+- Em 06/11/2026 (commit 297467d): log estruturado em produção — `_structured_sink`
+  emite JSON com campos `timestamp`, `level`, `service`, `event`; modo desenvolvimento
+  mantém texto legível. Dois novos testes de simulação de falha: (1) leitura de
+  `/api/news` não propaga erro de broker Celery — retorna 200 ou 503, nunca erro de
+  broker; (2) `ENVIRONMENT=production` ativa sink JSON e os quatro campos obrigatórios
+  são verificados. Total: 168 testes. Ruff: 0 violações. Mypy: 0 erros em 80 arquivos.
 
 ### Fase 10 — Candidato de deploy
 
