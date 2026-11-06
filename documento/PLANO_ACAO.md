@@ -169,7 +169,7 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ### Fase 5 — Segurança e administração editorial
 
-- Estado: em andamento; CORS fail-closed em produção. Mypy zerado em 30/10/2026.
+- Estado: concluída em 06/11/2026 (commit 16d588d); todos os contratos validados. Pendência residual: validação nativa do Caddy (executar `caddy validate --config Caddyfile` no host — binário não disponível neste ambiente de desenvolvimento).
 - Escopo: CORS, proxy, endpoint editorial, analytics, imagens externas e variáveis de ambiente.
 - Ações:
   1. Exigir `CORS_ALLOWED_ORIGINS` em produção sem defaults locais.
@@ -203,8 +203,13 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   Em 30/10/2026 (commit f0099a9): mypy zerado em 80 arquivos após correção de
   `app/ml/category_model.py` (Optional[Any]) e `app/admin_analytics_audience.py`
   (anotações dict[str,int]); o erro preexistente de `scan_persistence.py:45`
-  estava já corrigido — não existe mais. Validação nativa do Caddy continua
-  pendente (binário não instalado neste ambiente).
+  estava já corrigido — não existe mais.
+  Em 06/11/2026 (commit 16d588d): `tests/conftest.py` recebeu `MEDIA_DIR` apontando
+  para diretório temporário de teste; corrigido `PermissionError` que impedia coleta
+  de `test_admin_endpoints.py`. Suíte completa: 141 testes passados em 24s.
+  Ruff: 0 violações. Mypy: 0 erros em 80 arquivos. Todos os contratos da Fase 5
+  cobertos (CORS, rate limit, auth, rotação, CSP/headers, .env). Validação nativa
+  do Caddy permanece manual: `caddy validate --config Caddyfile` no host de produção.
 
 ### Fase 6 — Consolidar frontend e SEO
 
