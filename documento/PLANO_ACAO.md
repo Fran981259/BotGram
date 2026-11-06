@@ -271,7 +271,7 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ### Fase 8 — CI, imagens e promoção controlada
 
-- Estado: em andamento; promoção manual e imagens imutáveis configuradas.
+- Estado: concluída em 06/11/2026 (commit 4684af7); 10 contratos cobertos. Pendências residuais: PR de teste real no GitHub Actions, pull de imagem por SHA e reprodução local — requerem runner e registry ativos.
 - Ações:
   1. Fazer CI executar exatamente os comandos aprovados localmente.
   2. Bloquear merge se backend, frontend ou auditoria de dependências falhar.
@@ -287,6 +287,11 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   completo, exige CORS e aponta para `docker-stack.swarm.yml`; o caminho local usa
   `docker-compose.local.yml`. O contrato passou em 3 testes; nenhuma imagem foi
   construída, publicada ou promovida.
+  Em 06/11/2026 (commit 4684af7): python-version alinhado para 3.12 em ci.yml e
+  deploy.yml (era 3.11, divergindo do ambiente local validado). 7 novos contratos
+  — jobs obrigatórios no CI, ordem lint→test, tsc sem --offline, gates de publish,
+  GITHUB_SHA no stack-contract e Python version. Total: 10 contratos. Suíte
+  completa: 166 testes. Ruff: 0 violações.
 
 ### Fase 9 — Observabilidade e ensaio de operação
 
