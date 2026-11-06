@@ -1,0 +1,23 @@
+frontend/src/app/categoria/[slug]/page.tsx
+  s_faf7d962c246b9::t_adad3de5bc079f 15,84-91,94-101
+frontend/src/lib/articleSeo.ts
+  s_faf7d962c246b9::t_cc8e916c00a245 3-37
+frontend/src/lib/categories.ts
+  s_faf7d962c246b9::t_f6e15062d593e1 32-33,53-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dfbaa7c4ecd66087145b32006992dd42be798051",
+  "prompts": {},
+  "sessions": {
+    "s_faf7d962c246b9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "02e84e12-6dc9-4a15-8a4d-c5f3f2ebf202",
+        "model": "unknown"
+      },
+      "human_author": "razuk <razuk@atualizabrasil.news>"
+    }
+  }
+}
