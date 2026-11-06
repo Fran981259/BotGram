@@ -359,10 +359,19 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ### Fase 10 — Candidato de deploy
 
+- Estado: contratos concluídos em 06/11/2026; relatório de aceite gerado em `documento/RELATORIO_CANDIDATO_DEPLOY.md`. Deploy em produção permanece bloqueado até aprovação explícita do usuário.
 - Pré-condições: fases 0 a 9 aprovadas e `git status` limpo.
 - Ações: criar tag de candidato, publicar imagens SHA, fazer deploy somente no ambiente de teste e executar smoke test completo.
 - Saída: relatório de aceite com versões, resultados, risco residual e plano de rollback.
 - Regra: produção continua bloqueada até aprovação explícita do usuário depois do relatório.
+- Em 06/11/2026: 7 contratos estáticos de release adicionados em
+  `tests/unit/test_release_candidate_contract.py` — gates de publish, SHA-pinned images,
+  serviços obrigatórios na stack, update/rollback scripts e Caddyfile. Suíte completa:
+  175 testes. Ruff: 0 violações. Mypy: 0 erros em 80 arquivos. Relatório de aceite
+  completo em `documento/RELATORIO_CANDIDATO_DEPLOY.md` com versões, processo de deploy
+  de teste, plano de rollback e registro de risco residual. Deploy em produção (Contabo
+  `13.140.149.158`) exige smoke test aprovado na stack `cerrado_test` e aprovação
+  explícita do usuário.
 
 ## Fase 11 — Otimização estrutural e consolidação documental
 
