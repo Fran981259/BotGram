@@ -393,7 +393,7 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ## Fase 12 — Governança documental contínua
 
-- Estado: em andamento em 04/10/2026.
+- Estado: concluída em 06/11/2026; 10 contratos de governança documental adicionados.
 - Objetivo: manter documentação curta, datada e escalável sem duplicar estado
   de runtime ou transformar relatórios históricos em instruções operacionais.
 - Regras:
@@ -405,3 +405,10 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
      for usado como evidência de promoção.
   5. Mudanças de rota, serviço, variável de ambiente ou contrato devem atualizar
      o mapa do projeto e o documento canônico correspondente no mesmo commit.
+- Em 06/11/2026: 10 contratos em `tests/unit/test_documentation_governance.py`
+  verificam tabela de classificação no README.md (Regra 1), stack e "Estado
+  auditado" com data no MEMORIA.md (Regras 2 e 4), disclaimer de runbook e
+  procedimento de rollback no OPERACAO.md (Regra 3), existência e conteúdo de
+  EVIDENCIAS_VALIDACAO.md, e datas de conclusão no PLANO_ACAO.md (Regra 4).
+  MEMORIA.md atualizado com candidato `8ebc300` e 175 testes. Suíte completa:
+  185 testes. Ruff: 0 violações. Mypy: 0 erros em 80 arquivos.

@@ -41,8 +41,8 @@
 
 ## Estado auditado
 
-- Última validação local: 30/10/2026 — candidato `d1fb422`.
-- 149 testes passando; Ruff 0 violações; mypy 80 arquivos sem erros.
+- Última validação local: 06/11/2026 — candidato `8ebc300` (branch main).
+- 175 testes passando; Ruff 0 violações; mypy 80 arquivos sem erros.
 - Frontend: lint, tsc e build ok; `npm audit --omit=dev` 0 vulnerabilidades (next 16.4.3).
 - Resultados anteriores registrados neste diretório são históricos e não
   substituem a validação do candidato atual.
