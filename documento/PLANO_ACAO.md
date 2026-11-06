@@ -213,7 +213,7 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
 
 ### Fase 6 — Consolidar frontend e SEO
 
-- Estado: em andamento; contrato SEO validado no build atual.
+- Estado: concluída em 06/11/2026 (commit f95f576); todos os contratos cobertos. Pendências residuais manuais: inspeção de XML do news sitemap e Lighthouse no ambiente servido.
 - Escopo: App Router, sitemap, news sitemap, metadados, busca, admin e integração API.
 - Ações:
   1. Confirmar que sitemaps só publicam artigos públicos de MS.
@@ -237,6 +237,12 @@ Manter uma base reproduzível, testável e operável durante a evolução do pro
   `npm audit --omit=dev --audit-level=high` retornou 0 vulnerabilidades com rede.
   Build Next.js revalidado: `✓ Compiled successfully`, 25 rotas, lint e tsc limpos.
   Inspeção manual de XML e Lighthouse continuam pendentes para ambiente servido.
+  Em 06/11/2026 (commit f95f576): 12 contratos SEO de backend cobrem /api/news
+  (campos, filtro de categoria, tags, visibilidade) e /api/news/{slug}; 26 assertions
+  TypeScript cobrem buildArticleJsonLd, buildBreadcrumbJsonLd e buildCategoryItemListJsonLd
+  via `npx tsx frontend/tests/seo-builders.test.mts`. Bug corrigido: /api/news/{slug}
+  não filtrava visibility=="public" — artigos privados eram expostos pelo slug.
+  Suíte completa: 153 testes. Ruff: 0 violações. Mypy: 0 erros em 80 arquivos.
 
 ### Fase 7 — Separar runtime local e Swarm
 
