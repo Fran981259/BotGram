@@ -19,6 +19,11 @@ function safeImageUrl(url: string | undefined): string | null {
   try {
     const parsed = new URL(url);
     if (!["http:", "https:"].includes(parsed.protocol)) return null;
+    const low = parsed.toString().toLowerCase();
+    // Descarta resizers proprietários ou com tokens temporários que quebram por CORS/hotlink/CSP
+    if (low.includes("estadao.com.br/resizer")) return null;
+    // Descarta formatos de streaming/vídeo passados como imagem
+    if (/\.(mp4|m3u8|mpd|webm|mov)(\?|$|#)/i.test(low)) return null;
     return parsed.toString();
   } catch {
     return null;

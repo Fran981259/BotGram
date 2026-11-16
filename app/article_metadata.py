@@ -129,6 +129,23 @@ class ArticleMetadataMixin:
         return None
 
     def _extract_image(self, soup: BeautifulSoup, jsonld: Optional[Dict], page_url: str = "") -> Optional[str]:
+        # 0) Video poster (se a matéria tiver vídeo mobile / player com poster estático)
+        for video in soup.find_all("video"):
+            poster = video.get("poster") or video.get("data-poster")
+            if poster and self._is_valid_image_url(poster):
+                return self._abs_url(poster, page_url)
+
+        # 0b) JSON-LD VideoObject thumbnail
+        if jsonld:
+            v_type = jsonld.get("@type")
+            if v_type == "VideoObject" or "video" in jsonld:
+                v_obj = jsonld.get("video") if isinstance(jsonld.get("video"), dict) else jsonld
+                thumb = v_obj.get("thumbnailUrl") or v_obj.get("thumbnail")
+                if isinstance(thumb, list) and thumb:
+                    thumb = thumb[0]
+                if thumb and self._is_valid_image_url(str(thumb)):
+                    return self._abs_url(str(thumb), page_url)
+
         # 1) og:image / twitter:image via meta
         for key in ["og:image", "twitter:image", "twitter:image:src"]:
             val = self._meta(soup, [key])
@@ -202,6 +219,21 @@ class ArticleMetadataMixin:
         if not url or url.startswith("data:"):
             return False
         low = url.lower()
+
+        # descarta streams e arquivos de vídeo passados como imagem
+        video_exts = [".mp4", ".m3u8", ".mpd", ".webm", ".avi", ".mov"]
+        if any(v in low for v in video_exts):
+            return False
+
+        # descarta embeds e players de vídeo
+        video_players = ["youtube.com/embed", "player.vimeo", "dailymotion.com/embed", "globo.com/videos/"]
+        if any(p in low for p in video_players):
+            return False
+
+        # descarta resizers proprietários conhecidos com tokens temporários ou hotlink restrito
+        if "estadao.com.br/resizer" in low:
+            return False
+
         # descarta ícones, logos, placeholders, tracking pixels e genéricos repetidos
         bad = [
             "icone",
