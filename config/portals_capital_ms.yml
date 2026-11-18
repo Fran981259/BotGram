@@ -13,7 +13,6 @@ portals_ms:
     - { name: "JD1 Notícias", url: "https://www.jd1noticias.com", city: "Campo Grande" }
 
   dourados:
-    - { name: "Dourados News", url: "https://www.douradosnews.com.br", city: "Dourados" }
     - { name: "O Progresso", url: "https://www.progresso.com.br", city: "Dourados" }
     - { name: "Dourados Agora", url: "https://www.douradosagora.com.br", city: "Dourados" }
 
